@@ -38,9 +38,9 @@ jobs:
             flutter create --platforms=android .
           fi
 
-      - name: Set NAI app label
+      - name: Set Hustle Academy app label
         run: |
-          sed -i 's/android:label="[^"]*"/android:label="NAI"/' android/app/src/main/AndroidManifest.xml
+          sed -i 's/android:label="[^"]*"/android:label="Hustle Academy"/' android/app/src/main/AndroidManifest.xml
 
       - run: flutter build apk --release
 
