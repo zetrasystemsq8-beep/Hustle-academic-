@@ -1,0 +1,49 @@
+{
+  "shared": {
+    "get_started": "Continue"
+  },
+  "onboarding": {
+    "onboarding_title_1": "Nigeria's AI Assistant",
+    "onboarding_subtitle_1": "Ask questions, discover Nigeria, learn, work,\nand get AI assistance instantly.",
+    "onboarding_title_2": "Real Nigerian\nNews, Daily",
+    "onboarding_subtitle_2": "Get an AI-written briefing of today's top\nNigerian stories, updated every day.",
+    "onboarding_title_3": "Built for\nNigeria, by Zetra",
+    "onboarding_subtitle_3": "Chat, learn, and get things done — all\ndesigned around Nigerian life and context."
+  },
+  "home": {
+    "home_title": "Home",
+    "welcome_home": "Welcome Home!",
+    "home_subtitle": "You have successfully completed the onboarding process."
+  },
+  "auth": {
+    "log_in": "Welcome Back",
+    "log_in_subtitle": "Sign in to continue to NAI",
+    "email": "ZetraMail",
+    "email_required": "ZetraMail is required",
+    "email_invalid": "Enter a valid ZetraMail",
+    "password": "Password",
+    "password_required": "Password is required",
+    "password_too_short": "Password must be at least 6 characters",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot Password",
+    "login_button": "Continue",
+    "dont_have_account": "Don't have an account? ",
+    "sign_up": "Sign Up",
+    "create_account": "Create NAI Account",
+    "create_account_subtitle": "Join Nigeria's AI Assistant",
+    "name": "Name",
+    "name_required": "Name is required",
+    "confirm_password": "Confirm Password",
+    "confirm_password_required": "Confirm password is required",
+    "passwords_do_not_match": "Passwords do not match",
+    "create_account_button": "Create Account",
+    "already_have_account": "Already using NAI? ",
+    "sign_in": "Sign In",
+    "or_continue_with": "Or Continue With Account",
+    "forgot_password_title": "Forgot Password",
+    "forgot_password_subtitle": "Enter your ZetraMail address to receive a reset link\nand regain access to your account.",
+    "reset_link_sent": "Password reset link sent to your ZetraMail.",
+    "back_to_login": "Back to Login",
+    "send_reset_link": "Send Reset Link"
+  }
+}
