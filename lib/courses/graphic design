@@ -1,0 +1,1418 @@
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:convert';
+
+/// High-precision 2D Vector representation for graphic design calculations,
+/// transformations, and path manipulations.
+class Vec2D {
+  final double x;
+  final double y;
+
+  const Vec2D(this.x, this.y);
+
+  static const Vec2D zero = Vec2D(0.0, 0.0);
+  static const Vec2D unitX = Vec2D(1.0, 0.0);
+  static const Vec2D unitY = Vec2D(0.0, 1.0);
+
+  Vec2D operator +(Vec2D other) => Vec2D(x + other.x, y + other.y);
+  Vec2D operator -(Vec2D other) => Vec2D(x - other.x, y - other.y);
+  Vec2D operator *(double scalar) => Vec2D(x * scalar, y * scalar);
+  Vec2D operator /(double scalar) => Vec2D(x / scalar, y / scalar);
+  Vec2D operator -() => Vec2D(-x, -y);
+
+  double get lengthSquared => x * x + y * y;
+  double get length => math.sqrt(lengthSquared);
+
+  Vec2D normalized() {
+    final len = length;
+    if (len < 1e-10) return Vec2D.zero;
+    return Vec2D(x / len, y / len);
+  }
+
+  double dot(Vec2D other) => x * other.x + y * other.y;
+  double cross(Vec2D other) => x * other.y - y * other.x;
+
+  double distanceTo(Vec2D other) => (this - other).length;
+  double distanceToSquared(Vec2D other) => (this - other).lengthSquared;
+
+  double angleWith(Vec2D other) {
+    final denom = math.sqrt(lengthSquared * other.lengthSquared);
+    if (denom < 1e-10) return 0.0;
+    final cosAngle = (dot(other) / denom).clamp(-1.0, 1.0);
+    return math.acos(cosAngle);
+  }
+
+  Vec2D rotate(double angleRadians) {
+    final cosA = math.cos(angleRadians);
+    final sinA = math.sin(angleRadians);
+    return Vec2D(x * cosA - y * sinA, x * sinA + y * cosA);
+  }
+
+  Vec2D rotateAround(Vec2D pivot, double angleRadians) {
+    return (this - pivot).rotate(angleRadians) + pivot;
+  }
+
+  Vec2D lerp(Vec2D target, double t) {
+    return Vec2D(x + (target.x - x) * t, y + (target.y - y) * t);
+  }
+
+  Vec2D projectOnto(Vec2D target) {
+    final targetLenSq = target.lengthSquared;
+    if (targetLenSq < 1e-10) return Vec2D.zero;
+    final scalar = dot(target) / targetLenSq;
+    return target * scalar;
+  }
+
+  Vec2D perpendicular() => Vec2D(-y, x);
+
+  Map<String, dynamic> toJson() => {'x': x, 'y': y};
+
+  factory Vec2D.fromJson(Map<String, dynamic> json) {
+    return Vec2D(
+      (json['x'] as num).toDouble(),
+      (json['y'] as num).toDouble(),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Vec2D &&
+          runtimeType == other.runtimeType &&
+          (x - other.x).abs() < 1e-9 &&
+          (y - other.y).abs() < 1e-9;
+
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode;
+
+  @override
+  String toString() => 'Vec2D(${x.toStringAsFixed(2)}, ${y.toStringAsFixed(2)})';
+}
+
+/// A 3x3 Affine Transformation Matrix tailored for 2D design canvas operations.
+/// [a, b, c,
+///  d, e, f,
+///  0, 0, 1]
+class Matrix2D {
+  final double a; // Scale X / Cosine
+  final double b; // Shear Y / Sine
+  final double c; // Translate X
+  final double d; // Shear X / -Sine
+  final double e; // Scale Y / Cosine
+  final double f; // Translate Y
+
+  const Matrix2D(this.a, this.b, this.c, this.d, this.e, this.f);
+
+  static const Matrix2D identity = Matrix2D(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+  factory Matrix2D.translation(double tx, double ty) {
+    return Matrix2D(1.0, 0.0, tx, 0.0, 1.0, ty);
+  }
+
+  factory Matrix2D.scale(double sx, double sy, [Vec2D? pivot]) {
+    if (pivot == null || (pivot.x == 0 && pivot.y == 0)) {
+      return Matrix2D(sx, 0.0, 0.0, 0.0, sy, 0.0);
+    }
+    return Matrix2D.translation(pivot.x, pivot.y)
+        .multiply(Matrix2D(sx, 0.0, 0.0, 0.0, sy, 0.0))
+        .multiply(Matrix2D.translation(-pivot.x, -pivot.y));
+  }
+
+  factory Matrix2D.rotation(double radians, [Vec2D? pivot]) {
+    final cosA = math.cos(radians);
+    final sinA = math.sin(radians);
+    if (pivot == null || (pivot.x == 0 && pivot.y == 0)) {
+      return Matrix2D(cosA, sinA, 0.0, -sinA, cosA, 0.0);
+    }
+    return Matrix2D.translation(pivot.x, pivot.y)
+        .multiply(Matrix2D(cosA, sinA, 0.0, -sinA, cosA, 0.0))
+        .multiply(Matrix2D.translation(-pivot.x, -pivot.y));
+  }
+
+  factory Matrix2D.skew(double skewXAngle, double skewYAngle) {
+    final tanX = math.tan(skewXAngle);
+    final tanY = math.tan(skewYAngle);
+    return Matrix2D(1.0, tanY, 0.0, tanX, 1.0, 0.0);
+  }
+
+  Matrix2D multiply(Matrix2D o) {
+    return Matrix2D(
+      a * o.a + d * o.b,
+      b * o.a + e * o.b,
+      c * o.a + f * o.b + c,
+      a * o.d + d * o.e,
+      b * o.d + e * o.e,
+      c * o.d + f * o.e + f,
+    );
+  }
+
+  Vec2D transformPoint(Vec2D point) {
+    return Vec2D(
+      a * point.x + d * point.y + c,
+      b * point.x + e * point.y + f,
+    );
+  }
+
+  double get determinant => a * e - b * d;
+
+  bool get isInvertible => determinant.abs() > 1e-10;
+
+  Matrix2D? inverted() {
+    final det = determinant;
+    if (det.abs() < 1e-10) return null;
+    final invDet = 1.0 / det;
+    return Matrix2D(
+      e * invDet,
+      -b * invDet,
+      (b * f - c * e) * invDet,
+      -d * invDet,
+      a * invDet,
+      (c * d - a * f) * invDet,
+    );
+  }
+
+  Vec2D get translation => Vec2D(c, f);
+
+  Vec2D get scaleFactors {
+    final scaleX = math.sqrt(a * a + b * b);
+    final scaleY = math.sqrt(d * d + e * e);
+    return Vec2D(scaleX, scaleY);
+  }
+
+  double get rotationRadians => math.atan2(b, a);
+
+  Float64List toFloat64List() {
+    final list = Float64List(16);
+    list[0] = a;
+    list[1] = b;
+    list[2] = 0.0;
+    list[3] = 0.0;
+    list[4] = d;
+    list[5] = e;
+    list[6] = 0.0;
+    list[7] = 0.0;
+    list[8] = 0.0;
+    list[9] = 0.0;
+    list[10] = 1.0;
+    list[11] = 0.0;
+    list[12] = c;
+    list[13] = f;
+    list[14] = 0.0;
+    list[15] = 1.0;
+    return list;
+  }
+
+  Map<String, dynamic> toJson() => {'a': a, 'b': b, 'c': c, 'd': d, 'e': e, 'f': f};
+
+  factory Matrix2D.fromJson(Map<String, dynamic> json) {
+    return Matrix2D(
+      (json['a'] as num).toDouble(),
+      (json['b'] as num).toDouble(),
+      (json['c'] as num).toDouble(),
+      (json['d'] as num).toDouble(),
+      (json['e'] as num).toDouble(),
+      (json['f'] as num).toDouble(),
+    );
+  }
+
+  @override
+  String toString() => 'Matrix2D([$a, $b, $c], [$d, $e, $f])';
+}
+
+/// Axis-Aligned Bounding Box (AABB) for spatial indexing, selection, and layout.
+class Rect2D {
+  final double minX;
+  final double minY;
+  final double maxX;
+  final double maxY;
+
+  const Rect2D(this.minX, this.minY, this.maxX, this.maxY);
+
+  factory Rect2D.fromLTWH(double left, double top, double width, double height) {
+    return Rect2D(left, top, left + width, top + height);
+  }
+
+  factory Rect2D.fromPoints(Vec2D p1, Vec2D p2) {
+    return Rect2D(
+      math.min(p1.x, p2.x),
+      math.min(p1.y, p2.y),
+      math.max(p1.x, p2.x),
+      math.max(p1.y, p2.y),
+    );
+  }
+
+  factory Rect2D.fromCenter(Vec2D center, double width, double height) {
+    final halfW = width / 2.0;
+    final halfH = height / 2.0;
+    return Rect2D(center.x - halfW, center.y - halfH, center.x + halfW, center.y + halfH);
+  }
+
+  static const Rect2D zero = Rect2D(0, 0, 0, 0);
+  static const Rect2D largest = Rect2D(-1e9, -1e9, 1e9, 1e9);
+
+  double get width => maxX - minX;
+  double get height => maxY - minY;
+  Vec2D get center => Vec2D((minX + maxX) / 2.0, (minY + maxY) / 2.0);
+  Vec2D get topLeft => Vec2D(minX, minY);
+  Vec2D get topRight => Vec2D(maxX, minY);
+  Vec2D get bottomLeft => Vec2D(minX, maxY);
+  Vec2D get bottomRight => Vec2D(maxX, maxY);
+
+  bool get isEmpty => width <= 0 || height <= 0;
+
+  bool containsPoint(Vec2D p) {
+    return p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY;
+  }
+
+  bool intersects(Rect2D other) {
+    return minX < other.maxX && maxX > other.minX && minY < other.maxY && maxY > other.minY;
+  }
+
+  Rect2D expandToInclude(Vec2D point) {
+    return Rect2D(
+      math.min(minX, point.x),
+      math.min(minY, point.y),
+      math.max(maxX, point.x),
+      math.max(maxY, point.y),
+    );
+  }
+
+  Rect2D union(Rect2D other) {
+    return Rect2D(
+      math.min(minX, other.minX),
+      math.min(minY, other.minY),
+      math.max(maxX, other.maxX),
+      math.max(maxY, other.maxY),
+    );
+  }
+
+  Rect2D intersect(Rect2D other) {
+    if (!intersects(other)) return Rect2D.zero;
+    return Rect2D(
+      math.max(minX, other.minX),
+      math.max(minY, other.minY),
+      math.min(maxX, other.maxX),
+      math.min(maxY, other.maxY),
+    );
+  }
+
+  Rect2D inflate(double delta) {
+    return Rect2D(minX - delta, minY - delta, maxX + delta, maxY + delta);
+  }
+
+  Rect2D transform(Matrix2D matrix) {
+    final p1 = matrix.transformPoint(topLeft);
+    final p2 = matrix.transformPoint(topRight);
+    final p3 = matrix.transformPoint(bottomLeft);
+    final p4 = matrix.transformPoint(bottomRight);
+
+    final minXRes = math.min(math.min(p1.x, p2.x), math.min(p3.x, p4.x));
+    final minYRes = math.min(math.min(p1.y, p2.y), math.min(p3.y, p4.y));
+    final maxXRes = math.max(math.max(p1.x, p2.x), math.max(p3.x, p4.x));
+    final maxYRes = math.max(math.max(p1.y, p2.y), math.max(p3.y, p4.y));
+
+    return Rect2D(minXRes, minYRes, maxXRes, maxYRes);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'minX': minX,
+        'minY': minY,
+        'maxX': maxX,
+        'maxY': maxY,
+      };
+
+  factory Rect2D.fromJson(Map<String, dynamic> json) {
+    return Rect2D(
+      (json['minX'] as num).toDouble(),
+      (json['minY'] as num).toDouble(),
+      (json['maxX'] as num).toDouble(),
+      (json['maxY'] as num).toDouble(),
+    );
+  }
+
+  @override
+  String toString() => 'Rect2D(x: $minX, y: $minY, w: $width, h: $height)';
+}
+
+/// Highly precise Cubic/Quadratic Bezier Curve evaluation and geometry engine.
+class BezierSegment {
+  final Vec2D p0;
+  final Vec2D p1;
+  final Vec2D p2;
+  final Vec2D p3;
+
+  const BezierSegment(this.p0, this.p1, this.p2, this.p3);
+
+  factory BezierSegment.quadratic(Vec2D start, Vec2D control, Vec2D end) {
+    // Elevate degree to cubic for uniform processing
+    final c1 = start + (control - start) * (2.0 / 3.0);
+    final c2 = end + (control - end) * (2.0 / 3.0);
+    return BezierSegment(start, c1, c2, end);
+  }
+
+  factory BezierSegment.line(Vec2D start, Vec2D end) {
+    return BezierSegment(
+      start,
+      start.lerp(end, 1.0 / 3.0),
+      start.lerp(end, 2.0 / 3.0),
+      end,
+    );
+  }
+
+  Vec2D evaluate(double t) {
+    final u = 1.0 - t;
+    final tt = t * t;
+    final uu = u * u;
+    final uuu = uu * u;
+    final ttt = tt * t;
+
+    final x = uuu * p0.x + 3 * uu * t * p1.x + 3 * u * tt * p2.x + ttt * p3.x;
+    final y = uuu * p0.y + 3 * uu * t * p1.y + 3 * u * tt * p2.y + ttt * p3.y;
+    return Vec2D(x, y);
+  }
+
+  Vec2D derivative(double t) {
+    final u = 1.0 - t;
+    final term1 = (p1 - p0) * (3 * u * u);
+    final term2 = (p2 - p1) * (6 * u * t);
+    final term3 = (p3 - p2) * (3 * t * t);
+    return term1 + term2 + term3;
+  }
+
+  Vec2D normal(double t) {
+    final tangent = derivative(t);
+    return tangent.perpendicular().normalized();
+  }
+
+  List<BezierSegment> split(double t) {
+    final p01 = p0.lerp(p1, t);
+    final p12 = p1.lerp(p2, t);
+    final p23 = p2.lerp(p3, t);
+
+    final p012 = p01.lerp(p12, t);
+    final p123 = p12.lerp(p23, t);
+
+    final p0123 = p012.lerp(p123, t);
+
+    return [
+      BezierSegment(p0, p01, p012, p0123),
+      BezierSegment(p0123, p123, p23, p3),
+    ];
+  }
+
+  double computeArcLength({int steps = 20}) {
+    double length = 0.0;
+    Vec2D previous = evaluate(0.0);
+    for (int i = 1; i <= steps; i++) {
+      final t = i / steps;
+      final current = evaluate(t);
+      length += previous.distanceTo(current);
+      previous = current;
+    }
+    return length;
+  }
+
+  Rect2D get boundingBox {
+    double minX = math.min(p0.x, p3.x);
+    double maxX = math.max(p0.x, p3.x);
+    double minY = math.min(p0.y, p3.y);
+    double maxY = math.max(p0.y, p3.y);
+
+    // Solve for extrema where derivative == 0
+    final a = (p1 - p0) * -3.0 + (p2 - p1) * 3.0;
+    final b = (p1 - p0) * 6.0 - (p2 - p1) * 6.0 + (p3 - p2) * 6.0; // simplified coefficients
+
+    // Evaluate x extrema
+    _checkExtremaComponent(p0.x, p1.x, p2.x, p3.x, (t) {
+      final pt = evaluate(t);
+      minX = math.min(minX, pt.x);
+      maxX = math.max(maxX, pt.x);
+    });
+
+    // Evaluate y extrema
+    _checkExtremaComponent(p0.y, p1.y, p2.y, p3.y, (t) {
+      final pt = evaluate(t);
+      minY = math.min(minY, pt.y);
+      maxY = math.max(maxY, pt.y);
+    });
+
+    return Rect2D(minX, minY, maxX, maxY);
+  }
+
+  void _checkExtremaComponent(
+      double p0c, double p1c, double p2c, double p3c, void Function(double t) onExtremaFound) {
+    final a = -3 * p0c + 9 * p1c - 9 * p2c + 3 * p3c;
+    final b = 6 * p0c - 12 * p1c + 6 * p2c;
+    final c = -3 * p0c + 3 * p1c;
+
+    if (a.abs() < 1e-9) {
+      if (b.abs() > 1e-9) {
+        final t = -c / b;
+        if (t > 0 && t < 1) onExtremaFound(t);
+      }
+    } else {
+      final discriminant = b * b - 4 * a * c;
+      if (discriminant >= 0) {
+        final sqrtD = math.sqrt(discriminant);
+        final t1 = (-b + sqrtD) / (2 * a);
+        final t2 = (-b - sqrtD) / (2 * a);
+        if (t1 > 0 && t1 < 1) onExtremaFound(t1);
+        if (t2 > 0 && t2 < 1) onExtremaFound(t2);
+      }
+    }
+  }
+
+  List<Vec2D> flatten({double tolerance = 0.5}) {
+    final List<Vec2D> points = [p0];
+    _flattenRecursive(p0, p1, p2, p3, points, tolerance, 0);
+    points.add(p3);
+    return points;
+  }
+
+  void _flattenRecursive(Vec2D p0, Vec2D p1, Vec2D p2, Vec2D p3, List<Vec2D> points,
+      double tolerance, int depth) {
+    if (depth > 12) return; // Recursion limit safety guard
+
+    final d1 = (p1 - p0).cross(p3 - p0).abs();
+    final d2 = (p2 - p0).cross(p3 - p0).abs();
+
+    if ((d1 + d2) * (d1 + d2) < tolerance * p3.distanceToSquared(p0)) {
+      return;
+    }
+
+    final p01 = p0.lerp(p1, 0.5);
+    final p12 = p1.lerp(p2, 0.5);
+    final p23 = p2.lerp(p3, 0.5);
+    final p012 = p01.lerp(p12, 0.5);
+    final p123 = p12.lerp(p23, 0.5);
+    final p0123 = p012.lerp(p123, 0.5);
+
+    _flattenRecursive(p0, p01, p012, p0123, points, tolerance, depth + 1);
+    points.add(p0123);
+    _flattenRecursive(p0123, p123, p23, p3, points, tolerance, depth + 1);
+  }
+}
+
+/// Comprehensive Color Representation supporting RGBA, HSLA, CMYK, and Hex conversions.
+class ColorRGBA {
+  final double r; // 0.0 - 1.0
+  final double g; // 0.0 - 1.0
+  final double b; // 0.0 - 1.0
+  final double a; // 0.0 - 1.0
+
+  const ColorRGBA(this.r, this.g, this.b, [this.a = 1.0]);
+
+  static const ColorRGBA transparent = ColorRGBA(0, 0, 0, 0);
+  static const ColorRGBA black = ColorRGBA(0, 0, 0, 1);
+  static const ColorRGBA white = ColorRGBA(1, 1, 1, 1);
+  static const ColorRGBA red = ColorRGBA(1, 0, 0, 1);
+  static const ColorRGBA green = ColorRGBA(0, 1, 0, 1);
+  static const ColorRGBA blue = ColorRGBA(0, 0, 1, 1);
+
+  factory ColorRGBA.fromInts(int r, int g, int b, [int a = 255]) {
+    return ColorRGBA(r / 255.0, g / 255.0, b / 255.0, a / 255.0);
+  }
+
+  factory ColorRGBA.fromHex(String hexString) {
+    String buffer = hexString.replaceAll('#', '');
+    if (buffer.length == 6) {
+      buffer = 'FF$buffer';
+    }
+    final val = int.parse(buffer, radix: 16);
+    final a = ((val >> 24) & 0xFF) / 255.0;
+    final r = ((val >> 16) & 0xFF) / 255.0;
+    final g = ((val >> 8) & 0xFF) / 255.0;
+    final b = (val & 0xFF) / 255.0;
+    return ColorRGBA(r, g, b, a);
+  }
+
+  factory ColorRGBA.fromHSLA(double h, double s, double l, [double a = 1.0]) {
+    double r, g, b;
+    if (s == 0) {
+      r = g = b = l;
+    } else {
+      double hue2rgb(double p, double q, double t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+
+      final q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      final p = 2 * l - q;
+      final normalizedH = (h % 360) / 360.0;
+
+      r = hue2rgb(p, q, normalizedH + 1 / 3);
+      g = hue2rgb(p, q, normalizedH);
+      b = hue2rgb(p, q, normalizedH - 1 / 3);
+    }
+    return ColorRGBA(r, g, b, a);
+  }
+
+  factory ColorRGBA.fromCMYK(double c, double m, double y, double k, [double a = 1.0]) {
+    final r = (1.0 - c) * (1.0 - k);
+    final g = (1.0 - m) * (1.0 - k);
+    final b = (1.0 - y) * (1.0 - k);
+    return ColorRGBA(r, g, b, a);
+  }
+
+  int get redInt => (r * 255).round().clamp(0, 255);
+  int get greenInt => (g * 255).round().clamp(0, 255);
+  int get blueInt => (b * 255).round().clamp(0, 255);
+  int get alphaInt => (a * 255).round().clamp(0, 255);
+
+  String toHex({bool includeAlpha = true}) {
+    if (includeAlpha) {
+      return '#${alphaInt.toRadixString(16).padLeft(2, '0')}'
+          '${redInt.toRadixString(16).padLeft(2, '0')}'
+          '${greenInt.toRadixString(16).padLeft(2, '0')}'
+          '${blueInt.toRadixString(16).padLeft(2, '0')}';
+    }
+    return '#${redInt.toRadixString(16).padLeft(2, '0')}'
+        '${greenInt.toRadixString(16).padLeft(2, '0')}'
+        '${blueInt.toRadixString(16).padLeft(2, '0')}';
+  }
+
+  List<double> toHSLA() {
+    final maxC = math.max(r, math.max(g, b));
+    final minC = math.min(r, math.min(g, b));
+    final delta = maxC - minC;
+
+    double h = 0.0;
+    double s = 0.0;
+    final l = (maxC + minC/ 2.0;
+
+    if (delta != 0) {
+      s = l < 0.5 ? delta / (maxC + minC) : delta / (2.0 - maxC - minC);
+
+      if (maxC == r) {
+        h = ((g - b) / delta) + (g < b ? 6 : 0);
+      } else if (maxC == g) {
+        h = ((b - r) / delta) + 2;
+      } else {
+        h = ((r - g) / delta) + 4;
+      }
+      h /= 6.0;
+    }
+
+    return [h * 360.0, s, l, a];
+  }
+
+  List<double> toCMYK() {
+    final k = 1.0 - math.max(r, math.max(g, b));
+    if (k == 1.0) {
+      return [0.0, 0.0, 0.0, 1.0];
+    }
+    final c = (1.0 - r - k) / (1.0 - k);
+    final m = (1.0 - g - k) / (1.0 - k);
+    final y = (1.0 - b - k) / (1.0 - k);
+    return [c, m, y, k];
+  }
+
+  ColorRGBA lerp(ColorRGBA other, double t) {
+    final clampedT = t.clamp(0.0, 1.0);
+    return ColorRGBA(
+      r + (other.r - r) * clampedT,
+      g + (other.g - g) * clampedT,
+      b + (other.b - b) * clampedT,
+      a + (other.a - a) * clampedT,
+    );
+  }
+
+  ColorRGBA blend(ColorRGBA overlay, BlendMode mode) {
+    final double srcA = overlay.a;
+    final double dstA = this.a;
+    final double outA = srcA + dstA * (1.0 - srcA);
+
+    if (outA == 0.0) return ColorRGBA.transparent;
+
+    double blendComponent(double cb, double cs) {
+      switch (mode) {
+        case BlendMode.normal:
+          return cs;
+        case BlendMode.multiply:
+          return cb * cs;
+        case BlendMode.screen:
+          return cb + cs - (cb * cs);
+        case BlendMode.overlay:
+          return cb < 0.5 ? (2.0 * cb * cs) : (1.0 - 2.0 * (1.0 - cb) * (1.0 - cs));
+        case BlendMode.darken:
+          return math.min(cb, cs);
+        case BlendMode.lighten:
+          return math.max(cb, cs);
+        case BlendMode.colorDodge:
+          return cs == 1.0 ? 1.0 : math.min(1.0, cb / (1.0 - cs));
+        case BlendMode.colorBurn:
+          return cs == 0.0 ? 0.0 : 1.0 - math.min(1.0, (1.0 - cb) / cs);
+        case BlendMode.hardLight:
+          return cs < 0.5 ? (2.0 * cb * cs) : (1.0 - 2.0 * (1.0 - cb) * (1.0 - cs));
+        case BlendMode.softLight:
+          return cs < 0.5
+              ? cb - (1.0 - 2.0 * cs) * cb * (1.0 - cb)
+              : cb + (2.0 * cs - 1.0) * (_dSoftLight(cb) - cb);
+        case BlendMode.difference:
+          return (cb - cs).abs();
+        case BlendMode.exclusion:
+          return cb + cs - 2.0 * cb * cs;
+      }
+    }
+
+    final outR = (srcA * overlay.r + dstA * this.r * (1.0 - srcA)) / outA;
+    final outG = (srcA * overlay.g + dstA * this.g * (1.0 - srcA)) / outA;
+    final outB = (srcA * overlay.b + dstA * this.b * (1.0 - srcA)) / outA;
+
+    return ColorRGBA(outR, outG, outB, outA);
+  }
+
+  static double _dSoftLight(double x) {
+    return x <= 0.25 ? ((16.0 * x - 12.0) * x + 4.0) * x : math.sqrt(x);
+  }
+
+  Map<String, dynamic> toJson() => {'r': r, 'g': g, 'b': b, 'a': a};
+
+  factory ColorRGBA.fromJson(Map<String, dynamic> json) {
+    return ColorRGBA(
+      (json['r'] as num).toDouble(),
+      (json['g'] as num).toDouble(),
+      (json['b'] as num).toDouble(),
+      (json['a'] as num).toDouble(),
+    );
+  }
+}
+
+enum BlendMode {
+  normal,
+  multiply,
+  screen,
+  overlay,
+  darken,
+  lighten,
+  colorDodge,
+  colorBurn,
+  hardLight,
+  softLight,
+  difference,
+  exclusion,
+}
+
+/// Gradient Stop definition for vector fills.
+class GradientStop {
+  final double offset; // 0.0 to 1.0
+  final ColorRGBA color;
+
+  const GradientStop(this.offset, this.color);
+
+  Map<String, dynamic> toJson() => {'offset': offset, 'color': color.toJson()};
+
+  factory GradientStop.fromJson(Map<String, dynamic> json) {
+    return GradientStop(
+      (json['offset'] as num).toDouble(),
+      ColorRGBA.fromJson(json['color'] as Map<String, dynamic>),
+    );
+  }
+}
+
+enum GradientType { linear, radial, conic }
+
+abstract class PaintFill {
+  Map<String, dynamic> toJson();
+  static PaintFill fromJson(Map<String, dynamic> json) {
+    final type = json['type'] as String;
+    switch (type) {
+      case 'solid':
+        return SolidFill.fromJson(json);
+      case 'gradient':
+        return GradientFill.fromJson(json);
+      default:
+        return SolidFill(ColorRGBA.black);
+    }
+  }
+}
+
+class SolidFill extends PaintFill {
+  final ColorRGBA color;
+
+  SolidFill(this.color);
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': 'solid',
+        'color': color.toJson(),
+      };
+
+  factory SolidFill.fromJson(Map<String, dynamic> json) {
+    return SolidFill(ColorRGBA.fromJson(json['color']));
+  }
+}
+
+class GradientFill extends PaintFill {
+  final GradientType gradientType;
+  final Vec2D startPoint;
+  final Vec2D endPoint;
+  final List<GradientStop> stops;
+  final double focalRadius; // For radial gradients
+
+  GradientFill({
+    required this.gradientType,
+    required this.startPoint,
+    required this.endPoint,
+    required this.stops,
+    this.focalRadius = 0.0,
+  });
+
+  ColorRGBA colorAt(double t) {
+    if (stops.isEmpty) return ColorRGBA.black;
+    if (stops.length == 1) return stops.first.color;
+    if (t <= stops.first.offset) return stops.first.color;
+    if (t >= stops.last.offset) return stops.last.color;
+
+    for (int i = 0; i < stops.length - 1; i++) {
+      if (t >= stops[i].offset && t <= stops[i + 1].offset) {
+        final localT = (t - stops[i].offset) / (stops[i + 1].offset - stops[i].offset);
+        return stops[i].color.lerp(stops[i + 1].color, localT);
+      }
+    }
+    return stops.last.color;
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': 'gradient',
+        'gradientType': gradientType.name,
+        'startPoint': startPoint.toJson(),
+        'endPoint': endPoint.toJson(),
+        'stops': stops.map((s) => s.toJson()).toList(),
+        'focalRadius': focalRadius,
+      };
+
+  factory GradientFill.fromJson(Map<String, dynamic> json) {
+    return GradientFill(
+      gradientType: GradientType.values.byName(json['gradientType']),
+      startPoint: Vec2D.fromJson(json['startPoint']),
+      endPoint: Vec2D.fromJson(json['endPoint']),
+      stops: (json['stops'] as List).map((s) => GradientStop.fromJson(s)).toList(),
+      focalRadius: (json['focalRadius'] as num).toDouble(),
+    );
+  }
+}
+
+enum StrokeCap { butt, round, square }
+enum StrokeJoin { miter, round, bevel }
+
+class StrokeStyle {
+  final double width;
+  final PaintFill fill;
+  final StrokeCap cap;
+  final StrokeJoin join;
+  final double miterLimit;
+  final List<double> dashArray;
+  final double dashOffset;
+
+  const StrokeStyle({
+    this.width = 1.0,
+    required this.fill,
+    this.cap = StrokeCap.butt,
+    this.join = StrokeJoin.miter,
+    this.miterLimit = 4.0,
+    this.dashArray = const [],
+    this.dashOffset = 0.0,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'width': width,
+        'fill': fill.toJson(),
+        'cap': cap.name,
+        'join': join.name,
+        'miterLimit': miterLimit,
+        'dashArray': dashArray,
+        'dashOffset': dashOffset,
+      };
+
+  factory StrokeStyle.fromJson(Map<String, dynamic> json) {
+    return StrokeStyle(
+      width: (json['width'] as num).toDouble(),
+      fill: PaintFill.fromJson(json['fill']),
+      cap: StrokeCap.values.byName(json['cap']),
+      join: StrokeJoin.values.byName(json['join']),
+      miterLimit: (json['miterLimit'] as num).toDouble(),
+      dashArray: (json['dashArray'] as List).map((e) => (e as num).toDouble()).toList(),
+      dashOffset: (json['dashOffset'] as num).toDouble(),
+    );
+  }
+}
+
+enum PathCommandType { moveTo, lineTo, cubicTo, quadTo, close }
+
+class PathCommand {
+  final PathCommandType type;
+  final Vec2D target;
+  final Vec2D control1;
+  final Vec2D control2;
+
+  const PathCommand({
+    required this.type,
+    required this.target,
+    this.control1 = const Vec2D(0, 0),
+    this.control2 = const Vec2D(0, 0),
+  });
+
+  Map<String, dynamic> toJson() => {
+        'type': type.name,
+        'target': target.toJson(),
+        'control1': control1.toJson(),
+        'control2': control2.toJson(),
+      };
+
+  factory PathCommand.fromJson(Map<String, dynamic> json) {
+    return PathCommand(
+      type: PathCommandType.values.byName(json['type']),
+      target: Vec2D.fromJson(json['target']),
+      control1: Vec2D.fromJson(json['control1']),
+      control2: Vec2D.fromJson(json['control2']),
+    );
+  }
+}
+
+/// Comprehensive Vector Path representation with boolean operations support and curve sampling.
+class Path2D {
+  final List<PathCommand> commands = [];
+
+  Path2D();
+
+  void moveTo(double x, double y) {
+    commands.add(PathCommand(type: PathCommandType.moveTo, target: Vec2D(x, y)));
+  }
+
+  void lineTo(double x, double y) {
+    commands.add(PathCommand(type: PathCommandType.lineTo, target: Vec2D(x, y)));
+  }
+
+  void quadTo(double x1, double y1, double x2, double y2) {
+    commands.add(PathCommand(
+      type: PathCommandType.quadTo,
+      target: Vec2D(x2, y2),
+      control1: Vec2D(x1, y1),
+    ));
+  }
+
+  void cubicTo(double x1, double y1, double x2, double y2, double x3, double y3) {
+    commands.add(PathCommand(
+      type: PathCommandType.cubicTo,
+      target: Vec2D(x3, y3),
+      control1: Vec2D(x1, y1),
+      control2: Vec2D(x2, y2),
+    ));
+  }
+
+  void close() {
+    commands.add(const PathCommand(type: PathCommandType.close, target: Vec2D(0, 0)));
+  }
+
+  void addRect(Rect2D rect) {
+    moveTo(rect.minX, rect.minY);
+    lineTo(rect.maxX, rect.minY);
+    lineTo(rect.maxX, rect.maxY);
+    lineTo(rect.minX, rect.maxY);
+    close();
+  }
+
+  void addCircle(Vec2D center, double radius) {
+    final k = 0.552284749831 * radius;
+    moveTo(center.x + radius, center.y);
+    cubicTo(center.x + radius, center.y + k, center.x + k, center.y + radius, center.x, center.y + radius);
+    cubicTo(center.x - k, center.y + radius, center.x - radius, center.y + k, center.x - radius, center.y);
+    cubicTo(center.x - radius, center.y - k, center.x - k, center.y - radius, center.x, center.y - radius);
+    cubicTo(center.x + k, center.y - radius, center.x + radius, center.y - k, center.x + radius, center.y);
+    close();
+  }
+
+  void addPolygon(List<Vec2D> points) {
+    if (points.isEmpty) return;
+    moveTo(points.first.x, points.first.y);
+    for (int i = 1; i < points.length; i++) {
+      lineTo(points[i].x, points[i].y);
+    }
+    close();
+  }
+
+  Rect2D get boundingBox {
+    if (commands.isEmpty) return Rect2D.zero;
+
+    double minX = double.infinity;
+    double minY = double.infinity;
+    double maxX = -double.infinity;
+    double maxY = -double.infinity;
+
+    Vec2D current = Vec2D.zero;
+
+    for (final cmd in commands) {
+      switch (cmd.type) {
+        case PathCommandType.moveTo:
+        case PathCommandType.lineTo:
+          current = cmd.target;
+          minX = math.min(minX, current.x);
+          minY = math.min(minY, current.y);
+          maxX = math.max(maxX, current.x);
+          maxY = math.max(maxY, current.y);
+          break;
+        case PathCommandType.quadTo:
+          // Elevate quad to cubic for uniform bounding box solving
+          final c1 = current + (cmd.control1 - current) * (2.0 / 3.0);
+          final c2 = cmd.target + (cmd.control1 - cmd.target) * (2.0 / 3.0);
+          final seg = BezierSegment(current, c1, c2, cmd.target);
+          final box = seg.boundingBox;
+          minX = math.min(minX, box.minX);
+          minY = math.min(minY, box.minY);
+          maxX = math.max(maxX, box.maxX);
+          maxY = math.max(maxY, box.maxY);
+          current = cmd.target;
+          break;
+        case PathCommandType.cubicTo:
+          final seg = BezierSegment(current, cmd.control1, cmd.control2, cmd.target);
+          final box = seg.boundingBox;
+          minX = math.min(minX, box.minX);
+          minY = math.min(minY, box.minY);
+          maxX = math.max(maxX, box.maxX);
+          maxY = math.max(maxY, box.maxY);
+          current = cmd.target;
+          break;
+        case PathCommandType.close:
+          break;
+      }
+    }
+
+    return Rect2D(minX, minY, maxX, maxY);
+  }
+
+  List<Vec2D> toPolyline({double tolerance = 0.5}) {
+    final List<Vec2D> points = [];
+    Vec2D current = Vec2D.zero;
+
+    for (final cmd in commands) {
+      switch (cmd.type) {
+        case PathCommandType.moveTo:
+          current = cmd.target;
+          points.add(current);
+          break;
+        case PathCommandType.lineTo:
+          current = cmd.target;
+          points.add(current);
+          break;
+        case PathCommandType.quadTo:
+          final c1 = current + (cmd.control1 - current) * (2.0 / 3.0);
+          final c2 = cmd.target + (cmd.control1 - cmd.target) * (2.0 / 3.0);
+          final seg = BezierSegment(current, c1, c2, cmd.target);
+          final flattened = seg.flatten(tolerance: tolerance);
+          points.addAll(flattened.skip(1));
+          current = cmd.target;
+          break;
+        case PathCommandType.cubicTo:
+          final seg = BezierSegment(current, cmd.control1, cmd.control2, cmd.target);
+          final flattened = seg.flatten(tolerance: tolerance);
+          points.addAll(flattened.skip(1));
+          current = cmd.target;
+          break;
+        case PathCommandType.close:
+          if (points.isNotEmpty && points.first != current) {
+            points.add(points.first);
+          }
+          break;
+      }
+    }
+
+    return points;
+  }
+
+  Path2D transform(Matrix2D transform) {
+    final newPath = Path2D();
+    for (final cmd in commands) {
+      switch (cmd.type) {
+        case PathCommandType.moveTo:
+          final pt = transform.transformPoint(cmd.target);
+          newPath.moveTo(pt.x, pt.y);
+          break;
+        case PathCommandType.lineTo:
+          final pt = transform.transformPoint(cmd.target);
+          newPath.lineTo(pt.x, pt.y);
+          break;
+        case PathCommandType.quadTo:
+          final c1 = transform.transformPoint(cmd.control1);
+          final target = transform.transformPoint(cmd.target);
+          newPath.quadTo(c1.x, c1.y, target.x, target.y);
+          break;
+        case PathCommandType.cubicTo:
+          final c1 = transform.transformPoint(cmd.control1);
+          final c2 = transform.transformPoint(cmd.control2);
+          final target = transform.transformPoint(cmd.target);
+          newPath.cubicTo(c1.x, c1.y, c2.x, c2.y, target.x, target.y);
+          break;
+        case PathCommandType.close:
+          newPath.close();
+          break;
+      }
+    }
+    return newPath;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'commands': commands.map((c) => c.toJson()).toList(),
+      };
+
+  factory Path2D.fromJson(Map<String, dynamic> json) {
+    final path = Path2D();
+    final list = json['commands'] as List;
+    for (final item in list) {
+      path.commands.add(PathCommand.fromJson(item));
+    }
+    return path;
+  }
+}
+
+/// Shadow filter configuration for design layers.
+class DropShadow {
+  final Vec2D offset;
+  final double blurRadius;
+  final ColorRGBA color;
+
+  const DropShadow({
+    this.offset = const Vec2D(0, 4),
+    this.blurRadius = 8.0,
+    this.color = const ColorRGBA(0, 0, 0, 0.25),
+  });
+
+  Map<String, dynamic> toJson() => {
+        'offset': offset.toJson(),
+        'blurRadius': blurRadius,
+        'color': color.toJson(),
+      };
+
+  factory DropShadow.fromJson(Map<String, dynamic> json) {
+    return DropShadow(
+      offset: Vec2D.fromJson(json['offset']),
+      blurRadius: (json['blurRadius'] as num).toDouble(),
+      color: ColorRGBA.fromJson(json['color']),
+    );
+  }
+}
+
+/// Abstract base class for scene graph design nodes.
+abstract class DesignNode {
+  String id;
+  String name;
+  bool visible;
+  bool locked;
+  double opacity;
+  BlendMode blendMode;
+  Matrix2D transform;
+  DropShadow? shadow;
+
+  DesignNode({
+    required this.id,
+    required this.name,
+    this.visible = true,
+    this.locked = false,
+    this.opacity = 1.0,
+    this.blendMode = BlendMode.normal,
+    Matrix2D? transform,
+    this.shadow,
+  }) : transform = transform ?? Matrix2D.identity();
+
+  Rect2D get localBounds;
+  Rect2D get globalBounds => transform.transformRect(localBounds);
+
+  bool containsPoint(Vec2D point) {
+    final inverted = transform.invert();
+    if (inverted == null) return false;
+    final localPoint = inverted.transformPoint(point);
+    return localBounds.containsPoint(localPoint);
+  }
+
+  Map<String, dynamic> toJson();
+}
+
+/// Vector Shape Node representing paths, polygons, bezier curves with fill/stroke styling.
+class VectorShapeNode extends DesignNode {
+  Path2D path;
+  PaintFill? fill;
+  StrokeStyle? stroke;
+
+  VectorShapeNode({
+    required String id,
+    required String name,
+    required this.path,
+    this.fill,
+    this.stroke,
+    bool visible = true,
+    bool locked = false,
+    double opacity = 1.0,
+    BlendMode blendMode = BlendMode.normal,
+    Matrix2D? transform,
+    DropShadow? shadow,
+  }) : super(
+          id: id,
+          name: name,
+          visible: visible,
+          locked: locked,
+          opacity: opacity,
+          blendMode: blendMode,
+          transform: transform,
+          shadow: shadow,
+        );
+
+  @override
+  Rect2D get localBounds {
+    Rect2D box = path.boundingBox;
+    if (stroke != null) {
+      final pad = stroke!.width / 2.0;
+      box = Rect2D(box.minX - pad, box.minY - pad, box.maxX + pad, box.maxY + pad);
+    }
+    return box;
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': 'vectorShape',
+        'id': id,
+        'name': name,
+        'visible': visible,
+        'locked': locked,
+        'opacity': opacity,
+        'blendMode': blendMode.name,
+        'transform': transform.toJson(),
+        'shadow': shadow?.toJson(),
+        'path': path.toJson(),
+        'fill': fill?.toJson(),
+        'stroke': stroke?.toJson(),
+      };
+
+  factory VectorShapeNode.fromJson(Map<String, dynamic> json) {
+    return VectorShapeNode(
+      id: json['id'],
+      name: json['name'],
+      visible: json['visible'] ?? true,
+      locked: json['locked'] ?? false,
+      opacity: (json['opacity'] as num).toDouble(),
+      blendMode: BlendMode.values.byName(json['blendMode']),
+      transform: Matrix2D.fromJson(json['transform']),
+      shadow: json['shadow'] != null ? DropShadow.fromJson(json['shadow']) : null,
+      path: Path2D.fromJson(json['path']),
+      fill: json['fill'] != null ? PaintFill.fromJson(json['fill']) : null,
+      stroke: json['stroke'] != null ? StrokeStyle.fromJson(json['stroke']) : null,
+    );
+  }
+}
+
+enum TextAlignment { left, center, right, justify }
+
+/// Text Node representing dynamic vector layout typography.
+class TextNode extends DesignNode {
+  String text;
+  String fontFamily;
+  double fontSize;
+  double fontWeight; // 100 to 900
+  double letterSpacing;
+  double lineHeight;
+  TextAlignment alignment;
+  PaintFill fill;
+  StrokeStyle? stroke;
+
+  TextNode({
+    required String id,
+    required String name,
+    required this.text,
+    this.fontFamily = 'Inter',
+    this.fontSize = 16.0,
+    this.fontWeight = 400,
+    this.letterSpacing = 0.0,
+    this.lineHeight = 1.2,
+    this.alignment = TextAlignment.left,
+    required this.fill,
+    this.stroke,
+    bool visible = true,
+    bool locked = false,
+    double opacity = 1.0,
+    BlendMode blendMode = BlendMode.normal,
+    Matrix2D? transform,
+    DropShadow? shadow,
+  }) : super(
+          id: id,
+          name: name,
+          visible: visible,
+          locked: locked,
+          opacity: opacity,
+          blendMode: blendMode,
+          transform: transform,
+          shadow: shadow,
+        );
+
+  @override
+  Rect2D get localBounds {
+    // Estimating typographic layout bounding box
+    final lines = text.split('\n');
+    double maxWidth = 0.0;
+    for (final line in lines) {
+      final width = line.length * (fontSize * 0.6) + (line.length * letterSpacing);
+      maxWidth = math.max(maxWidth, width);
+    }
+    final height = lines.length * (fontSize * lineHeight);
+    return Rect2D(0, 0, maxWidth, height);
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': 'text',
+        'id': id,
+        'name': name,
+        'visible': visible,
+        'locked': locked,
+        'opacity': opacity,
+        'blendMode': blendMode.name,
+        'transform': transform.toJson(),
+        'shadow': shadow?.toJson(),
+        'text': text,
+        'fontFamily': fontFamily,
+        'fontSize': fontSize,
+        'fontWeight': fontWeight,
+        'letterSpacing': letterSpacing,
+        'lineHeight': lineHeight,
+        'alignment': alignment.name,
+        'fill': fill.toJson(),
+        'stroke': stroke?.toJson(),
+      };
+
+  factory TextNode.fromJson(Map<String, dynamic> json) {
+    return TextNode(
+      id: json['id'],
+      name: json['name'],
+      visible: json['visible'] ?? true,
+      locked: json['locked'] ?? false,
+      opacity: (json['opacity'] as num).toDouble(),
+      blendMode: BlendMode.values.byName(json['blendMode']),
+      transform: Matrix2D.fromJson(json['transform']),
+      shadow: json['shadow'] != null ? DropShadow.fromJson(json['shadow']) : null,
+      text: json['text'],
+      fontFamily: json['fontFamily'],
+      fontSize: (json['fontSize'] as num).toDouble(),
+      fontWeight: (json['fontWeight'] as num).toDouble(),
+      letterSpacing: (json['letterSpacing'] as num).toDouble(),
+      lineHeight: (json['lineHeight'] as num).toDouble(),
+      alignment: TextAlignment.values.byName(json['alignment']),
+      fill: PaintFill.fromJson(json['fill']),
+      stroke: json['stroke'] != null ? StrokeStyle.fromJson(json['stroke']) : null,
+    );
+  }
+}
+
+/// Container/Group node for managing hierarchical graphic scene trees.
+class GroupNode extends DesignNode {
+  final List<DesignNode> children = [];
+
+  GroupNode({
+    required String id,
+    required String name,
+    bool visible = true,
+    bool locked = false,
+    double opacity = 1.0,
+    BlendMode blendMode = BlendMode.normal,
+    Matrix2D? transform,
+    DropShadow? shadow,
+  }) : super(
+          id: id,
+          name: name,
+          visible: visible,
+          locked: locked,
+          opacity: opacity,
+          blendMode: blendMode,
+          transform: transform,
+          shadow: shadow,
+        );
+
+  void addChild(DesignNode child) {
+    children.add(child);
+  }
+
+  void removeChild(DesignNode child) {
+    children.remove(child);
+  }
+
+  @override
+  Rect2D get localBounds {
+    if (children.isEmpty) return Rect2D.zero;
+    Rect2D bounds = children.first.globalBounds;
+    for (int i = 1; i < children.length; i++) {
+      bounds = bounds.expandToInclude(children[i].globalBounds);
+    }
+    return bounds;
+  }
+
+  @override
+  DesignNode? findNodeAt(Vec2D point) {
+    if (!visible) return null;
+    final inverted = transform.invert();
+    if (inverted == null) return null;
+    final localPoint = inverted.transformPoint(point);
+
+    for (int i = children.length - 1; i >= 0; i--) {
+      final child = children[i];
+      if (child is GroupNode) {
+        final hit = child.findNodeAt(localPoint);
+        if (hit != null) return hit;
+      } else if (child.containsPoint(localPoint)) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': 'group',
+        'id': id,
+        'name': name,
+        'visible': visible,
+        'locked': locked,
+        'opacity': opacity,
+        'blendMode': blendMode.name,
+        'transform': transform.toJson(),
+        'shadow': shadow?.toJson(),
+        'children': children.map((c) => c.toJson()).toList(),
+      };
+
+  factory GroupNode.fromJson(Map<String, dynamic> json) {
+    final group = GroupNode(
+      id: json['id'],
+      name: json['name'],
+      visible: json['visible'] ?? true,
+      locked: json['locked'] ?? false,
+      opacity: (json['opacity'] as num).toDouble(),
+      blendMode: BlendMode.values.byName(json['blendMode']),
+      transform: Matrix2D.fromJson(json['transform']),
+      shadow: json['shadow'] != null ? DropShadow.fromJson(json['shadow']) : null,
+    );
+
+    final childList = json['children'] as List;
+    for (final cJson in childList) {
+      final type = cJson['type'] as String;
+      if (type == 'vectorShape') {
+        group.addChild(VectorShapeNode.fromJson(cJson));
+      } else if (type == 'text') {
+        group.addChild(TextNode.fromJson(cJson));
+      } else if (type == 'group') {
+        group.addChild(GroupNode.fromJson(cJson));
+      }
+    }
+    return group;
+  }
+}
+
+extension DesignNodeFindExt on DesignNode {
+  DesignNode? findNodeAt(Vec2D point) {
+    if (!visible) return null;
+    return containsPoint(point) ? this : null;
+  }
+}
+
+/// Document Canvas Artboard container.
+class Artboard {
