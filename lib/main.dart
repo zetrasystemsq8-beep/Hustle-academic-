@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'courses/programming_courses.dart';
+import 'courses/web_development_courses.dart';
 
 void main() {
   runApp(const HustleAcademyApp());
@@ -108,7 +108,7 @@ final List<AppCategory> kCategories = [
 // COURSES — wired from category files
 // ============================================================
 final List<AppCourse> kCourses = [
-  ...programmingCourses,
+  ...webDevelopmentCourses,
 ];
 
 // ============================================================
