@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'courses/programming_courses.dart';
+
 void main() {
   runApp(const HustleAcademyApp());
 }
@@ -82,7 +83,7 @@ class AppCategory {
 }
 
 // ============================================================
-// DUMMY DATA
+// CATEGORIES
 // ============================================================
 final List<AppCategory> kCategories = [
   AppCategory('Programming', Icons.code, Colors.indigo),
@@ -103,178 +104,11 @@ final List<AppCategory> kCategories = [
   AppCategory('Entrepreneurship', Icons.rocket_launch, Colors.redAccent),
 ];
 
+// ============================================================
+// COURSES — wired from category files
+// ============================================================
 final List<AppCourse> kCourses = [
-  AppCourse(
-    id: 'c1',
-    title: 'Flutter for Beginners',
-    description:
-        'Learn how to build beautiful cross-platform apps using Flutter and Dart from scratch.',
-    instructor: 'Chidi Okafor',
-    category: 'Mobile Development',
-    difficulty: 'Beginner',
-    icon: Icons.phone_android,
-    color: Colors.teal,
-    duration: '3h 20m',
-    lessons: [
-      AppLesson(
-        title: 'Introduction to Flutter',
-        body:
-            'Flutter is Google\'s UI toolkit for building natively compiled apps for mobile, web, and desktop from a single codebase.',
-        hasImage: true,
-      ),
-      AppLesson(
-        title: 'Widgets 101',
-        body:
-            'Everything in Flutter is a widget. Widgets describe what their view should look like given their current configuration and state.',
-        codeSnippet:
-            'Widget build(BuildContext context) {\n  return Text("Hello Hustle Academy");\n}',
-      ),
-      AppLesson(
-        title: 'State Management Basics',
-        body:
-            'StatefulWidgets allow your UI to rebuild when data changes. We will explore setState and beyond.',
-        codeSnippet:
-            'setState(() {\n  count++;\n});',
-      ),
-    ],
-  ),
-  AppCourse(
-    id: 'c2',
-    title: 'Python Programming Fundamentals',
-    description:
-        'Master the basics of Python, one of the most in-demand programming languages in the world.',
-    instructor: 'Ada Nwosu',
-    category: 'Programming',
-    difficulty: 'Beginner',
-    icon: Icons.code,
-    color: Colors.indigo,
-    duration: '4h 10m',
-    lessons: [
-      AppLesson(
-        title: 'Variables & Data Types',
-        body:
-            'Python variables are containers for storing data values. Python has no command for declaring a variable.',
-        codeSnippet: 'name = "Hustler"\nage = 20\nprint(name, age)',
-      ),
-      AppLesson(
-        title: 'Loops & Conditionals',
-        body:
-            'Loops let you execute a block of code repeatedly, while conditionals let your program make decisions.',
-        codeSnippet: 'for i in range(5):\n    print(i)',
-      ),
-      AppLesson(
-        title: 'Functions',
-        body:
-            'Functions are reusable blocks of code that perform a specific task and help keep your programs organized.',
-        codeSnippet: 'def greet(name):\n    return f"Hello {name}"',
-      ),
-    ],
-  ),
-  AppCourse(
-    id: 'c3',
-    title: 'AI & Machine Learning Basics',
-    description:
-        'Understand the core concepts behind Artificial Intelligence and Machine Learning.',
-    instructor: 'Tunde Bakare',
-    category: 'Artificial Intelligence',
-    difficulty: 'Intermediate',
-    icon: Icons.smart_toy,
-    color: Colors.deepPurple,
-    duration: '5h 45m',
-    lessons: [
-      AppLesson(
-        title: 'What is Machine Learning?',
-        body:
-            'Machine Learning is a subset of AI where systems learn patterns from data instead of being explicitly programmed.',
-        hasImage: true,
-      ),
-      AppLesson(
-        title: 'Types of ML',
-        body:
-            'Supervised, unsupervised, and reinforcement learning are the three broad categories of machine learning.',
-      ),
-      AppLesson(
-        title: 'Your First Model',
-        body:
-            'We will conceptually walk through training a simple classifier on labeled data.',
-        codeSnippet: 'model.fit(X_train, y_train)',
-      ),
-    ],
-  ),
-  AppCourse(
-    id: 'c4',
-    title: 'Graphic Design with Canva',
-    description:
-        'Create stunning visuals for social media, branding, and marketing using simple design tools.',
-    instructor: 'Ngozi Eze',
-    category: 'Graphic Design',
-    difficulty: 'Beginner',
-    icon: Icons.brush,
-    color: Colors.pink,
-    duration: '2h 30m',
-    lessons: [
-      AppLesson(
-        title: 'Design Principles',
-        body:
-            'Contrast, alignment, repetition, and proximity are the four foundational principles of good design.',
-        hasImage: true,
-      ),
-      AppLesson(
-        title: 'Color Theory',
-        body:
-            'Colors evoke emotion. Understanding color harmony helps you design visuals that resonate with your audience.',
-        hasImage: true,
-      ),
-    ],
-  ),
-  AppCourse(
-    id: 'c5',
-    title: 'Digital Marketing Mastery',
-    description:
-        'Learn SEO, social media marketing, and paid ads to grow any brand online.',
-    instructor: 'Femi Adeyemi',
-    category: 'Digital Marketing',
-    difficulty: 'Intermediate',
-    icon: Icons.trending_up,
-    color: Colors.green,
-    duration: '3h 50m',
-    lessons: [
-      AppLesson(
-        title: 'Intro to SEO',
-        body:
-            'Search Engine Optimization helps your content rank higher on Google, driving organic traffic.',
-      ),
-      AppLesson(
-        title: 'Social Media Strategy',
-        body:
-            'A good content calendar and consistent posting builds trust and audience loyalty over time.',
-      ),
-    ],
-  ),
-  AppCourse(
-    id: 'c6',
-    title: 'Freelancing 101',
-    description:
-        'Learn how to find clients, price your services, and build a sustainable freelance career.',
-    instructor: 'Ijeoma Chukwu',
-    category: 'Freelancing',
-    difficulty: 'Beginner',
-    icon: Icons.work,
-    color: Colors.cyan,
-    duration: '2h 15m',
-    lessons: [
-      AppLesson(
-        title: 'Finding Your First Client',
-        body:
-            'Platforms like Upwork, Fiverr, and local networking are great starting points for new freelancers.',
-      ),
-      AppLesson(
-        title: 'Pricing Your Work',
-        body:
-            'Price based on value delivered, not just hours spent — this is key to sustainable freelancing.',
-      ),
-    ],
-  ),
+  ...programmingCourses,
 ];
 
 // ============================================================
