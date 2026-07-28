@@ -6,6 +6,7 @@
 //
 // Source: assets/flutter_docs/ (category index)
 // To regenerate, run: python3 tools/generate_flutter_courses.py
+import 'package:flutter/material.dart';
 import '../models/app_course.dart';
 export 'flutter_add_to_app_courses.dart';
 export 'flutter_ai_courses.dart';
@@ -33,3 +34,32 @@ export 'flutter_testing_courses.dart';
 export 'flutter_tools_courses.dart';
 export 'flutter_tos_courses.dart';
 export 'flutter_ui_courses.dart';
+
+final List<AppCourse> flutterCourses = [
+  ...flutterAddToAppCourses,
+  ...flutterAiCourses,
+  ...flutterAppArchitectureCourses,
+  ...flutterBrandCourses,
+  ...flutterCommunityCourses,
+  ...flutterContributeCourses,
+  ...flutterCookbookCourses,
+  ...flutterDashCourses,
+  ...flutterDataBackendCourses,
+  ...flutterDeploymentCourses,
+  ...flutterEmbeddedCourses,
+  ...flutterFlutterForCourses,
+  ...flutterInstallCourses,
+  ...flutterJobsCourses,
+  ...flutterLearnCourses,
+  ...flutterPackagesPluginsCourses,
+  ...flutterPerfCourses,
+  ...flutterPlatformIntegrationCourses,
+  ...flutterReferenceCourses,
+  ...flutterReleaseCourses,
+  ...flutterResourcesCourses,
+  ...flutterSecurityCourses,
+  ...flutterTestingCourses,
+  ...flutterToolsCourses,
+  ...flutterTosCourses,
+  ...flutterUiCourses,
+];
