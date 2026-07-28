@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'courses/web_development_courses.dart';
 import 'courses/programming_courses.dart';
 import 'courses/flutter_courses.dart';
-
+import 'models/app_course.dart';
 void main() {
   runApp(const HustleAcademyApp());
 }
