@@ -1667,7 +1667,7 @@ final List<AppCourse> programmingCourses = [
             'focused interfaces over large general ones), and Dependency '
             'Inversion (depend on abstractions, not concrete '
             'implementations).\n\n'
-            'You don't need to apply all five perfectly on every project, '
+            "You don't need to apply all five perfectly on every project, "
             'but keeping them in mind as you design classes tends to produce '
             'noticeably more maintainable code over time.',
       ),
