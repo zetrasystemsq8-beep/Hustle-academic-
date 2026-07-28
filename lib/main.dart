@@ -62,7 +62,7 @@ final List<AppCategory> kCategories = [
 // ============================================================
 final List<AppCourse> kCourses = [
   ...webDevelopmentCourses,
-  
+  ...entrepreneurshipCourses,
   ...flutterCourses,
 ];
 
