@@ -8,6 +8,34 @@
 // To regenerate, run: python3 tools/generate_flutter_courses.py
 import 'package:flutter/material.dart';
 import '../models/app_course.dart';
+
+import 'flutter_add_to_app_courses.dart';
+import 'flutter_ai_courses.dart';
+import 'flutter_app_architecture_courses.dart';
+import 'flutter_brand_courses.dart';
+import 'flutter_community_courses.dart';
+import 'flutter_contribute_courses.dart';
+import 'flutter_cookbook_courses.dart';
+import 'flutter_dash_courses.dart';
+import 'flutter_data_backend_courses.dart';
+import 'flutter_deployment_courses.dart';
+import 'flutter_embedded_courses.dart';
+import 'flutter_flutter_for_courses.dart';
+import 'flutter_install_courses.dart';
+import 'flutter_jobs_courses.dart';
+import 'flutter_learn_courses.dart';
+import 'flutter_packages_plugins_courses.dart';
+import 'flutter_perf_courses.dart';
+import 'flutter_platform_integration_courses.dart';
+import 'flutter_reference_courses.dart';
+import 'flutter_release_courses.dart';
+import 'flutter_resources_courses.dart';
+import 'flutter_security_courses.dart';
+import 'flutter_testing_courses.dart';
+import 'flutter_tools_courses.dart';
+import 'flutter_tos_courses.dart';
+import 'flutter_ui_courses.dart';
+
 export 'flutter_add_to_app_courses.dart';
 export 'flutter_ai_courses.dart';
 export 'flutter_app_architecture_courses.dart';
