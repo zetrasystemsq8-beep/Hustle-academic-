@@ -1,6 +1,7 @@
 // GENERATED FILE - DO NOT EDIT BY HAND.
 // Produced by tools/generate_courses.py from the local freeCodeCamp
 // curriculum assets under assets/freecodecamp/. No network access used.
+import 'package:flutter/material.dart';
 
 import '../models/app_course.dart';
 final List<AppCourse> webDevelopmentCourses = [
