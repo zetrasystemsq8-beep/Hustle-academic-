@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import '../main.dart';
-
+import '../models/course_models.dart';
 final List<AppCourse> webDevelopmentCourses = [
   AppCourse(
     id: 'responsive-web-design',
