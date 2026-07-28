@@ -2,9 +2,7 @@
 // Produced by tools/generate_courses.py from the local freeCodeCamp
 // curriculum assets under assets/freecodecamp/. No network access used.
 
-import 'package:flutter/material.dart';
-import '../main.dart';
-import '../models/course_models.dart';
+import 'models/course_models.dart';
 final List<AppCourse> webDevelopmentCourses = [
   AppCourse(
     id: 'responsive-web-design',
