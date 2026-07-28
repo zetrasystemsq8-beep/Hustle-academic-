@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import '../models/app_course.dart';
 
-final generatedCourses = <AppCourse>[
+final entrepreneurshipCourses = <AppCourse>[
   AppCourse(
     id: "people-culture",
     title: "People & Culture",
