@@ -3,6 +3,7 @@ import 'courses/web_development_courses.dart';
 import 'courses/entrepreneurship_courses.dart';
 import 'courses/flutter_courses.dart';
 import 'models/app_course.dart';
+import 'courses/copywriting_courses.dart';
 import 'courses/digital_marketing_courses.dart';
 void main() {
   runApp(const HustleAcademyApp());
@@ -66,6 +67,7 @@ final List<AppCourse> kCourses = [
   ...entrepreneurshipCourses,
   ...flutterCourses,
   ...digitalMarketingCourses,
+  ...copywritingCourses,
 ];
 
 // ============================================================
