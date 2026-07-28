@@ -1,18 +1,22 @@
+import 'package:flutter/material.dart';
 import '../models/app_course.dart';
 
 final entrepreneurshipCourses = <AppCourse>[
 
 AppCourse(
-id: "entrepreneurship_1",
-title: "People & Culture",
-description: "People & Culture",
-category: AppCategory.business,
-lessons: [
-
-AppLesson(
-id: "l1",
-title: "Management Fundamentals",
-content: """Recommended Reading: *Managing Humans* by Michael Lopp
+  id: "entrepreneurship_2",
+  title: "People & Culture",
+  description: "People & Culture",
+  instructor: "Hustle Academy",
+  category: "Entrepreneurship",
+  difficulty: "Intermediate",
+  icon: Icons.business_center,
+  color: Colors.orange,
+  duration: "143 Lessons",
+  lessons: [
+    AppLesson(
+      title: "Management Fundamentals",
+      body: """Recommended Reading: *Managing Humans* by Michael Lopp
 
 The golden rule of management: do what it takes to get the best out of your team. In technical leadership as in any other leadership role, the best measure of your performance as a manager is the performance of the team itself. That means you should be thinking about and spending time doing everything necessary to help individual team members do their best work, both independently and collectively.
 
@@ -25,38 +29,34 @@ In *Managing Humans: Biting and Humorous Tales of a Software Engineering Manager
  *Every single person with whom you work has a vastly different set of needs. Fulfilling these needs is one way to make them content and productive. It is your full-time job to listen to these people and mentally document how they are built. This is your most important job. I know the senior VP of engineering is telling you that hitting the date for the project is job number one, but you are not going to write the code, test the product, or document the features. The team is going to do these things, and your job is to manage the team.*
 
 In that one succinct paragraph, Lopp hits on all the key points of management. First and foremost, you are a listener, a personal and career development coach, and a shield against external forces in the world which might distract, stress, or otherwise prevent your team from doing their best work.""",
-),
+    ),
 
-AppLesson(
-id: "l2",
-title: "The Professional Skill Tree",
-content: """Many video games involve a concept of a skill tree. For those unfamiliar, a skill tree is a sequence of skills or abilities that are unlocked as the player progresses through the game. Each skill is unlocked by spending skill points. Here's the rub: at any given time, there are more skills to unlock than you have skill points to spend. The skill tree forces you to choose some skills before others. The skill tree provides a reasonable model for your career as well. At any given job, you're likely accumulating skill points toward some skills and not others.
+    AppLesson(
+      title: "The Professional Skill Tree",
+      body: """Many video games involve a concept of a skill tree. For those unfamiliar, a skill tree is a sequence of skills or abilities that are unlocked as the player progresses through the game. Each skill is unlocked by spending skill points. Here's the rub: at any given time, there are more skills to unlock than you have skill points to spend. The skill tree forces you to choose some skills before others. The skill tree provides a reasonable model for your career as well. At any given job, you're likely accumulating skill points toward some skills and not others.
 
 In your journey to tech leadership, you've already invested many skill points into the technical/engineering branch of the skill tree. My key insight for you is that the management branch of the skill tree is equally vast, and if you've not been investing points in that area up to now, even if you're a Level 100 engineer you'll start your new leadership position as a Level 1 manager staring at a mighty oak tree of yet-to-be-unlocked crucial skills. Once your company has more than a small handful of engineers, these skills will make the difference in your ability to scale up with the team.""",
-),
+    ),
 
-AppLesson(
-id: "l3",
-title: "Kaizen: Continuous Improvement",
-content: """*Kaizen* is the Japanese word for improvement. The phrase was popularized as part of the Toyota Production System. At Toyota, all personnel are given a (literal or metaphorical) red handle to pull that stops the entire production line. If a worker identifies a problem with production, the idea is for them to pull the red handle, gather coworkers and resources to diagnose the issue, and then resolve it before work can continue. By empowering everyone on the team to improve the process and to be invested in its efficacy, Toyota can cost-effectively build higher-quality cars.
+    AppLesson(
+      title: "Kaizen: Continuous Improvement",
+      body: """*Kaizen* is the Japanese word for improvement. The phrase was popularized as part of the Toyota Production System. At Toyota, all personnel are given a (literal or metaphorical) red handle to pull that stops the entire production line. If a worker identifies a problem with production, the idea is for them to pull the red handle, gather coworkers and resources to diagnose the issue, and then resolve it before work can continue. By empowering everyone on the team to improve the process and to be invested in its efficacy, Toyota can cost-effectively build higher-quality cars.
 
 I'm not the first to suggest that software engineering has much in common with traditional manufacturing (see *The Phoenix Project* by Gene Kim). In this case, make the metaphor real: provide your team with a digital red handle and encourage them to focus on continuously improving everything you do. Members of great teams understand that, over time, the team will change, customer requirements will change, tools will change, and the team will need to revisit past decisions and make improvements.
 
 *Kaizen* applies not only to your team's process but also to individuals. Your best team members will embrace the idea of continuous education and continuous improvement, and treat mistakes not as failures but as opportunities for improvement.""",
-),
+    ),
 
-AppLesson(
-id: "l4",
-title: "Coaching",
-content: """Your principal role as a manager is to get the best out of the people on your team, so in many scenarios it's more appropriate to describe your role as that of a coach rather than a manager. A coach is somebody who is on your side, a source of wisdom and guidance to everyone on their team. A coach is quick to provide critical feedback, but also the first to celebrate and praise success.
+    AppLesson(
+      title: "Coaching",
+      body: """Your principal role as a manager is to get the best out of the people on your team, so in many scenarios it's more appropriate to describe your role as that of a coach rather than a manager. A coach is somebody who is on your side, a source of wisdom and guidance to everyone on their team. A coach is quick to provide critical feedback, but also the first to celebrate and praise success.
 
 Your goal in your interactions with your direct reports, whether they are individual contributing engineers or managers themselves, is to be the best coach they've ever had.""",
-),
+    ),
 
-AppLesson(
-id: "l5",
-title: "Find a Management Mentor",
-content: """One way to jumpstart your transition to leadership is to find yourself a management mentor. There are a lot of management coaches out there with different approaches; the challenge is to find one that resonates with you.
+    AppLesson(
+      title: "Find a Management Mentor",
+      body: """One way to jumpstart your transition to leadership is to find yourself a management mentor. There are a lot of management coaches out there with different approaches; the challenge is to find one that resonates with you.
 
 In my first role as a business leader at WiFast (then Zenreach, now Adentro) we quickly hired a team of ten full-time employees, mostly in engineering. As a first-time manager I knew I had a lot to learn, and I was eager to take advantage of every resource I could to become a better manager. My only problem was I hated most management advice. I found it either overly prescriptive, without context or insight, or entirely devoid of substance: fluff, if you will. That was until I met my first management coach, Jonathan.
 
@@ -70,23 +70,21 @@ The first speaker after lunch was Jonathan. Unlike prior presenters, he had no s
 
 *Allow me to transparently manipulate you.*
 
-I'll never forget that moment. What a funny thing to say; it's a seeming contradiction in terms like saying, "This sentence is false". (If you're curious, this is called the [Liar's paradox](https://ctohb.com/liarsparadox)). Jonathan went on to explain that that was exactly the point: he wanted to say something to grab our attention as an audience, and at that he succeeded perfectly. For the next thirty minutes I took copious notes, not on manipulating people but on understanding people in general.
+I'll never forget that moment. What a funny thing to say; it's a seeming contradiction in terms like saying, \"This sentence is false\". (If you're curious, this is called the [Liar's paradox](https://ctohb.com/liarsparadox)). Jonathan went on to explain that that was exactly the point: he wanted to say something to grab our attention as an audience, and at that he succeeded perfectly. For the next thirty minutes I took copious notes, not on manipulating people but on understanding people in general.
 
 I hung on every word Jonathan had to say. As the half-hour session wrapped, Jonathan said he had to catch a flight, and somewhat hurriedly ran out of the room. I looked down at my notebook, processed that I had taken three pages of notes in the last thirty minutes compared to none in the first four hours, then stood up from my chair and ran after him.
 
-I managed to catch him just as he was getting into a yellow cab. Somewhat exasperated, Jonathan asked me what I wanted. I asked if he did private coaching. He replied, "Ask the organizers to connect us", then got into the cab and took off. Cleverly, he didn't commit one way or another to coaching on the spot, he left himself the opportunity to do diligence on me via the organizers before deciding if I was worth his time. Luckily for me, when I asked the organizers to put us in touch, the contact said nice enough things about me that Jonathan agreed to an introductory coaching session. Jonathan and I would go on to work together for many years, across multiple companies, and I can confidently say that his mentorship has been invaluable in my leadership journey""",
-),
+I managed to catch him just as he was getting into a yellow cab. Somewhat exasperated, Jonathan asked me what I wanted. I asked if he did private coaching. He replied, \"Ask the organizers to connect us\", then got into the cab and took off. Cleverly, he didn't commit one way or another to coaching on the spot, he left himself the opportunity to do diligence on me via the organizers before deciding if I was worth his time. Luckily for me, when I asked the organizers to put us in touch, the contact said nice enough things about me that Jonathan agreed to an introductory coaching session. Jonathan and I would go on to work together for many years, across multiple companies, and I can confidently say that his mentorship has been invaluable in my leadership journey""",
+    ),
 
-AppLesson(
-id: "l6",
-title: "1:1 MEETINGS",
-content: """A 1:1 meeting is a private meeting between you and a direct report. It's tempting to treat 1:1s as status check-in meetings, and for the agenda to focus entirely on business or technical topics immediately at hand. It's all right if the agenda includes those topics, but this is your opportunity to establish a coaching relationship with your direct report. You should use this time to really get to know and understand how your report thinks, draw out and identify their strengths, and recognize weaknesses you can address to help the person do their best work.""",
-),
+    AppLesson(
+      title: "1:1 MEETINGS",
+      body: """A 1:1 meeting is a private meeting between you and a direct report. It's tempting to treat 1:1s as status check-in meetings, and for the agenda to focus entirely on business or technical topics immediately at hand. It's all right if the agenda includes those topics, but this is your opportunity to establish a coaching relationship with your direct report. You should use this time to really get to know and understand how your report thinks, draw out and identify their strengths, and recognize weaknesses you can address to help the person do their best work.""",
+    ),
 
-AppLesson(
-id: "l7",
-title: "SKIP-LEVEL MEETINGS",
-content: """It's good practice, on a semi-regular basis (monthly or quarterly), to have meetings with the direct reports of any managers that report to you. These are called skip-level meetings as you're skipping over a level on the organization chart by meeting with them directly. You're not trying to undermine your managers with skip-levels in fact, it's quite the opposite. By collecting more data and hearing different perspectives, you'll be better able to work with managers on things that can help improve the business.
+    AppLesson(
+      title: "SKIP-LEVEL MEETINGS",
+      body: """It's good practice, on a semi-regular basis (monthly or quarterly), to have meetings with the direct reports of any managers that report to you. These are called skip-level meetings as you're skipping over a level on the organization chart by meeting with them directly. You're not trying to undermine your managers with skip-levels in fact, it's quite the opposite. By collecting more data and hearing different perspectives, you'll be better able to work with managers on things that can help improve the business.
 
 Some quick thoughts for agendas of skip-level meetings:
 
@@ -97,12 +95,11 @@ Some quick thoughts for agendas of skip-level meetings:
 * Connect with the employee; ask questions and get curious.
 
 * There are many good actual templates/agendas for skip-levels on the internet. Here's one from managementcenter.org that I recommend: [ctohb.com/skip](https://ctohb.com/skip).""",
-),
+    ),
 
-AppLesson(
-id: "l8",
-title: "COACHING MANAGERS",
-content: """As your organization grows, you'll likely get to the point where you no longer have any individual contributor direct reports. Every direct contributor who actually writes code is managed by a middle manager. It should be obvious, then, that effective middle managers are critical to the performance of your organization. It's your job to make sure that your managers have the support, resources, training, and mentorship they need to enable them to do their best work coaching the engineers on their team.
+    AppLesson(
+      title: "COACHING MANAGERS",
+      body: """As your organization grows, you'll likely get to the point where you no longer have any individual contributor direct reports. Every direct contributor who actually writes code is managed by a middle manager. It should be obvious, then, that effective middle managers are critical to the performance of your organization. It's your job to make sure that your managers have the support, resources, training, and mentorship they need to enable them to do their best work coaching the engineers on their team.
 
 The biggest contributor to cultivating high-quality middle management is, of course, hiring the right people, but second to that is ongoing training and support. If you're in a position to be overseeing a team of managers, I encourage you to build the following into your organization:
 
@@ -125,32 +122,29 @@ The biggest contributor to cultivating high-quality middle management is, of cou
 * Develop an external-facing culture of thought leadership.
 
   - Encourage your managers to become thought leaders in your industry. This could take the form of a company blog, participating as a guest on technical or management podcasts, or speaking at conferences.""",
-),
+    ),
 
-AppLesson(
-id: "l9",
-title: "1:1 Meetings with Engineers",
-content: """Your engineers should be venting at you regularly, so if they are, don't panic this is totally normal, and in fact highly desirable. You should have a 1:1 meeting with every member of your team at least once every two weeks, if not weekly. Your goal in these meetings is to create a safe space for your engineers to tell you what's on their mind, and for you to actively listen and engage on these topics.
+    AppLesson(
+      title: "1:1 Meetings with Engineers",
+      body: """Your engineers should be venting at you regularly, so if they are, don't panic this is totally normal, and in fact highly desirable. You should have a 1:1 meeting with every member of your team at least once every two weeks, if not weekly. Your goal in these meetings is to create a safe space for your engineers to tell you what's on their mind, and for you to actively listen and engage on these topics.
 
 With strong engineers, that will mean they're aware of imperfections in the world around them and they want to tell you about them. Your job is not to solve every problem they bring up; your job is to listen, to ask questions to clarify your understanding, and to convince them that you do understand, and then steer them toward solutions. From time to time, there may be a direct ask, or something you can directly help with, but that's not the norm.
 
 The value you're providing here is making your direct reports feel heard and coaching them to productively handle issues themselves.""",
-),
+    ),
 
-AppLesson(
-id: "l10",
-title: "1:1 Content and Agenda",
-content: """Ultimately, your goal in a 1:1 meeting is to build a relationship with another person and have vulnerable and critical conversations that enable you to help them do their best work. If your direct report has a broad agenda, that's great, start there. However, if their agenda is consistently limited to tactical in-progress work items and you're not getting to those higher-level how- we-work conversations, then I encourage you to supplement their agenda so they better understand the purpose of your meetings and bring more substantive concerns to future sessions.
+    AppLesson(
+      title: "1:1 Content and Agenda",
+      body: """Ultimately, your goal in a 1:1 meeting is to build a relationship with another person and have vulnerable and critical conversations that enable you to help them do their best work. If your direct report has a broad agenda, that's great, start there. However, if their agenda is consistently limited to tactical in-progress work items and you're not getting to those higher-level how- we-work conversations, then I encourage you to supplement their agenda so they better understand the purpose of your meetings and bring more substantive concerns to future sessions.
 
 The easiest way to bridge your agenda and theirs is to have a shared document, perhaps with some structure/template, to elicit the kinds of discussion topics you think are important. Having this document available prior to your meeting also gives you and your employee a shared place to capture ideas in between meetings, to structure thoughts in advance of a meeting, all of which help make the meeting time more productive and efficient.
 
 There are several SaaS tools that help facilitate 1:1 conversations as well. Notable examples include Culture Amp and 15Five. You don't need a tool though; a simple document works equally well. The template I use is available at [ctohb.com/templates](https://ctohb.com/templates); it includes prompts for discussing liked/ wished for items at a personal, departmental, and company level, as well as bidirectional feedback between manager and employee.""",
-),
+    ),
 
-AppLesson(
-id: "l11",
-title: "1:1 Playbooks",
-content: """Establishing a playbook for these engineering 1:1s is another useful way to make sure these meetings address a consistent set of topics and don't go off track. Your playbook should ensure that your 1:1s touch on the following:
+    AppLesson(
+      title: "1:1 Playbooks",
+      body: """Establishing a playbook for these engineering 1:1s is another useful way to make sure these meetings address a consistent set of topics and don't go off track. Your playbook should ensure that your 1:1s touch on the following:
 
  **Conflict:** Inside your immediate team, across engineering teams, cross-functional
 
@@ -159,12 +153,11 @@ content: """Establishing a playbook for these engineering 1:1s is another useful
  **Clarity:** Engineers may have general thoughts about something and are looking for your perspective, or to see if you have different information than they do about something
 
  **Context:** What's going on more broadly at the company, and how does a contributor's work relate to those goals/objectives""",
-),
+    ),
 
-AppLesson(
-id: "l12",
-title: "Radical Candor",
-content: """The phrase *Radical Candor* was defined by Kim Scott in her book *Radical Candor*. The book defines Radical Candor as communication that incorporates both praise and criticism, and ensures that the delivery involves both caring personally while challenging directly. I think the point is best made in contrast to three other kinds of communication outlined in Scott's book:
+    AppLesson(
+      title: "Radical Candor",
+      body: """The phrase *Radical Candor* was defined by Kim Scott in her book *Radical Candor*. The book defines Radical Candor as communication that incorporates both praise and criticism, and ensures that the delivery involves both caring personally while challenging directly. I think the point is best made in contrast to three other kinds of communication outlined in Scott's book:
 
 **Obnoxious Aggression:** Sometimes referred to as brutal honesty or front-stabbing, characterized by direct challenge but lack of individual caring, perhaps demonstrated by insincere praise or unkind criticism
 
@@ -173,20 +166,18 @@ content: """The phrase *Radical Candor* was defined by Kim Scott in her book *Ra
 **Manipulative Insincerity:** Also known as backstabbing or passive-aggressive behavior, characterized by neither caring personally nor challenging directly
 
 I encourage you to read Scott's book, but if you don't, then at least be aware of these terms and use them as a coaching tool to move your team toward regularly practicing Radical Candor.""",
-),
+    ),
 
-AppLesson(
-id: "l13",
-title: "Benefits of Overcommunication",
-content: """There's nothing worse for an employee than feeling like their manager doesn't communicate enough with them. In the absence of information, it's a natural instinct to assume the worst-case scenario; a lack of information can also be a prime source of anxiety and confusion.
+    AppLesson(
+      title: "Benefits of Overcommunication",
+      body: """There's nothing worse for an employee than feeling like their manager doesn't communicate enough with them. In the absence of information, it's a natural instinct to assume the worst-case scenario; a lack of information can also be a prime source of anxiety and confusion.
 
 Overcommunication, by contrast, has very few consequences. The worst that can be said of overcommunication is that it can prove a distraction or become redundant, which are problems easily remedied with a bit of thoughtfulness as to the form of overcommunication. It's no surprise, then, that most startups invest heavily in building overcommunication into their culture, often including the phrase as a company core value.""",
-),
+    ),
 
-AppLesson(
-id: "l14",
-title: "Email",
-content: """Pretty much anyone you interact with nowadays has either been using email for twenty-five years, or since they were in early grade school, so of course this means they know how to use it effectively, right? Unfortunately, effective use of email at work is not necessarily common sense. So, it comes to you to help encourage best practices. Here is some general advice for using email effectively:
+    AppLesson(
+      title: "Email",
+      body: """Pretty much anyone you interact with nowadays has either been using email for twenty-five years, or since they were in early grade school, so of course this means they know how to use it effectively, right? Unfortunately, effective use of email at work is not necessarily common sense. So, it comes to you to help encourage best practices. Here is some general advice for using email effectively:
 
 * Don't let email become your job.
 
@@ -216,12 +207,11 @@ content: """Pretty much anyone you interact with nowadays has either been using 
 
   - Engineers in general prefer to be writing code instead of reading/answering email. Ask yourself if an email is really the right way to communicate with your audience. In general, the best method of communication with somebody is *their* preferred method, not yours.
   - It's very easy to leave coworkers off an email thread, either intentionally in an effort not to flood inboxes, or as an innocent mistake. If you're sitting there thinking about which people to add to/remove from an email thread, that's a good sign email is the wrong forum to begin with.""",
-),
+    ),
 
-AppLesson(
-id: "l15",
-title: "Synchronous Chat",
-content: """Chances are high that your company has already adopted some form of synchronous chat platform; in the early 2000s it was commonly Google Chat or an MSN messenger product, while in the 2020s it's more commonly Slack, Microsoft Teams, or Workspace from Meta. If you're not presently on one of these platforms, it's worth considering their adoption.
+    AppLesson(
+      title: "Synchronous Chat",
+      body: """Chances are high that your company has already adopted some form of synchronous chat platform; in the early 2000s it was commonly Google Chat or an MSN messenger product, while in the 2020s it's more commonly Slack, Microsoft Teams, or Workspace from Meta. If you're not presently on one of these platforms, it's worth considering their adoption.
 
 The vast majority of companies ranging from day one startups to goliath companies of 100,000-plus have adopted them with great success.
 
@@ -241,30 +231,27 @@ Here are a few recommendations for working with synchronous chat tools:
 * In the spirit of overcommunication, default communication to public channels. Even better, establish a culture and standard operating procedure of turning conversations and resulting decisions into long-lived, organized documentation in the company wiki or other appropriate document/information store.
 
 * Be extremely judicious with messages that send notifications to multiple people, e.g., @here or @channel in Slack. Especially as your company grows, the odds are that sending such a message will send a notification and interrupt potentially dozens of employees.""",
-),
+    ),
 
-AppLesson(
-id: "l16",
-title: "Asynchronous Communication",
-content: """Asynchronous communication is any communication that is not intended to get a response immediately. To be effective, the receiving party should be able to take their time, process the information, and then reply thoughtfully. A key element of asynchronous communication is that the initial message is a complete thought and contains the necessary context to allow the other party to respond.
+    AppLesson(
+      title: "Asynchronous Communication",
+      body: """Asynchronous communication is any communication that is not intended to get a response immediately. To be effective, the receiving party should be able to take their time, process the information, and then reply thoughtfully. A key element of asynchronous communication is that the initial message is a complete thought and contains the necessary context to allow the other party to respond.
 
-A trite example is the dreaded "the feature is broken" bug report. In nearly all cases, bug reports should go to a ticketing system rather than a direct message. An engineer receiving a bug report in a message does not have the context to know which feature is broken or in what way it's failing to meet expectations. So, the reply from the engineer will likely consist of a handful of questions, requiring more round trips with the reporter, costing time and creating frustration.
+A trite example is the dreaded \"the feature is broken\" bug report. In nearly all cases, bug reports should go to a ticketing system rather than a direct message. An engineer receiving a bug report in a message does not have the context to know which feature is broken or in what way it's failing to meet expectations. So, the reply from the engineer will likely consist of a handful of questions, requiring more round trips with the reporter, costing time and creating frustration.
 
 Contrast that with a bug report that includes full written reproduction steps as well as a video of a user trying to use the feature and demonstrating the failure. More than likely, this approach will enable the engineer to produce a fix without requiring any further follow-up.
 
 The bottom line is this: any time you send a message to somebody in an asynchronous format, give that person all the information they need so they can understand, process, and reply in a way that advances the conversation.""",
-),
+    ),
 
-AppLesson(
-id: "l17",
-title: "Asynchronous Culture",
-content: """You'd be surprised how often well-thought-out asynchronous communication can substitute for a synchronous chat or a meeting. Not only can good asynchronous communication mean fewer meetings and interruptions, but it can also leave behind comprehensive written documentation for others to process in the future. Some startup companies, such as Levels Health, have actually built the idea of asynchronous-by-default into the core of their company culture to great effect (ctohb.com/async).""",
-),
+    AppLesson(
+      title: "Asynchronous Culture",
+      body: """You'd be surprised how often well-thought-out asynchronous communication can substitute for a synchronous chat or a meeting. Not only can good asynchronous communication mean fewer meetings and interruptions, but it can also leave behind comprehensive written documentation for others to process in the future. Some startup companies, such as Levels Health, have actually built the idea of asynchronous-by-default into the core of their company culture to great effect (ctohb.com/async).""",
+    ),
 
-AppLesson(
-id: "l18",
-title: "Documentation",
-content: """Documentation is a key element of scaling up your organization. The benefits of writing things down are many: written documentation can assist in onboarding, training, overcommunication, thoughtfulness, thoroughness, building culture, avoiding unforced errors, and more. Your role is not just to believe in the value and ROI of documentation, but to build a culture of documentation and a team that values it.
+    AppLesson(
+      title: "Documentation",
+      body: """Documentation is a key element of scaling up your organization. The benefits of writing things down are many: written documentation can assist in onboarding, training, overcommunication, thoughtfulness, thoroughness, building culture, avoiding unforced errors, and more. Your role is not just to believe in the value and ROI of documentation, but to build a culture of documentation and a team that values it.
 
 Some tips for building a culture of good documentation:
 
@@ -284,12 +271,11 @@ One key area of documentation you should pay special attention to is how a devel
 **Directory Structure:** How to find your way around this codebase
 **Development:** What the develop/run/test loop looks like on this codebase
 **Deployment:** How you get your changes into higher environments for this app""",
-),
+    ),
 
-AppLesson(
-id: "l19",
-title: "On Acronyms at Work",
-content: """Every organization has its own distinct culture, and its own style of internal and external communications. One of a leader's key responsibilities is to make sure that culture always supports the goals of the organization rather than impeding them.
+    AppLesson(
+      title: "On Acronyms at Work",
+      body: """Every organization has its own distinct culture, and its own style of internal and external communications. One of a leader's key responsibilities is to make sure that culture always supports the goals of the organization rather than impeding them.
 
 One element of the internal culture of a technical organization that tends to get out of hand is the generation of made-up acronyms that can multiply over time and obscure and over-complicate the communication they were intended to streamline. It may seem like a minor annoyance, but it's symptomatic of poor communications strategy that can spiral out of control, particularly as it can place barriers between those in the know and team members who have no clue what the acronyms stand for. As an organization's technical leader, it's your job to set the tone and define the culture, and although the proliferation of made-up acronyms most likely won't start with you, it's your job to recognize when it's happening and shut it down before it gets out of hand.
 
@@ -298,36 +284,32 @@ In a January 2018 memo to SpaceX employees, Elon Musk called for a No Acronyms p
 > There is a creeping tendency to use made-up acronyms at SpaceX. Excessive use of made-up acronyms is a significant impediment to communication and keeping communication good as we grow is incredibly important. Individually, a few acronyms here and there may not seem so bad, but if a thousand people are making these up, over time the result will be a huge glossary that we have to issue to new employees. [...] This is particularly tough on new employees. [...] The key test for an acronym is to ask whether it helps or hurts communication. An acronym that most engineers outside of SpaceX already know, such as GUI, is fine to use. In practice, most acronyms act as a barrier and not a benefit to clear communication. It makes it harder for new employees to understand what's being discussed. It requires effort for a team to maintain a list of acronym definitions someplace, and overall, it's less of a timesaver to both write and speak than it may seem at first glance.*
 
 This may seem blasphemous, or an overbearing and silly rule to try and enforce in a culture. I'm not proposing you punish people for using acronyms or write it on the walls in the halls of your office. Quite the opposite; especially at a smaller organization, it takes only a very light touch to make no-new-acronyms a part of your culture. Get buy-in from your executive team to not create acronyms, and then encourage them to issue a gentle reminder to their managers to do the same, and you'll be amazed how quickly everyone kicks the habit. A sentence or two in your onboarding documentation is often a sufficient nudge for new employees who, due to the gentle note in onboarding and witnessing the lack of acronyms surrounding them, will be far less likely to create them themselves.""",
-),
+    ),
 
-AppLesson(
-id: "l20",
-title: "Meetings and Time Management",
-content: """Broadly speaking, there are three types of meetings: regularly scheduled informational meetings, conflict resolution meetings, and spontaneous/ ad-hoc meetings. Your job as a manager is to set expectations for attendees based on which type of meeting it is. For informational meetings, ask yourself if a meeting is really the best way to communicate the information; sometimes it is, but not always. If it is, make sure the information is communicated in multiple ways, maybe with written materials provided in advance in your company's wiki. If it's a conflict resolution meeting, make sure you've identified the discussion points in advance so participants can come prepared to discuss and work through the issue. Ad-hoc meetings likely have a clearly defined purpose upfront and need no further introduction.
+    AppLesson(
+      title: "Meetings and Time Management",
+      body: """Broadly speaking, there are three types of meetings: regularly scheduled informational meetings, conflict resolution meetings, and spontaneous/ ad-hoc meetings. Your job as a manager is to set expectations for attendees based on which type of meeting it is. For informational meetings, ask yourself if a meeting is really the best way to communicate the information; sometimes it is, but not always. If it is, make sure the information is communicated in multiple ways, maybe with written materials provided in advance in your company's wiki. If it's a conflict resolution meeting, make sure you've identified the discussion points in advance so participants can come prepared to discuss and work through the issue. Ad-hoc meetings likely have a clearly defined purpose upfront and need no further introduction.
 
 Regardless of the type of meeting, any meeting you set should have a clear objective that is known to invitees in advance. Ideally, everyone will have enough information before the meeting to know if it'll be valuable for them to attend. Just as importantly, your culture should empower people to make the decision not to attend if they judge it not a good use of their time.""",
-),
+    ),
 
-AppLesson(
-id: "l21",
-title: "Time Management",
-content: """As a leader at a startup, you'll quickly find your time is split between many kinds of work, and potentially dozens of hours of meetings every week. If you don't yet have a system in place that works for you, now is the time to invest in some good habits and get organized. I recommend both Stephen Covey's *The 7 Habits of Highly Effective People* and David Allen's *Getting things Done* as places to start on this journey.""",
-),
+    AppLesson(
+      title: "Time Management",
+      body: """As a leader at a startup, you'll quickly find your time is split between many kinds of work, and potentially dozens of hours of meetings every week. If you don't yet have a system in place that works for you, now is the time to invest in some good habits and get organized. I recommend both Stephen Covey's *The 7 Habits of Highly Effective People* and David Allen's *Getting things Done* as places to start on this journey.""",
+    ),
 
-AppLesson(
-id: "l22",
-title: "Meeting Timing",
-content: """One of the ways you can enable productivity in your team is by creating, or allowing for, large blocks of free time for your engineers. Context switching (our tendency to shift from one unrelated task to another) is expensive (see The Multitasking Myth at ctohb.com/myth), so the more time you can create for engineers to do the work of engineering without switching to other tasks (email, phone calls, meetings), the less total context switching penalty you pay.
+    AppLesson(
+      title: "Meeting Timing",
+      body: """One of the ways you can enable productivity in your team is by creating, or allowing for, large blocks of free time for your engineers. Context switching (our tendency to shift from one unrelated task to another) is expensive (see The Multitasking Myth at ctohb.com/myth), so the more time you can create for engineers to do the work of engineering without switching to other tasks (email, phone calls, meetings), the less total context switching penalty you pay.
 
 I'm a fan of declaring an informal meeting hours window for the team. Encourage the engineering team, and cross-functional teams, to schedule meetings during this two or three hour window every day and try not to schedule engineers outside that window. That leaves a healthy amount of time *every single day* for your engineering team to focus on the core of their work and also make space for necessary informational and conflict resolution meetings. If your team is in more than three hours of meetings per day (fifteen hours per week, nearly half of their time!), you should take a close look at those meetings and ask yourself if they can be consolidated and reduced.
 
 Other teams have found success with no-meeting days setting aside one or more days each week when nobody schedules any recurring meetings. Just keep in mind that, in a forty-hour work week, your goal is to reserve as many of those hours as possible for your engineering team as contiguous blocks of focus time. A single no-meeting day implies an eight-hour block of focus time, but there are still thirty-two other hours to consider, so it doesn't solve the whole problem.""",
-),
+    ),
 
-AppLesson(
-id: "l23",
-title: "Engineer's Time Recommendation",
-content: """Consider this hypothetical week for a software engineer:
+    AppLesson(
+      title: "Engineer's Time Recommendation",
+      body: """Consider this hypothetical week for a software engineer:
 
 * One hour: 1:1 with manager
 
@@ -343,40 +325,35 @@ content: """Consider this hypothetical week for a software engineer:
 In total, that's about thirteen to seventeen hours of the week used up for meetings and communication. If you add another few hours on top of that for time spent context switching and unplanned miscellaneous interruptions, quickly you're looking at at best half of a forty-hour work week available for actual focus time. If you're not careful about when meetings are scheduled, then not only will your engineers have only twenty hours left for their core tasks, but also they won't have them in contiguous blocks, further reducing productivity.
 
 I present this contrived example to drive home the point that providing engineers with large blocks of focus time to do engineering does not happen by accident. It's up to you as the leader who determines how their time is spent to develop a culture and process that consolidates and minimizes these distractions and maximizes time available for individual contributors to do actual engineering.""",
-),
+    ),
 
-AppLesson(
-id: "l24",
-title: "The HIPPO",
-content: """HIPPO is a casually used industry acronym, short for Highest-Paid Person's Opinion. Whether you're the highest-paid person or not, your title will imply that you are. The thing about the HIPPO is, most employees are reluctant to challenge the HIPPO. I strongly encourage you to minimize this effect in discussions by regularly opening the door for challenges, being overtly open to being wrong, and then acting on and championing ideas other than your own. you'll know you're doing this often enough when you feel like you're doing it too often. By the time you feel you're overdoing it, you've probably reached the minimum that most employees need to actually believe you.
+    AppLesson(
+      title: "The HIPPO",
+      body: """HIPPO is a casually used industry acronym, short for Highest-Paid Person's Opinion. Whether you're the highest-paid person or not, your title will imply that you are. The thing about the HIPPO is, most employees are reluctant to challenge the HIPPO. I strongly encourage you to minimize this effect in discussions by regularly opening the door for challenges, being overtly open to being wrong, and then acting on and championing ideas other than your own. you'll know you're doing this often enough when you feel like you're doing it too often. By the time you feel you're overdoing it, you've probably reached the minimum that most employees need to actually believe you.
 
 In spite of your best efforts to come across as approachable and open to being convinced of other approaches, your presence in a meeting will often still have a subconscious effect on other attendees, especially if they're more than one level below you in the organization chart. Be mindful of this effect and do your best to attend meetings only when you truly add value and the team needs you there. For everything else you can get the notes/ recording after the meeting is over.""",
-),
+    ),
 
-AppLesson(
-id: "l25",
-title: "To-do Lists",
-content: """In general, to-do lists are a very unsophisticated form of task management: they lack in structure, any sense of prioritization or a time component. Instead I recommend using a calendar-based to-do list. Rather than putting work items in a generic list, slot them in your actual calendar.
+    AppLesson(
+      title: "To-do Lists",
+      body: """In general, to-do lists are a very unsophisticated form of task management: they lack in structure, any sense of prioritization or a time component. Instead I recommend using a calendar-based to-do list. Rather than putting work items in a generic list, slot them in your actual calendar.
 
 Using your calendar as a to-do list has several advantages. It blocks off dedicated time for actually doing items on your to-do list and ensures you're not overcommitting your time. It allows for prioritization by moving items around, and it also makes it easier to predict when things will get done. Most calendaring systems also have built-in reminder mechanisms that will notify you when you're scheduled to do a particular task.""",
-),
+    ),
 
-AppLesson(
-id: "l26",
-title: "Calendar Retrospectives And Time Balance",
-content: """Every now and then say, once a month I encourage you to do a historic review of your calendar and measure how you've spent your time. For example, Google Calendar has built-in analytics and requires only very minimal adaptation of your calendaring habits to provide accurate summaries of how time was spent. When reviewing this data, ask yourself if the ratio of time spent on various types of activities makes sense for the goals you're trying to achieve. It's also good to check in and confirm that you're spending your time in ways that play to your strengths and bring you personal satisfaction. Often just having this kind of data presented matter-of-factly can provide good motivation for organization and productive change.""",
-),
+    AppLesson(
+      title: "Calendar Retrospectives And Time Balance",
+      body: """Every now and then say, once a month I encourage you to do a historic review of your calendar and measure how you've spent your time. For example, Google Calendar has built-in analytics and requires only very minimal adaptation of your calendaring habits to provide accurate summaries of how time was spent. When reviewing this data, ask yourself if the ratio of time spent on various types of activities makes sense for the goals you're trying to achieve. It's also good to check in and confirm that you're spending your time in ways that play to your strengths and bring you personal satisfaction. Often just having this kind of data presented matter-of-factly can provide good motivation for organization and productive change.""",
+    ),
 
-AppLesson(
-id: "l27",
-title: "Mini Management Frameworks",
-content: """A lot of the problems you'll encounter as a manager follow common, repeating patterns. Having a mental framework to approach problems can speed up decision-making, improve the quality of your decision-making, and provide context and perspective for explaining decisions to others. Below are some frameworks I've found useful in my management journey.""",
-),
+    AppLesson(
+      title: "Mini Management Frameworks",
+      body: """A lot of the problems you'll encounter as a manager follow common, repeating patterns. Having a mental framework to approach problems can speed up decision-making, improve the quality of your decision-making, and provide context and perspective for explaining decisions to others. Below are some frameworks I've found useful in my management journey.""",
+    ),
 
-AppLesson(
-id: "l28",
-title: "Three Stages Of Management Problem-Solving",
-content: """When presented with a large, ambiguous challenge, such as taking over managing a new team, or diagnosing and improving an individual's underperformance, I like to use a three-step process. These steps should be done sequentially to come up with a plan to address a particular problem.
+    AppLesson(
+      title: "Three Stages Of Management Problem-Solving",
+      body: """When presented with a large, ambiguous challenge, such as taking over managing a new team, or diagnosing and improving an individual's underperformance, I like to use a three-step process. These steps should be done sequentially to come up with a plan to address a particular problem.
 
 1. Ingest
 
@@ -395,12 +372,11 @@ content: """When presented with a large, ambiguous challenge, such as taking ove
 3. Act
 
   * Once you've got a thesis, it's time to actually put a plan into place. When you're taking action, it's important to validate that your plan is achieving the desired results. Whenever possible, test, validate, and if necessary start the loop over again.""",
-),
+    ),
 
-AppLesson(
-id: "l29",
-title: "Team-Based Decisioning Models",
-content: """There are three models for for making decisions with your team. As the manager, you can make the decisions entirely yourself and present the result as a *fait accompli* to the team. There's also the opposite approach: you start from scratch and entirely co-develop the material with some or all of the team. The third approach is a compromise between the first two: develop a draft yourself and present it as a straw man to the team as a starting point for collecting feedback and iterating to get to a final version. The key differences between these techniques are the amount of time they take, and how much buy-in you get from the team. And I encourage you to optimize for buy-in: ensuring everyone on your team understands decisions and can be a champion for those decisions is the only way to ensure you're all marching in the same direction. As Marty Cagan of Silicon Valley Product Group calls it, you want your team to behave like missionaries, not mercenaries.
+    AppLesson(
+      title: "Team-Based Decisioning Models",
+      body: """There are three models for for making decisions with your team. As the manager, you can make the decisions entirely yourself and present the result as a *fait accompli* to the team. There's also the opposite approach: you start from scratch and entirely co-develop the material with some or all of the team. The third approach is a compromise between the first two: develop a draft yourself and present it as a straw man to the team as a starting point for collecting feedback and iterating to get to a final version. The key differences between these techniques are the amount of time they take, and how much buy-in you get from the team. And I encourage you to optimize for buy-in: ensuring everyone on your team understands decisions and can be a champion for those decisions is the only way to ensure you're all marching in the same direction. As Marty Cagan of Silicon Valley Product Group calls it, you want your team to behave like missionaries, not mercenaries.
 
  **The Independent Model:** Developing independently as a manager takes the least overall time, but also produces the least buy-in.
 
@@ -409,71 +385,64 @@ content: """There are three models for for making decisions with your team. As t
  **The Codevelopment Model:** Developing collectively from scratch can take a significant amount of time, though it produces the most buy-in from those who contributed to the development.
 
 Which model you use for any given decision is up to you, and I encourage you to be thoughtful and deliberate about that choice. Don't be afraid to revisit it if you feel you've chosen the wrong model.""",
-),
+    ),
 
-AppLesson(
-id: "l30",
-title: "Two Types of Decisions",
-content: """In an annual letter to shareholders in 1997, Jeff Bezos outlined a framework for classifying decisions into Type 1 and Type 2 decisions. Type 1 decisions are not reversible, and should be thought through methodically, carefully, slowly, and with great deliberation and consultation, Bezos wrote. If you walk through a door and don't like what you see on the other side, you can't get back to where you were before. Which programming language you use, for example, is a Type 1 decision.
+    AppLesson(
+      title: "Two Types of Decisions",
+      body: """In an annual letter to shareholders in 1997, Jeff Bezos outlined a framework for classifying decisions into Type 1 and Type 2 decisions. Type 1 decisions are not reversible, and should be thought through methodically, carefully, slowly, and with great deliberation and consultation, Bezos wrote. If you walk through a door and don't like what you see on the other side, you can't get back to where you were before. Which programming language you use, for example, is a Type 1 decision.
 
 Type 2 decisions are the opposite. They can and should be made quickly by high-judgment individuals or small groups. Which exact shade of gray a button is can be a Type 2 decision, as it's easily changed down the line.
 
 Bezos's advice, which I'll echo here, is that using Type 1 decision-making for Type 2 decisions leads to slowness and failure to experiment and innovate.
 
 Most of your day-to-day technical decisions are Type 2 and are best made quickly and revisited or confirmed after you've collected more data via a prototype or MVP implementation. This is because the most expensive element of most startup technical decisions is the engineering team's time invested in the solution. If you deliberately constrain the time (and thus cost) invested into validating a reversible decision, you're out only a small bit. Most Type 2 technical decisions become irreversible only after you've invested considerable time and new engineering on top of them, so be rigorous about evaluating progress early on. When in doubt, make the decision to reverse early.""",
-),
+    ),
 
-AppLesson(
-id: "l31",
-title: "Breaking Ties",
-content: """As the leader of your team, ultimately you are accountable for achieving your team's objectives. If the team as a whole fails to meet milestones, that's on you. So, when there is a conflict or disagreement within the team, you need to engage thoughtfully, and then be prepared to make a decision by following one of these three narratives:
+    AppLesson(
+      title: "Breaking Ties",
+      body: """As the leader of your team, ultimately you are accountable for achieving your team's objectives. If the team as a whole fails to meet milestones, that's on you. So, when there is a conflict or disagreement within the team, you need to engage thoughtfully, and then be prepared to make a decision by following one of these three narratives:
 
 1. We'll go with your way because you've made a clear and convincing argument that it's superior.
 
 1. We'll go with my way because it's superior, and I'll explain why using the additional context I have as a result of being a manager with a broader scope of responsibility.
 
 1. We'll go with my way because we can't identify any objective reason why one way is better than another. In other words, it's a tie, and since ultimately I'm the accountable party for success here, we'll go with my approach. I will own the success or failure of this decision.""",
-),
+    ),
 
-AppLesson(
-id: "l32",
-title: "Task Triage The Urgent/Important Matrix",
-content: """In *The 7 Habits of Highly Effective People*, Dr. Stephen Covey offers the Urgent/Important Matrix, adapted from a concept introduced by President Dwight Eisenhower in a 1955 speech. In the Urgent/ Important dichotomy, work is classified by both its urgency (i.e., time sensitivity) and importance (i.e., impact). The result is a four-quadrant chart:
+    AppLesson(
+      title: "Task Triage The Urgent/Important Matrix",
+      body: """In *The 7 Habits of Highly Effective People*, Dr. Stephen Covey offers the Urgent/Important Matrix, adapted from a concept introduced by President Dwight Eisenhower in a 1955 speech. In the Urgent/ Important dichotomy, work is classified by both its urgency (i.e., time sensitivity) and importance (i.e., impact). The result is a four-quadrant chart:
 
 
 I provide this framework here as a reminder to consider the value of various tasks that arise. The tech leader is regularly bombarded by feature requests, debt to prioritize, defects, etc., and having the perspective to ask whether any given item is important and/or urgent is a very useful and quick triage mechanism.""",
-),
+    ),
 
-AppLesson(
-id: "l33",
-title: "People-Puzzle Solver",
-content: """Much of the work you'll do as a manager is as a people-puzzle solver. you'll have to figure out how to help two people work together productively, or guide somebody to improve on a skill, or design a team structure to enable collaboration. People's behavior is hard to predict and sometimes a team member may say one thing but think or feel another.
+    AppLesson(
+      title: "People-Puzzle Solver",
+      body: """Much of the work you'll do as a manager is as a people-puzzle solver. you'll have to figure out how to help two people work together productively, or guide somebody to improve on a skill, or design a team structure to enable collaboration. People's behavior is hard to predict and sometimes a team member may say one thing but think or feel another.
 
 In light of this ever-changing complexity, I encourage you to think like a detective or a scientist: always be collecting data. Form a hypothesis of what might happen if you take a given action, take that action, and then collect data on the results. Going through these motions deliberately will encourage you to listen, to witness how people respond in various scenarios. This in turn will supply helpful data for the next time you're in a similar scenario with the same people.""",
-),
+    ),
 
-AppLesson(
-id: "l34",
-title: "Joining a Team",
-content: """There are two ways you join a team as a technical leader: either you start on a team in a non-leadership position and grow or are promoted into the role, or you're hired to lead a team. If you're promoted into a role, presumably you have good business context and have demonstrated technical competency but have not yet proven yourself in management and leadership. Conversely, if you're being hired into leadership, you likely have a track record in management but lack context, history, and background on the organization's business, technology, and people. It follows, then, that your approach when starting in the role should differ to compensate for the respective weaknesses.""",
-),
+    AppLesson(
+      title: "Joining a Team",
+      body: """There are two ways you join a team as a technical leader: either you start on a team in a non-leadership position and grow or are promoted into the role, or you're hired to lead a team. If you're promoted into a role, presumably you have good business context and have demonstrated technical competency but have not yet proven yourself in management and leadership. Conversely, if you're being hired into leadership, you likely have a track record in management but lack context, history, and background on the organization's business, technology, and people. It follows, then, that your approach when starting in the role should differ to compensate for the respective weaknesses.""",
+    ),
 
-AppLesson(
-id: "l35",
-title: "Being Promoted into Management/Leadership",
-content: """If you're being promoted into a management role and have invested time in developing management skills, or if you have experience and a track record as a manager, then it's likely you won't find this transition very scary, and your goal will be to continue leveling up as a manager. If this is your first management role, however, you'll have a larger mountain to climb.
+    AppLesson(
+      title: "Being Promoted into Management/Leadership",
+      body: """If you're being promoted into a management role and have invested time in developing management skills, or if you have experience and a track record as a manager, then it's likely you won't find this transition very scary, and your goal will be to continue leveling up as a manager. If this is your first management role, however, you'll have a larger mountain to climb.
 
 People management is an entirely new skill set from the technical skills that got you your promotion. Technical skills are of course a prerequisite to being a good technical manager, but they're far from sufficient. Understanding this, and developing the additional skill set that your new role requires, will be key to succeeding as a manager.
 
 If your job role changed from backend engineer writing code in C to frontend engineer writing code in TypeScript, what kind of things would you do? You might read a book on TypeScript, do some TypeScript coding exercises, join a TypeScript user group, read some TypeScript blogs, etc.
 
 Moving from writing C to managing people is actually a larger change than C to TypeScript. Making this transition successfully requires the same level or more of proactive learning. Becoming a great people manager, for most people, is a lifelong journey, and not a skill picked up in a weekend. Embrace the challenge and treat the job as a lifelong learning exercise that starts now.""",
-),
+    ),
 
-AppLesson(
-id: "l36",
-title: "Actionable Management Tips",
-content: """Keeping in mind German Chancellor Otto von Bismarck's dictum, **Fools learn from experience; I prefer to learn from the experience of others**, here are some actionable tips for new managers:
+    AppLesson(
+      title: "Actionable Management Tips",
+      body: """Keeping in mind German Chancellor Otto von Bismarck's dictum, **Fools learn from experience; I prefer to learn from the experience of others**, here are some actionable tips for new managers:
 
 * Find a management mentor or coach. Talking through people's problems and gaining additional perspective is invaluable. (See the sidebar Find a Management Mentor, page 13.)
 
@@ -486,12 +455,11 @@ content: """Keeping in mind German Chancellor Otto von Bismarck's dictum, **Fool
   * Pay attention to burnout signs and take a break before it happens. Managing people does not have to be an eighty-hour-a-week activity.
 
 See the recommended reading list at the end of this book to find more resources for developing your management skills.""",
-),
+    ),
 
-AppLesson(
-id: "l37",
-title: "Being Hired To Lead",
-content: """If you've been hired to lead a team (as opposed to being promoted into a leadership job or assuming a leadership role as a first-time startup cofounder), presumably you have both technical and management experience. Your challenge as a hired leader of an existing team is to integrate yourself into your new team as smoothly as possible and build trust with your new peers. It should come as no surprise that my advice is to focus more on the people than the technology when managing your new team.
+    AppLesson(
+      title: "Being Hired To Lead",
+      body: """If you've been hired to lead a team (as opposed to being promoted into a leadership job or assuming a leadership role as a first-time startup cofounder), presumably you have both technical and management experience. Your challenge as a hired leader of an existing team is to integrate yourself into your new team as smoothly as possible and build trust with your new peers. It should come as no surprise that my advice is to focus more on the people than the technology when managing your new team.
 
 Below, I outline some short-term goals for an externally hired tech leader, plus some questions you should try to answer very early.
 
@@ -516,20 +484,18 @@ Questions:
 
 * What pain points exist between the technical team and the rest of the company today?
 * What pain points are the highest priority within the technical team?""",
-),
+    ),
 
-AppLesson(
-id: "l38",
-title: "Giving Technical Advice to Friends/Strangers",
-content: """After you've had some form of technical leadership on your résumé for a while, you'll likely start to get friends, or friends of friends, reaching out for advice. For the most part, I recommend taking these phone calls, not only because the networking is valuable, but because the questions you are asked may force you to think through and put words to ideas you're subconsciously working on. They say teaching others is the best way to really learn something yourself.
+    AppLesson(
+      title: "Giving Technical Advice to Friends/Strangers",
+      body: """After you've had some form of technical leadership on your résumé for a while, you'll likely start to get friends, or friends of friends, reaching out for advice. For the most part, I recommend taking these phone calls, not only because the networking is valuable, but because the questions you are asked may force you to think through and put words to ideas you're subconsciously working on. They say teaching others is the best way to really learn something yourself.
 
 A quick note on advising non-technical founders: you're likely to get approached from time to time by somebody with a self-pro claimed billion-dollar idea. It costs very little to take these calls and can be a great way to build some social/relationship capital. Be mindful however that brilliant ideas don't themselves make successful businesses. Between every great idea and success is a gigantic mountain of execution, and most climbers are not equipped to summit Everest. So be very careful about making commitments to someone with a good idea and no climbing gear.""",
-),
+    ),
 
-AppLesson(
-id: "l39",
-title: "Traffic: Funnels and Umbrellas",
-content: """**You can either be a shit funnel or a shit umbrella.** - Todd Jackson, Gmail Product Manager (see ctohb.com/umbrella and ctohb.com/keytogmail)
+    AppLesson(
+      title: "Traffic: Funnels and Umbrellas",
+      body: """**You can either be a shit funnel or a shit umbrella.** - Todd Jackson, Gmail Product Manager (see ctohb.com/umbrella and ctohb.com/keytogmail)
 
 Questions, concerns, and ideas about your product, absent any strict process for directing them elsewhere, will find their way to management. That includes not just you but everyone in management in your organization. Managers are the default inbox, and the crux of Jackson's statement is that your team is the default outbox. You hear, Hey, There's a bug in X, and you think, OK, engineer Y wrote that feature, go send them the bug. That would be an example of funneling inbound directly at your team.
 
@@ -540,76 +506,68 @@ Only on rare occasions should you, as manager, highlight a bug to an individual 
 Management should be monitoring that bug queue process to ensure the queue stays at a manageable length, and adjusting staffing or process if product quality isn't meeting targets.
 
 You should prioritize your queues based on importance and urgency. If something of critical importance with extreme time pressure arises, it should be put into the queue and escalated to the top. Then apply common sense as to how you handle it. If you need to call somebody to ensure they know it's there, then so be it, as long as this is the exception and not the rule.""",
-),
+    ),
 
-AppLesson(
-id: "l40",
-title: "Your First Team",
-content: """As a technical leader, your job is not just to manage the technical team; it also includes serving as the technical representative in the C-suite. Your role is to represent engineering and technology in all of the company's highest-level strategic discussions and to ensure that engineering and technology are on the right course for the business. At times, this means having difficult conversations with other leaders that require vulnerability and humility, and conversations that enable you to work through conflict and are grounded in mutual trust. These conversations are key to the job, and for them to be possible you must be deeply engaged with your leadership team, thinking of them as your first team.
+    AppLesson(
+      title: "Your First Team",
+      body: """As a technical leader, your job is not just to manage the technical team; it also includes serving as the technical representative in the C-suite. Your role is to represent engineering and technology in all of the company's highest-level strategic discussions and to ensure that engineering and technology are on the right course for the business. At times, this means having difficult conversations with other leaders that require vulnerability and humility, and conversations that enable you to work through conflict and are grounded in mutual trust. These conversations are key to the job, and for them to be possible you must be deeply engaged with your leadership team, thinking of them as your first team.
 
 You're likely a highly technical person. You probably enjoy your technical meetings the most, or at least find solving technical problems with your team familiar and highly satisfying. So, it's easy to fall into a pattern where you spend most of your time with technical teams, and to adopt a my team is the technical team mindset. This is a great way to build rapport within the tech team, and there are times when that is the most critical relationship to invest in.
 
 My guidance is simple: do not let the technical shiny objects distract you or limit your investment in relationships with non-technical leaders. Your relationships with other leaders and your trust with your non-technical peers will give you credibility and enable you to guide the business to making good technical decisions as a whole. Building trust outside the technical team is built the same way any other trust relationship is built: great communication, regular expectation setting by making and meeting commitments, and owning up to mistakes/failures if and when they occur.
 
 The technical leader or CTO who spends all their time deep in code with engineering and barely participates in the leadership team will have little credibility when trying to convince the other C-levels to invest further in engineering. Or worse, they won't even be asked for their input when the time comes to make a hard call. Other leaders will not have the context to understand the value of what the tech team is asking for or the perspective on how engineering is operating at that moment, and they'll lack the shared vision for what it can be in the future. Only by regularly engaging with the rest of the leadership team, sharing that context, and being part of the conversation along the way can you, as the technical leader, ensure that the leadership team has a shared understanding of how engineering helps the organization and how it needs to grow over time.""",
-),
+    ),
 
-AppLesson(
-id: "l41",
-title: "Working With The CEO",
-content: """Every CTO CEO relationship is different, though there are a few elements that are common to all such partnerships, as well as some key prerequisites for a healthy relationship.""",
-),
+    AppLesson(
+      title: "Working With The CEO",
+      body: """Every CTO CEO relationship is different, though there are a few elements that are common to all such partnerships, as well as some key prerequisites for a healthy relationship.""",
+    ),
 
-AppLesson(
-id: "l42",
-title: "Aligning Specific Objectives",
-content: """The CEO must have complete trust in your ability to lead the technical team to meet business objectives. Building that trust means you need to be able to communicate well with the CEO, both through proactive communication and making sure the CEO always has enough context to ask good questions.
+    AppLesson(
+      title: "Aligning Specific Objectives",
+      body: """The CEO must have complete trust in your ability to lead the technical team to meet business objectives. Building that trust means you need to be able to communicate well with the CEO, both through proactive communication and making sure the CEO always has enough context to ask good questions.
 
 Communicating well means learning to speak business language and avoiding lapses into tech jargon during leadership conversations. You want to empower the CEO to communicate with you, and the more you speak their language (if they are not technical), the more information you can get out of your interactions, and the better the two of you will get along.""",
-),
+    ),
 
-AppLesson(
-id: "l43",
-title: "Aligning Business Direction",
-content: """You and the CEO need to have a shared understanding of the direction of the business and be able to engage in constructive and perhaps even contentious conversations to ensure the depth of that understanding. Trust applies to overall business direction as well as specific objectives.
+    AppLesson(
+      title: "Aligning Business Direction",
+      body: """You and the CEO need to have a shared understanding of the direction of the business and be able to engage in constructive and perhaps even contentious conversations to ensure the depth of that understanding. Trust applies to overall business direction as well as specific objectives.
 
 There are many ways to build this, but you need to establish trust regardless of the approach you take. Engage in shared non-work activities, find areas where you share personal values, and use specific tools and exercises to build that trust (see Brene Brown's BRAVING Inventory at ctohb.com/braving).""",
-),
+    ),
 
-AppLesson(
-id: "l44",
-title: "Aligning Culture And Values",
-content: """As with all C-levels, the CTO and CEO should have strong alignment on company culture and values. It's particularly important that you focus on building a positive culture within engineering, and between engineering and the rest of the company. The technical team is often a very large if not the single largest line item in a startup company's budget. Technical staff are also often the most competitive roles to hire for, making recruiting and inevitable involuntary employee turnover more expensive in engineering than in other departments.
+    AppLesson(
+      title: "Aligning Culture And Values",
+      body: """As with all C-levels, the CTO and CEO should have strong alignment on company culture and values. It's particularly important that you focus on building a positive culture within engineering, and between engineering and the rest of the company. The technical team is often a very large if not the single largest line item in a startup company's budget. Technical staff are also often the most competitive roles to hire for, making recruiting and inevitable involuntary employee turnover more expensive in engineering than in other departments.
 
 Strong alignment between the CTO and other C-level executives on culture and values is a key factor in ensuring the technical team feels respected and included in the company, which should in turn help with retention.""",
-),
+    ),
 
-AppLesson(
-id: "l45",
-title: "Delivering Bad News",
-content: """One general piece of advice for working with other leaders or executives is to not shy away from delivering bad news to your fellow leaders, especially the CEO. Since you are accountable for the performance of the team, you may be tempted to sugarcoat reality, to advertise that everything is fine. The problems with this approach are numerous:
+    AppLesson(
+      title: "Delivering Bad News",
+      body: """One general piece of advice for working with other leaders or executives is to not shy away from delivering bad news to your fellow leaders, especially the CEO. Since you are accountable for the performance of the team, you may be tempted to sugarcoat reality, to advertise that everything is fine. The problems with this approach are numerous:
 
 * If things are not fine, meaning deadlines are consistently missed or quality is falling below expectations, your peers will know that and will wonder why you're not owning those failures and explaining how you'll improve. This disparity between reality and how you're representing it undermines trust in your leadership.
 
 * From time to time, you'll need to make time for the software engineering team to do non-user-facing engineering as an investment, either in tech debt or future architecture. You'll need to have the trust of other leaders and the credibility so that others believe you and understand the ROI on that time.
 
 See the Principle section of Chapter 1 of Jocko Willink and Leif Babin's *Extreme Ownership: How U.S. Navy SEALs Lead and Win* for more on the importance of owning failure.""",
-),
+    ),
 
-AppLesson(
-id: "l46",
-title: "Speaking the Language of Your Audience",
-content: """Technical topics are often highly nuanced; the details matter. Technical jargon does a great job at helping to convey that nuance, so it's no surprise that when engineers explain technical subjects they often use language that is unintelligible to members of other departments. I'm sure you've witnessed the over-eager engineer trying, with energy, passion, and excitement, to explain their project to a non-engineer only to be met with a blank stare and no new shared understanding being created. As a technical leader, you must do better.
+    AppLesson(
+      title: "Speaking the Language of Your Audience",
+      body: """Technical topics are often highly nuanced; the details matter. Technical jargon does a great job at helping to convey that nuance, so it's no surprise that when engineers explain technical subjects they often use language that is unintelligible to members of other departments. I'm sure you've witnessed the over-eager engineer trying, with energy, passion, and excitement, to explain their project to a non-engineer only to be met with a blank stare and no new shared understanding being created. As a technical leader, you must do better.
 
 If, for example, you have a major area of tech debt and you want to advocate within the executive team for taking an entire month to re-architect that area of code, you need to communicate your reasons in a comprehensible way. If you enter that conversation discussing latencies, RPC calls, dependency injection, and acronyms from your cloud service provider, chances are your CEO and CFO will tune you out almost immediately.
 
 If, on the other hand, you frame that conversation around developer productivity and team morale, and explain the debt paydown in the context of team velocity over the next six months, your argument will be much more convincing.""",
-),
+    ),
 
-AppLesson(
-id: "l47",
-title: "Technical Communication Best Practices",
-content: """A few general tips for ensuring more successful discussions and presentations particularly with non-engineers when talking tech:
+    AppLesson(
+      title: "Technical Communication Best Practices",
+      body: """A few general tips for ensuring more successful discussions and presentations particularly with non-engineers when talking tech:
 
 Establish a shared language/vocabulary upfront. If you need to use any words the average high-school student wouldn't understand, make sure that your audience already knows them, or clearly define them before launching into the explanation.
 
@@ -620,22 +578,20 @@ Confirm understanding along the way. Ask questions of your audience during your 
 Don't assume you are in any way superior due to your mastery of technical language, or worse, make your audience feel inferior for their lack of knowledge. I don't want to get too technical for you is a great way to turn off an audience.
 
 In general, try to keep your explanations as simple and concise as you can. Avoid going down rabbit holes that might be a distraction or otherwise disengage your audience.""",
-),
+    ),
 
-AppLesson(
-id: "l48",
-title: "Hiring and Interviewing",
-content: """Hiring effectively is one of your highest-impact activities as a technical leader and one of the most challenging to get right. You will often find yourself trying to recruit talent in a supply-constrained market and competing against other companies that might have deeper pockets than yours. Your top candidates will likely receive other competing job offers, which means you not only need to qualify candidates but convince them that your opportunity is the right one for them.
+    AppLesson(
+      title: "Hiring and Interviewing",
+      body: """Hiring effectively is one of your highest-impact activities as a technical leader and one of the most challenging to get right. You will often find yourself trying to recruit talent in a supply-constrained market and competing against other companies that might have deeper pockets than yours. Your top candidates will likely receive other competing job offers, which means you not only need to qualify candidates but convince them that your opportunity is the right one for them.
 
 In that way, hiring is as much a sales activity (where candidates qualify you/your company) as it is a filtering process (you/your company qualifies the candidates). It's important to keep this in mind every step of the way as you define your team's hiring processes.
 
 This section of the book covers the various sections of the hiring and interviewing journey, sequentially, from headcount planning to onboarding.""",
-),
+    ),
 
-AppLesson(
-id: "l49",
-title: "Hire like a Startup",
-content: """As a startup, you have several key advantages in hiring, and it's critical you leverage those in the process to ensure you can attract top talent. A few features that give you an edge:
+    AppLesson(
+      title: "Hire like a Startup",
+      body: """As a startup, you have several key advantages in hiring, and it's critical you leverage those in the process to ensure you can attract top talent. A few features that give you an edge:
 
 * You're smaller, meaning you should also be more nimble, higher-touch, and faster to hire than large competition.
 
@@ -658,52 +614,46 @@ Here are some practical tips for leveraging these advantages:
 * Ensure that each interviewer has a unique script or guide that covers different material, or material from a different angle than other interviews. (For more detail on this, see the Ask Only New Questions section of Interviewing Best Practices, page 63.)
 
 As ever, there is no free lunch, and the benefits of hiring as a startup also come with tradeoffs, primarily in the form of risk. Candidates are almost certain to ask you questions about your company's product market fit, cash on hand or runway, company culture, and work/life balance. I encourage you to be candid with candidates about these factors, work with your executive team on the facts on the ground, and have good answers to these questions when asked.""",
-),
+    ),
 
-AppLesson(
-id: "l50",
-title: "Speed is Your Friend!",
-content: """Remember, speed is your friend when recruiting top talent. If you can move somebody through your full process in a week, you give your startup a major advantage against larger companies whose processes often take months to arrive at a decision.""",
-),
+    AppLesson(
+      title: "Speed is Your Friend!",
+      body: """Remember, speed is your friend when recruiting top talent. If you can move somebody through your full process in a week, you give your startup a major advantage against larger companies whose processes often take months to arrive at a decision.""",
+    ),
 
-AppLesson(
-id: "l51",
-title: "When To Hire: Headcount Planning",
-content: """Cash is the lifeblood of a young and not-yet-profitable startup, so the decision to commit to a recurring $100,000-plus a year expense in the form of a new engineer's salary should not be taken lightly. Several key factors contribute to headcount decisions, foremost among them need, prioritization, timing, and budget.""",
-),
+    AppLesson(
+      title: "When To Hire: Headcount Planning",
+      body: """Cash is the lifeblood of a young and not-yet-profitable startup, so the decision to commit to a recurring $100,000-plus a year expense in the form of a new engineer's salary should not be taken lightly. Several key factors contribute to headcount decisions, foremost among them need, prioritization, timing, and budget.""",
+    ),
 
-AppLesson(
-id: "l52",
-title: "Role Need/Team Gap",
-content: """The first step towards deciding to hire is identifying a gap in the team. Gaps come in several forms. Commonly, at an early stage in a company's development, it's simply a skill gap. For example, your business decides that mobile apps are going to be a key element of your go-to-market strategy, and your founding team has never worked in mobile before. Certainly, they could learn and become effective over time, but it would be far more efficient in both the short and long term to hire a senior engineer who has experience in and desire to work on mobile to build and maintain that project.
+    AppLesson(
+      title: "Role Need/Team Gap",
+      body: """The first step towards deciding to hire is identifying a gap in the team. Gaps come in several forms. Commonly, at an early stage in a company's development, it's simply a skill gap. For example, your business decides that mobile apps are going to be a key element of your go-to-market strategy, and your founding team has never worked in mobile before. Certainly, they could learn and become effective over time, but it would be far more efficient in both the short and long term to hire a senior engineer who has experience in and desire to work on mobile to build and maintain that project.
 
 Other kinds of gaps include seniority gaps (not enough senior experience to make good decisions, or not enough junior talent to handle less complex tasks), management gaps (one manager responsible for too many people), or subject matter expertise gaps (no one on the team who understands an area of the industry well enough to guide decision-making).
 
 The other major justification for a hire is to increase total bandwidth on a team. These kinds of hires should be aligned with some kind of business objective, or product roadmap, that justifies bringing on a new permanent team member at a given time.""",
-),
+    ),
 
-AppLesson(
-id: "l53",
-title: "Role Prioritization And Timing",
-content: """Once you've identified a gap, the next question to ask is when that gap needs to be filled. Taking into account the lead time required to get a great hire, when does it make sense to start the hiring process?
+    AppLesson(
+      title: "Role Prioritization And Timing",
+      body: """Once you've identified a gap, the next question to ask is when that gap needs to be filled. Taking into account the lead time required to get a great hire, when does it make sense to start the hiring process?
 
 There's generally a pressure to hire ASAP. Try to fend off that pressure, as it's not always the right answer. Every new person you hire adds complexity and overhead to your team. Assuming the pain of having the gap isn't severe, if you can get away with a smaller team for another six months and delay the hire, that can be a good idea as it both reduces cost and gives you more time to build a case for the hire.
 
 Headcount or hiring requests from your team will often have to compete with requests from other teams, so it's useful to develop a common language across your company for discussing how urgent or important a hire is. This doesn't have to be very sophisticated; it could be a 0-5 ranking system, where a 0 represents an urgent need, and a 5 a hire that would be nice to have but can wait a few months or quarters before becoming urgent.""",
-),
+    ),
 
-AppLesson(
-id: "l54",
-title: "Budgeting For New Hires",
-content: """At an unprofitable startup, you should have a financial model that rationalizes expenses vs. revenue and forecasts roughly how long your current cash on hand will last before you need another fundraising round. Most CEOs and CFOs have a deep and intimate understanding of this model; as a tech leader, you won't need to spend nearly as much time with it.
+    AppLesson(
+      title: "Budgeting For New Hires",
+      body: """At an unprofitable startup, you should have a financial model that rationalizes expenses vs. revenue and forecasts roughly how long your current cash on hand will last before you need another fundraising round. Most CEOs and CFOs have a deep and intimate understanding of this model; as a tech leader, you won't need to spend nearly as much time with it.
 
 However, it's essential that you maintain a clear picture of your department's contribution to that model, which will primarily come in the form of headcount expenses (current and future). This model should provide some level of constraint, in the form of either an annualized budget or an expense run-rate, that will guide the timing of your hires.""",
-),
+    ),
 
-AppLesson(
-id: "l55",
-title: "Hiring Goals and Objectives",
-content: """Just as with designing software systems, when you sit down to design your interview process, you should begin by considering your requirements and goals. While every company should and will have its own requirements and perspective, here are some of the things I consider when designing an interview process:
+    AppLesson(
+      title: "Hiring Goals and Objectives",
+      body: """Just as with designing software systems, when you sit down to design your interview process, you should begin by considering your requirements and goals. While every company should and will have its own requirements and perspective, here are some of the things I consider when designing an interview process:
 
 **Efficiency:** How much time and cost does it take to hire a candidate?
 
@@ -714,80 +664,71 @@ content: """Just as with designing software systems, when you sit down to design
 **Equitable opportunities:** Have you ensured that every person has a fair shot at being hired, and avoided unconscious bias as much as possible?
 
 **Scalability:** Can people other than you run the process and be as effective/have a success rate similar to yours?""",
-),
+    ),
 
-AppLesson(
-id: "l56",
-title: "Efficiency",
-content: """Hiring well is an expensive undertaking for your company. That cost comes in actual dollars, be it for recruiters, job board listings, or job advertisements. It also costs time, primarily in employee time spent conducting interviews. As you design your interview process, consider what your intention is with each step, what you are filtering for, and what is the most efficient way to accomplish that filtering.
+    AppLesson(
+      title: "Efficiency",
+      body: """Hiring well is an expensive undertaking for your company. That cost comes in actual dollars, be it for recruiters, job board listings, or job advertisements. It also costs time, primarily in employee time spent conducting interviews. As you design your interview process, consider what your intention is with each step, what you are filtering for, and what is the most efficient way to accomplish that filtering.
 
 One way to reduce or at least spread out the time investment is to include other team members in the hiring process. Depending on the subject matter of a given interview, you don't always need your most senior engineers in the room. A hiring coordinator, with appropriate training, can do a phone screen, a culture interview, or a reference check just as effectively as a senior engineer or executive.""",
-),
+    ),
 
-AppLesson(
-id: "l57",
-title: "Success Rate",
-content: """Not every hire is going to be a home run for your company. Some will be leveled incorrectly, some won't be a culture fit, and others will be fired or quit in the first year. Especially as you scale an interview process, you need to measure how many hires are successful. This is one of the few opportunities as a technical leader where you can calculate clear, consistent, and indicative metrics, so take advantage and ensure your process is top notch. Consider tracking time to hire (from posting a job description until a new hire start date), overall employee retention, new hire attrition (or down-leveling), as well as how many new hires are promoted in their first two years.
+    AppLesson(
+      title: "Success Rate",
+      body: """Not every hire is going to be a home run for your company. Some will be leveled incorrectly, some won't be a culture fit, and others will be fired or quit in the first year. Especially as you scale an interview process, you need to measure how many hires are successful. This is one of the few opportunities as a technical leader where you can calculate clear, consistent, and indicative metrics, so take advantage and ensure your process is top notch. Consider tracking time to hire (from posting a job description until a new hire start date), overall employee retention, new hire attrition (or down-leveling), as well as how many new hires are promoted in their first two years.
 
 As Andy Grove discusses in *High Output Management*, even a world- class interview process is successful only about 70 percent of the time. Fundamentally, there are many risks in hiring: you're trying to predict how someone will perform forty hours a week, week in and week out, based on just a few conversations and data points gathered in an interview process.
 
 The best leaders track their success rate, are not afraid of admitting hiring mistakes, and will hire slow, fire fast.
 
 There's no getting around it: firing a new employee who isn't working out shortly after they were hired is socially awkward and uncomfortable for everyone. It is, however, the responsible thing to do for your team. Some practices to help provide transparency to new employees and assist managers in making good decisions include implementing a formal ninety-day probationary or introductory period and required new-employee/ manager check-ins every fifteen or thirty days, or using a contract-to-hire employment structure.""",
-),
+    ),
 
-AppLesson(
-id: "l58",
-title: "Candidate Experience",
-content: """Candidate experience is how candidates feel about your company during and after they go through your hiring process. Many candidates will do due diligence on your company before applying or interviewing. They are likely to look at online forums and social media and see what other candidates or employees who went through your process have to say about you.
+    AppLesson(
+      title: "Candidate Experience",
+      body: """Candidate experience is how candidates feel about your company during and after they go through your hiring process. Many candidates will do due diligence on your company before applying or interviewing. They are likely to look at online forums and social media and see what other candidates or employees who went through your process have to say about you.
 
 You can't always control what people say about you, but nonetheless, you want to provide the sort of candidate experience that makes them more likely to read good things online, have a great experience themselves, and thus be more inclined to continue with your interviews and accept your offers.""",
-),
+    ),
 
-AppLesson(
-id: "l59",
-title: "Equitable Opportunities",
-content: """There's a saying that people tend to hire people who look like themselves. This is often the result of unsophisticated interview scoring methods that simply rely on an interviewer's gut feeling, and gut feelings are often strongly influenced by unconscious bias. This bias can disadvantage candidates of other races, genders, ethnicities, etc.
+    AppLesson(
+      title: "Equitable Opportunities",
+      body: """There's a saying that people tend to hire people who look like themselves. This is often the result of unsophisticated interview scoring methods that simply rely on an interviewer's gut feeling, and gut feelings are often strongly influenced by unconscious bias. This bias can disadvantage candidates of other races, genders, ethnicities, etc.
 
 As you design your interview process, you should focus on evaluations based on a rubric that aligns with requirements from a job description, not just an interviewer's gut feeling. See the Avoiding Bias section in Interviewing Best Practices, page 63, for more about avoiding biases.""",
-),
+    ),
 
-AppLesson(
-id: "l60",
-title: "Scalability",
-content: """It's all well and good if you, individually, are capable of hiring effectively. At some point, there will be more open roles than you can hire yourself, and you'll need to scale the process and bring in other people. To do so effectively, you must build a repeatable system that others can leverage to identify top talent and hire with the same efficacy and success rate as you.
+    AppLesson(
+      title: "Scalability",
+      body: """It's all well and good if you, individually, are capable of hiring effectively. At some point, there will be more open roles than you can hire yourself, and you'll need to scale the process and bring in other people. To do so effectively, you must build a repeatable system that others can leverage to identify top talent and hire with the same efficacy and success rate as you.
 
 That means that somebody else will need to be able to conduct the same interviews and draw the same conclusions at the end of that process that you likely would have if you'd conducted the interviews yourself.
 
 The goal of the remainder of this section is to help you create a scalable system for interviewing and hiring that fits your organization's goals and can work seamlessly *without* your direct involvement (once you've taken the time to calibrate it). By defining and deploying this kind of structure, creating thoughtful documentation, and templating, you enable others to conduct interviews and produce candidate ranking scores that would closely mirror your own.""",
-),
+    ),
 
-AppLesson(
-id: "l61",
-title: "The Job Description",
-content: """Many companies underestimate the value of a great job description. A really good job description does two main things for you: it helps you create clarity and alignment internally with your company on what the role does and the value it can offer, and it advertises your company and attracts the kind of applicants that could be a good fit.""",
-),
+    AppLesson(
+      title: "The Job Description",
+      body: """Many companies underestimate the value of a great job description. A really good job description does two main things for you: it helps you create clarity and alignment internally with your company on what the role does and the value it can offer, and it advertises your company and attracts the kind of applicants that could be a good fit.""",
+    ),
 
-AppLesson(
-id: "l62",
-title: "Surveying the Market",
-content: """Before starting to write a job description I encourage you to do a survey of the market. Look at competing or similar companies and the job descriptions they have for similar roles.
+    AppLesson(
+      title: "Surveying the Market",
+      body: """Before starting to write a job description I encourage you to do a survey of the market. Look at competing or similar companies and the job descriptions they have for similar roles.
 
 Often these posts can provide good inspiration and calibration, especially when you're hiring for less common roles that may not be as well addressed by the scalable system you've put in place.""",
-),
+    ),
 
-AppLesson(
-id: "l63",
-title: "Creating Clarity on a Role",
-content: """The traditional job description has a brief description of what the role will do, followed by a bulleted list of requirements for the candidate. I encourage you to write more than that. Rather than focusing on what a successful candidate will do in a particular role, think through the purpose the role serves. What outcomes does the role drive? What kind of impact do you expect from this role in three, six, or twelve months? You may or may not want to publish the answer to these questions as part of the job description, but the exercise of going into detail on expectations will prove valuable nonetheless.
+    AppLesson(
+      title: "Creating Clarity on a Role",
+      body: """The traditional job description has a brief description of what the role will do, followed by a bulleted list of requirements for the candidate. I encourage you to write more than that. Rather than focusing on what a successful candidate will do in a particular role, think through the purpose the role serves. What outcomes does the role drive? What kind of impact do you expect from this role in three, six, or twelve months? You may or may not want to publish the answer to these questions as part of the job description, but the exercise of going into detail on expectations will prove valuable nonetheless.
 
 Socialize the answers to these questions with other leaders at your organization and ensure they agree with the answers. Don't be surprised if you get significant feedback on the first version of the responsibilities and outcomes of a role. At most startups, before a headcount is formally opened, there is a high-level, unstructured conversation around a specific title. Oh, we need to hire a senior JavaScript backend engineer. The act of writing and socializing the job description enables your team to get precise about what the company really needs, so it's natural that you'll need to do a few revisions.""",
-),
+    ),
 
-AppLesson(
-id: "l64",
-title: "Job Descriptions Advertisements",
-content: """Everything your company posts publicly is a reflection of your culture and brand. A job description is no exception. The job description targets the single most valuable customer of that culture and brand: your employees, present and future. Ideally, the right candidate someone who not only meets your job requirements but who is also a great culture fit reads your job description and is excited about both the role and the company itself.
+    AppLesson(
+      title: "Job Descriptions Advertisements",
+      body: """Everything your company posts publicly is a reflection of your culture and brand. A job description is no exception. The job description targets the single most valuable customer of that culture and brand: your employees, present and future. Ideally, the right candidate someone who not only meets your job requirements but who is also a great culture fit reads your job description and is excited about both the role and the company itself.
 
 Some ways to help your job description reflect your culture:
 
@@ -806,30 +747,27 @@ In addition to elements aimed to pique candidate interest, it's a good idea to i
 * Include location, on-site requirements, and whether remote work is allowed and to what extent.
 
 * Include time zone/working hour requirements.""",
-),
+    ),
 
-AppLesson(
-id: "l65",
-title: "Sourcing Candidates",
-content: """When it comes to filling roles in your organization, you'll source qualified candidates in three ways: inbound recruiting, outbound recruiting, and referrals. An effective, scalable hiring process should be designed to leverage all three methods.""",
-),
+    AppLesson(
+      title: "Sourcing Candidates",
+      body: """When it comes to filling roles in your organization, you'll source qualified candidates in three ways: inbound recruiting, outbound recruiting, and referrals. An effective, scalable hiring process should be designed to leverage all three methods.""",
+    ),
 
-AppLesson(
-id: "l66",
-title: "Inbound Recruiting",
-content: """Inbound recruiting is about marketing your job opening and collecting voluntary candidate applications. Much like any other marketing exercise, a one-channel approach may not be enough to drive results.
+    AppLesson(
+      title: "Inbound Recruiting",
+      body: """Inbound recruiting is about marketing your job opening and collecting voluntary candidate applications. Much like any other marketing exercise, a one-channel approach may not be enough to drive results.
 
 As such, posting a job description on a job board is the bare minimum. Depending on the state of the market, how many roles you're hiring for, and the quality/clarity of your job description, the posting alone may be sufficient. Often you'll need to do more to draw in top talent, including actively promoting your roles in specialized tech communities and/or marketing your brand via conference attendance/sponsorship, a company blog, social media outreach, etc.
 
 There is no universal best venue for placing classified ads that great employees turn to. Keep your ear to the ground for whatever platform/job site seems to be most common and post your job description accordingly. This is something a good Applicant Tracking System (ATS) will help you with, as it can track a referral source for every candidate and provide metrics around which job boards bring in better/more candidates that make it deeper into your process than others. When hiring designers in particular, it's important to talk to some working designers about where the most popular portfolio hosting sites are and maintain a presence on those job boards to find the best candidates.
 
 You'll also want to monitor how many applications you're receiving for each role. At a minimum, your hiring manager(s) should be looking at the state of the funnel for their roles on a weekly basis and adjusting their approach accordingly. If a role isn't getting enough applicants (or is attracting the wrong applicants), then change something! Try tweaking the job title or posting the job description to new channels. A key element of a strong hiring process is the same as any other process you build for your team: a humble willingness to revisit past decisions and improve over time.""",
-),
+    ),
 
-AppLesson(
-id: "l67",
-title: "Outbound Recruiting",
-content: """Outbound recruiting involves proactively reaching out to target candidates and encouraging them to apply for your role. This can be done by you, your team, an internal recruiter, and/or an external recruiter. I encourage teams to start their hiring process with inbound recruiting and in-house outbound recruiting first. By actually doing the recruiting, talking to the candidates, and listening to their reactions to your pitch, you'll learn a lot about the market and what top candidates think of what you're selling. you'll also get a sense of how competitive your offer is and how easy or hard it is to find candidates that match your job description, perhaps even leading you to tweak it. Once you've fine-tuned the role and know exactly whom and what you're looking for, you'll be ready to give optimized guidance to an external recruiter, which will help them source candidates more effectively on your behalf.
+    AppLesson(
+      title: "Outbound Recruiting",
+      body: """Outbound recruiting involves proactively reaching out to target candidates and encouraging them to apply for your role. This can be done by you, your team, an internal recruiter, and/or an external recruiter. I encourage teams to start their hiring process with inbound recruiting and in-house outbound recruiting first. By actually doing the recruiting, talking to the candidates, and listening to their reactions to your pitch, you'll learn a lot about the market and what top candidates think of what you're selling. you'll also get a sense of how competitive your offer is and how easy or hard it is to find candidates that match your job description, perhaps even leading you to tweak it. Once you've fine-tuned the role and know exactly whom and what you're looking for, you'll be ready to give optimized guidance to an external recruiter, which will help them source candidates more effectively on your behalf.
 
 Not all external recruiters are the same. You want somebody who meets all of these criteria:
 
@@ -840,58 +778,51 @@ Not all external recruiters are the same. You want somebody who meets all of the
 * Motivated to follow up relentlessly without being pushy or obnoxious
 
 * Inclined to value the relationship with both you and the candidate more than the commission for a single placement""",
-),
+    ),
 
-AppLesson(
-id: "l68",
-title: "Referrals",
-content: """The highest return on investment in hiring comes from internal referrals, i.e., referrals from your existing employees. People are much more likely to want to do business with a company that is spoken highly of by a current team member, and it's often easier to find a cultural fit when the candidate has already been vetted by someone familiar with your culture. You can encourage internal referrals by providing cash incentives (see sidebar) or having good communication with referees as to the status of their referrals.
+    AppLesson(
+      title: "Referrals",
+      body: """The highest return on investment in hiring comes from internal referrals, i.e., referrals from your existing employees. People are much more likely to want to do business with a company that is spoken highly of by a current team member, and it's often easier to find a cultural fit when the candidate has already been vetted by someone familiar with your culture. You can encourage internal referrals by providing cash incentives (see sidebar) or having good communication with referees as to the status of their referrals.
 
 Given that referrals have such a high chance of success, you want to provide the best possible candidate experience. You may also want to consider an abbreviated (but fair) hiring process. Skipping or compressing any top-of-funnel coarse filters, such as phone screens or qualification forms, may be appropriate. You may also want to encourage the referrer to contribute a paragraph or two, in writing, justifying their referral.""",
-),
+    ),
 
-AppLesson(
-id: "l69",
-title: "A Note on the Mathematics of Incentivizing Referrals",
-content: """Based on the data you likely already have, it's relatively easy to approximate the cost (in both time and actual dollars spent) to hire a new engineer for your company. If you consider that referrals often have a substantially higher conversion rate to hire, it becomes clear that referrals save thousands to tens of thousands of dollars, which can help you justify a multi-thousand-dollar bonus to any employee who refers a candidate who is ultimately hired and stays in their role for more than a few months.""",
-),
+    AppLesson(
+      title: "A Note on the Mathematics of Incentivizing Referrals",
+      body: """Based on the data you likely already have, it's relatively easy to approximate the cost (in both time and actual dollars spent) to hire a new engineer for your company. If you consider that referrals often have a substantially higher conversion rate to hire, it becomes clear that referrals save thousands to tens of thousands of dollars, which can help you justify a multi-thousand-dollar bonus to any employee who refers a candidate who is ultimately hired and stays in their role for more than a few months.""",
+    ),
 
-AppLesson(
-id: "l70",
-title: "Interviewing Best Practices",
-content: """The interview flow is where the rubber meets the road on your ability to determine how well a candidate fits the role you're hiring for. Keep in mind that there is no perfect interview. The amount of data an interviewer collects in a sparse few hours with a candidate, of course, cannot perfectly predict how well somebody will do full-time on the job for months and years to come.
+    AppLesson(
+      title: "Interviewing Best Practices",
+      body: """The interview flow is where the rubber meets the road on your ability to determine how well a candidate fits the role you're hiring for. Keep in mind that there is no perfect interview. The amount of data an interviewer collects in a sparse few hours with a candidate, of course, cannot perfectly predict how well somebody will do full-time on the job for months and years to come.
 
 In this section, I cover some high-level interviewing best practices, and then provide some background and context on the various steps of interviewing, including candidate/résumé intake forms, phone screens, culture interviews, technical interviews, coding assignments, or take-home assignments, executive interviews, and finally reference checks.""",
-),
+    ),
 
-AppLesson(
-id: "l71",
-title: "Rejected Candidates Opinions Matter",
-content: """When designing your interview process, your candidate experience should be top of mind and a top priority. Even if you choose not to hire a candidate, that person will walk away with an impression good or bad of you and your company. That impression may lead to them singing your praises to those in their professional network who may someday apply for your roles. Or that impression could lead them to rant negatively about you every chance they get.
+    AppLesson(
+      title: "Rejected Candidates Opinions Matter",
+      body: """When designing your interview process, your candidate experience should be top of mind and a top priority. Even if you choose not to hire a candidate, that person will walk away with an impression good or bad of you and your company. That impression may lead to them singing your praises to those in their professional network who may someday apply for your roles. Or that impression could lead them to rant negatively about you every chance they get.
 
 Job boards and Google reviews are littered with the evidence of interviews running amok, and it's very difficult to undo the damage to your reputation once it's been done. While it's true that, for some candidates, no amount of respect and consideration on your part will prevent the bitter sting of rejection from poisoning their takeaway opinion of you, those people are in the minority. For most candidates who get to the interview stage, a respectful and thoughtful interviewing process will leave them with a neutral-to-positive feeling about your company and help you avoid negative press online.""",
-),
+    ),
 
-AppLesson(
-id: "l72",
-title: "Be Timely And Make Scheduling Easy",
-content: """Ideally, you/your team will communicate the steps and scope of your hiring process to candidates upfront and leverage an easy, reliable solution for scheduling those steps in real time. For example, you can choose to (A) designate a hiring manager to handle all of the scheduling during business hours, (B) schedule all of the interviews in advance, or (C) provide an online tool that candidates can use to schedule their interviews asynchronously on their own time.
+    AppLesson(
+      title: "Be Timely And Make Scheduling Easy",
+      body: """Ideally, you/your team will communicate the steps and scope of your hiring process to candidates upfront and leverage an easy, reliable solution for scheduling those steps in real time. For example, you can choose to (A) designate a hiring manager to handle all of the scheduling during business hours, (B) schedule all of the interviews in advance, or (C) provide an online tool that candidates can use to schedule their interviews asynchronously on their own time.
 
 Truly, anything is better than requiring each interviewer to email each candidate before each interview to set up schedules sequentially, which can drag out an interview process over weeks or months.""",
-),
+    ),
 
-AppLesson(
-id: "l73",
-title: "Ask Only New Questions",
-content: """Every interview touchpoint should feel to the candidate like a continuation of the conversation, rather than a rehashing of details that were discussed in prior sessions. Avoiding the latter requires thoughtful structuring and careful planning in advance of your interviews.
+    AppLesson(
+      title: "Ask Only New Questions",
+      body: """Every interview touchpoint should feel to the candidate like a continuation of the conversation, rather than a rehashing of details that were discussed in prior sessions. Avoiding the latter requires thoughtful structuring and careful planning in advance of your interviews.
 
 Ideally, subsequent interviews should be used to dive deeper and explore areas specific to a candidate or role, where both parties are looking to fully understand key strengths and weaknesses. Sharing suggested areas to focus on or new questions to ask with subsequent interviewers via an Applicant Tracking System (ATS) is a great way to ensure continuity, efficiency, and a great candidate experience that can reveal whether or not your potential hires are a true fit for your team.""",
-),
+    ),
 
-AppLesson(
-id: "l74",
-title: "Avoid Unconscious Bias",
-content: """If you're unfamiliar with the phrase unconscious bias, I encourage you to read *Thinking Fast and Slow* by Daniel Kahneman. It's my go-to book for understanding many types of systematic errors our brains make.
+    AppLesson(
+      title: "Avoid Unconscious Bias",
+      body: """If you're unfamiliar with the phrase unconscious bias, I encourage you to read *Thinking Fast and Slow* by Daniel Kahneman. It's my go-to book for understanding many types of systematic errors our brains make.
 
 It's actually very easy to unintentionally advantage or disadvantage a candidate in ways that are not justified. Inevitably, this will result in worse hiring outcomes or potentially costly legal battles.
 
@@ -905,20 +836,18 @@ To avoid anchoring or biasing subsequent interviewers, I encourage interviewers 
 Most of the interview feedback should consist of detailed notes and scores against the job-specific scoring guide which has your interview questions planned out in advance (for more, see Technical Interviews, page 76). This feedback should ideally not be read by subsequent team members in advance of their interview to avoid bias. For example, if you know the prior interviewer scored the candidate poorly, you may experience confirmation bias and overvalue any areas where a candidate does poorly in your interview.
 
 The second type of feedback, subsequent interview suggestions, should focus on areas for emphasis or more in-depth exploration in subsequent interviews and not reveal data that might overtly bias further interviews.""",
-),
+    ),
 
-AppLesson(
-id: "l75",
-title: "Usage Of An Applicant Tracking System (ATS)",
-content: """When interviewing more than two or three candidates simultaneously, it can require a substantial effort to manage the logistics of where candidates stand in the process, coordinate notes from interviewers, and communicate consistently and promptly with candidates as they move through the funnel. Without a finely tuned system to manage all of these logistics, it's easy for candidate experience to suffer and for hiring costs to rise. This is a universal problem, and several high-quality, off-the-shelf Applicant Tracking System (ATS) solutions have been developed at various price points and levels of sophistication to address this problem.
+    AppLesson(
+      title: "Usage Of An Applicant Tracking System (ATS)",
+      body: """When interviewing more than two or three candidates simultaneously, it can require a substantial effort to manage the logistics of where candidates stand in the process, coordinate notes from interviewers, and communicate consistently and promptly with candidates as they move through the funnel. Without a finely tuned system to manage all of these logistics, it's easy for candidate experience to suffer and for hiring costs to rise. This is a universal problem, and several high-quality, off-the-shelf Applicant Tracking System (ATS) solutions have been developed at various price points and levels of sophistication to address this problem.
 
 The guidance here is simple: choose and onboard an ATS early. Don't wait until your process is already underwater to take action. Train your team, require widespread adoption of the system, and set expectations for its use with HR, hiring managers, and interviewers.""",
-),
+    ),
 
-AppLesson(
-id: "l76",
-title: "Selling Candidates",
-content: """As mentioned earlier, I highly encourage hiring managers to think of the interview process as a sales process. This naturally leads to several good habits that translate seamlessly from sales to interviews:
+    AppLesson(
+      title: "Selling Candidates",
+      body: """As mentioned earlier, I highly encourage hiring managers to think of the interview process as a sales process. This naturally leads to several good habits that translate seamlessly from sales to interviews:
 
 * During the sales process with a customer, you're always focused on selling the prospect on the product, even when you're qualifying the customer. A good sales process regards qualifying candidates as a funnel, with light-touch qualification at the top and progressively more nuanced/time-intensive qualification down-funnel, along with a progressively more customized and tailored sales pitch.
 
@@ -930,12 +859,11 @@ content: """As mentioned earlier, I highly encourage hiring managers to think of
 * Always leave candidates some time (five or ten minutes) to ask questions at the end of the interview. Most qualified candidates come to interviews armed with questions, and you can learn a lot about what somebody cares about by what they choose to ask. This is a good opportunity for your interviewer to sell the benefits of your company in their responses.
 
 * Along the way, ensure candidates feel respected and are progressively exposed to more of your company. Your best candidates need to feel like they were intelligently vetted *and* like they've learned enough about the company to get excited. Ideally, you want even rejected candidates to be able to leave positive reviews on Google and Glassdoor. You can accomplish that by selling your company's benefits throughout the interview, respecting people's time as if it were your own, having consistent and timely communication, and ensuring that everyone feels the process was as fair and transparent as possible.""",
-),
+    ),
 
-AppLesson(
-id: "l77",
-title: "Intake Forms",
-content: """The beginning of the interview funnel is a form that achieves two goals: it provides the candidate with some information about your company and its hiring process, and thus a sample of its culture; and it takes in a bunch of information from the candidate to act as an inexpensive, coarse-grained filter.
+    AppLesson(
+      title: "Intake Forms",
+      body: """The beginning of the interview funnel is a form that achieves two goals: it provides the candidate with some information about your company and its hiring process, and thus a sample of its culture; and it takes in a bunch of information from the candidate to act as an inexpensive, coarse-grained filter.
 
 Intake Form Preamble
 
@@ -946,12 +874,11 @@ At the top of your intake form, you should outline several key pieces of informa
 * Reiterate your company's core values and provide a sample of your culture.
 
 * Set expectations for the hiring process, how long it will take, how many steps there are, and generally what the process looks like.""",
-),
+    ),
 
-AppLesson(
-id: "l78",
-title: "Intake Form Questionnaire",
-content: """The questionnaire should include a request for the candidate's résumé (or LinkedIn profile URL), ask some questions required by legal and HR with respect to employment eligibility, and then ideally ask a few qualifying questions of the candidate. The qualifying questions should be light-touch, generally freeform, and possibly even technical questions to ensure the candidate is in the right ballpark for the role. For example, for a role that requires experience in JavaScript, it's not unreasonable to confirm that experience in the questionnaire with a question like, Rate your comfort level working with JavaScript on a scale from not comfortable to extremely comfortable.
+    AppLesson(
+      title: "Intake Form Questionnaire",
+      body: """The questionnaire should include a request for the candidate's résumé (or LinkedIn profile URL), ask some questions required by legal and HR with respect to employment eligibility, and then ideally ask a few qualifying questions of the candidate. The qualifying questions should be light-touch, generally freeform, and possibly even technical questions to ensure the candidate is in the right ballpark for the role. For example, for a role that requires experience in JavaScript, it's not unreasonable to confirm that experience in the questionnaire with a question like, Rate your comfort level working with JavaScript on a scale from not comfortable to extremely comfortable.
 
 This may seem redundant to the requirements listed in the job description, and it is, though you'd be surprised how many résumés will come through lacking basic qualifications. These questions are quick/trivial for the candidate to answer and just as quick for a hiring manager to use to filter out applicants.
 
@@ -968,12 +895,11 @@ Some example questions for an intake form covering broad compatibility and self-
 * What are your geographic expectations (location, remote, on-site)?
 
 * How familiar are you with basic technical qualifiers: rank familiarity with [relevant programming language or tool] on a scale of 1-10?""",
-),
+    ),
 
-AppLesson(
-id: "l79",
-title: "Phone Screen",
-content: """The initial phone screen, like everything in the interview process, serves a dual function: it's an opportunity to learn more about the candidate, and it's the candidate's first interaction with (and evaluation of) a human at your company.
+    AppLesson(
+      title: "Phone Screen",
+      body: """The initial phone screen, like everything in the interview process, serves a dual function: it's an opportunity to learn more about the candidate, and it's the candidate's first interaction with (and evaluation of) a human at your company.
 
 Given that this is the first person the candidate will have an interaction with at your company, it's worth thinking carefully about who conducts the interview. The questions at this point should not be very technical in nature and so it's not necessary that the interview be conducted by a member of the technical team. Often it is done by HR or a dedicated recruiting team.
 
@@ -997,12 +923,11 @@ The exact questions asked in a phone screen are thus not super important. Here i
 * Confirm compensation expectations are aligned and explain benefits/perks.
 
 In addition to good answers to the questions, the interviewer should gauge their general fit for the role. Does the candidate communicate clearly, do they seem like a culture fit, does their claimed experience match what they have on their résumé, and are they interested in the company and opportunity?""",
-),
+    ),
 
-AppLesson(
-id: "l80",
-title: "Culture Interview",
-content: """One of the major criteria you're looking for in your interview process is culture fit. Culture fit is all the elements of a candidate's personality, beyond their experience and skills, that will enable them to be successful in your organization. In order to effectively screen candidates for culture fit, your company should have a fairly clear idea of what its culture is. This can look like many things, for example, a list of core values, a mission statement, a vision statement, guiding principles. Whatever they are, they should be authentic and true to the company. If you're struggling on this, I would refer you to *Team of Teams* by Stanley McChrystal, *Work Rules!* by Laszlo Bock, and *Good Authority* by Jonathan Raymond.
+    AppLesson(
+      title: "Culture Interview",
+      body: """One of the major criteria you're looking for in your interview process is culture fit. Culture fit is all the elements of a candidate's personality, beyond their experience and skills, that will enable them to be successful in your organization. In order to effectively screen candidates for culture fit, your company should have a fairly clear idea of what its culture is. This can look like many things, for example, a list of core values, a mission statement, a vision statement, guiding principles. Whatever they are, they should be authentic and true to the company. If you're struggling on this, I would refer you to *Team of Teams* by Stanley McChrystal, *Work Rules!* by Laszlo Bock, and *Good Authority* by Jonathan Raymond.
 
 Currently, there are few formally structured interview programs that are widely used. The one that does come up fairly regularly is called *topgrading* which refers to at least two different things: the topgrading method and the topgrading interview. The topgrading method ([ctohb.com/topgrading](https://ctohb.com/topgrading)) is a hiring methodology that was purportedly developed by General Electric in the 1980s/90s and written about in Verne Harnish's *Scaling Up*. The topgrading interview ([ctohb.com/interview](ctohb.com/interview)), which I call the culture interview, is a specific interview agenda, style, and structure designed to learn about a candidate's background and cultural fit.
 
@@ -1023,12 +948,11 @@ For each role, topgrading has the interviewer ask the following questions:
 In addition to this interview formula, topgrading suggests a two-interviewer approach: the lead, who is actively engaging in conversation and getting curious with the candidate; and a dedicated notetaker.
 
 Whether you're using one or two interviewers, taking notes is critically important. To review candidates fairly, you will want to create a scorecard which evaluates a candidate's answers, looking for alignment to your company culture. For example, if respectful challenge is a company core value, ask the candidate if they could identify any instances of challenging respectfully. Or did they speak disrespectfully about any past coworkers? Using notes after the interview to complete and justify scores on a scorecard is essential.""",
-),
+    ),
 
-AppLesson(
-id: "l81",
-title: "Coding Challenge",
-content: """Requiring take-home assignments also referred to as coding challenges or interviewing homework is a controversial topic. Take-homes are often a significant investment of time for candidates and are thus a significant source of candidate drop-off in the hiring funnel. It's not hard to imagine in-demand candidates being asked to do several take-homes, each of them requiring many hours or days of work, adding up to weeks of work. When facing those requests, it's understandable that candidates will prioritize the assignments for companies they are most excited about and/or have the most tractable assignments.
+    AppLesson(
+      title: "Coding Challenge",
+      body: """Requiring take-home assignments also referred to as coding challenges or interviewing homework is a controversial topic. Take-homes are often a significant investment of time for candidates and are thus a significant source of candidate drop-off in the hiring funnel. It's not hard to imagine in-demand candidates being asked to do several take-homes, each of them requiring many hours or days of work, adding up to weeks of work. When facing those requests, it's understandable that candidates will prioritize the assignments for companies they are most excited about and/or have the most tractable assignments.
 
 Despite these structural challenges, from a hiring manager's perspective, it's critical to have one. How can you hire a software engineer without having had them write code for you?
 
@@ -1039,12 +963,11 @@ To summarize, there are three competing factors:
 **Minimize Drop Off:** Employers desire to have candidates actually complete coding assignments and not fall out in the funnel.
 
 **Improve Candidate Experience:** Candidates desire to feel like their time is respected and the assigned tasks are reasonable. Ideally, a candidate should learn more about your company through this assignment and be even more excited about your opportunity.""",
-),
+    ),
 
-AppLesson(
-id: "l82",
-title: "Predictive Ability",
-content: """There are several styles of coding interview or assignment. Assignments range from take-home projects with a prompt, to using an online platform for programming exercises (also sometimes known as code katas), to live pair programming. Absent any empirical data about the predictive capability of these styles, I encourage you to design an exercise that looks as much like regular day-to-day work at your company as possible. If you don't do any pair programming at your company, then gauging how a candidate performs in an interview setting pair programming, intuitively, doesn't feel highly correlated/predictive. At the very least it's collecting tangential signals.
+    AppLesson(
+      title: "Predictive Ability",
+      body: """There are several styles of coding interview or assignment. Assignments range from take-home projects with a prompt, to using an online platform for programming exercises (also sometimes known as code katas), to live pair programming. Absent any empirical data about the predictive capability of these styles, I encourage you to design an exercise that looks as much like regular day-to-day work at your company as possible. If you don't do any pair programming at your company, then gauging how a candidate performs in an interview setting pair programming, intuitively, doesn't feel highly correlated/predictive. At the very least it's collecting tangential signals.
 
 As a manager, your aim is to get the best out of the people you work with. With that in mind, try and recall the last time you were interviewed and exercise your empathy muscle when designing your coding assignment. Being interviewed is, for most, a very stressful process, and being asked to be creative or problem-solve in that scenario doesn't always bring out the best performance. Some ways to help candidates do their best work on a coding assignment are:
 
@@ -1054,12 +977,11 @@ As a manager, your aim is to get the best out of the people you work with. With 
   * If you're indexing strongly on signals from the coding process such that take-homes are not giving you enough information, consider asking the candidate to record themselves (via Loom or other similar tools) doing a part of the exercise.
 
 * Be explicit about what you're looking for in the candidate's output. For example, if your scorecard measures how well they've documented their code, then ensure the prompt the candidate is given tells them to include documentation. Or if you plan to run the code, let the candidate know whether you'll just be evaluating correctness, or if other elements matter, such as performance, negative cases, etc.""",
-),
+    ),
 
-AppLesson(
-id: "l83",
-title: "Candidate Experience and Drop-Off",
-content: """Candidates are more likely to complete your take-home coding assignment if they find it interesting and easy to get started. The best assignments are topically related to your business and ideally expose the candidate to the kind of problems your company actually faces on a daily basis.
+    AppLesson(
+      title: "Candidate Experience and Drop-Off",
+      body: """Candidates are more likely to complete your take-home coding assignment if they find it interesting and easy to get started. The best assignments are topically related to your business and ideally expose the candidate to the kind of problems your company actually faces on a daily basis.
 
 **Bad example:** You're a web SaaS platform, and you assign a candidate to do a challenge related to mobile phone development.
 
@@ -1071,30 +993,27 @@ To be respectful of a candidate's time, I suggest providing a hard time limit fo
 * Provide ample explanation of the time limit
 * Ensure that the task is readily achievable in the time limit specified
 * Let candidates know how their submission will be evaluated. If your scorecard rates the candidate's README file, then let the candidate know they should spend time writing a README. If the code will be run either live with the candidate or by an interviewer asynchronously let them know that runtime will be judged. If you mostly care about architectural decisions and you're less concerned about runtime performance, let them know that, too, so they can spend time in the right way.""",
-),
+    ),
 
-AppLesson(
-id: "l84",
-title: "Technical Interviews",
-content: """As controversial and varied as the methodologies for take-home coding interviews are, technical interviews themselves are even more varied. In general, I encourage you to follow the same fundamentals: ensure you're collecting signals relevant to the actual job, and be respectful and considerate of candidates themselves.
+    AppLesson(
+      title: "Technical Interviews",
+      body: """As controversial and varied as the methodologies for take-home coding interviews are, technical interviews themselves are even more varied. In general, I encourage you to follow the same fundamentals: ensure you're collecting signals relevant to the actual job, and be respectful and considerate of candidates themselves.
 
 The classic technical interview, practiced by many of the largest tech companies, involves some form of shared whiteboard experience where the candidate is asked to solve a technical problem in real time. The problems range from the academic, sort an array with some special conditions, to high-level/hand-wavy architecture, design a system to handle 100 million users posting news feed updates. The classic interview approach must work for the big companies, as they continue to use it year after year, but I don't see how they work at a startup. They re often overly broad, or overly narrow, and thus difficult to score fairly. The academic questions are rarely correlated with the types of problems one solves on a daily basis on the job.
 
 Most damning, they're not setting candidates up to be successful in the interview environment. After all, I'm sure there are very few engineers at the big companies writing array-sorting algorithms as part of their day job.
 
 The methodology I outline in this chapter represents an alternative approach I've seen and used myself successfully in a startup environment.""",
-),
+    ),
 
-AppLesson(
-id: "l85",
-title: "Methodology",
-content: """What follows is a methodology I've used, derived from lessons in topgrading, to filter and hire senior software engineering candidates. In the spirit of topgrading, I call it the technical focus interview.""",
-),
+    AppLesson(
+      title: "Methodology",
+      body: """What follows is a methodology I've used, derived from lessons in topgrading, to filter and hire senior software engineering candidates. In the spirit of topgrading, I call it the technical focus interview.""",
+    ),
 
-AppLesson(
-id: "l86",
-title: "Technical Focus Interview Guide",
-content: """To find out where a candidate's strengths and weaknesses are, and how much that matters in the role you are hiring for, first you need to decide what topic areas matter for your role. You do this by creating a technical focus interview guide, which should include a list of anywhere from four to eight technical areas, and within each area a set of sample questions, best practice answers, and a scoring guide.
+    AppLesson(
+      title: "Technical Focus Interview Guide",
+      body: """To find out where a candidate's strengths and weaknesses are, and how much that matters in the role you are hiring for, first you need to decide what topic areas matter for your role. You do this by creating a technical focus interview guide, which should include a list of anywhere from four to eight technical areas, and within each area a set of sample questions, best practice answers, and a scoring guide.
 
 The sample answers and scoring guide are included to ensure fairness and uniformity in scoring across multiple interviewers and across candidates. You're trying to differentiate where any given candidate has gaps vs. true expertise, so your questions should be designed to elicit one of three kinds of answers: bad, good, and amazing. Thus, they should lend themselves to being scored as such. When it comes to scoring a question, to make the difference between a knowledge gap and true expertise obvious, I recommend that a bad answer gets a score of 0‒2, a good answer gets a score of 3‒6, and only an amazing answer gets between 7‒10.
 
@@ -1105,20 +1024,18 @@ In the spirit of giving candidates the best chance at success, I don't recommend
 Make no mistake, writing these questions, sample answers, and scoring guides is a lot of work. The good news is that any given question is useful across multiple roles and can be reused over a long period of time. In fact, I encourage you to maintain a central repository of questions (and associated sample answers/scoring guides). When it comes time to write the next technical focus interview guide, you'll find your job much easier by being able to reuse questions from the repository as appropriate.
 
 See (ctohb.com/templates)[https://ctohb.com/templates] for an example focus guide from my own question repository.""",
-),
+    ),
 
-AppLesson(
-id: "l87",
-title: "Hiring Juniors vs. Seniors",
-content: """The qualities you're looking for in a junior hire, with say one to two years of coding experience, should be very different from a senior hire with ten-plus years. The ideal junior hire should be curious, eager to learn, and have solid programming fundamentals and be prepared to work on incremental feature development. A senior hire, by contrast, should come with not just programming fundamentals but deep thinking on architecture, opinions, and best practices across a wide range of tools and problems. They should be able to develop trust that they can not only build incremental features but own and make good decisions in architecture for new greenfield projects. Since the key value these two types of roles offer is so different, it should follow that your interviews for them should be different.
+    AppLesson(
+      title: "Hiring Juniors vs. Seniors",
+      body: """The qualities you're looking for in a junior hire, with say one to two years of coding experience, should be very different from a senior hire with ten-plus years. The ideal junior hire should be curious, eager to learn, and have solid programming fundamentals and be prepared to work on incremental feature development. A senior hire, by contrast, should come with not just programming fundamentals but deep thinking on architecture, opinions, and best practices across a wide range of tools and problems. They should be able to develop trust that they can not only build incremental features but own and make good decisions in architecture for new greenfield projects. Since the key value these two types of roles offer is so different, it should follow that your interviews for them should be different.
 
 For a senior hire, the focus interview where you deeply explore the candidate's decision-making skills, understanding of concepts, and architectural know-how is critical and should be weighed heavily. For a junior role, that knowledge deep-dive should be shorter, and weighed less heavily than a practical coding exercise.""",
-),
+    ),
 
-AppLesson(
-id: "l88",
-title: "The Interview Itself",
-content: """The senior software engineer technical focus interview is typically a sixty to ninety-minute conversation between the candidate and a lead interviewer, ideally with a primarily silent second interviewer on hand to take notes. Depending on the length of your focus guide and how many subjects you want to cover, you may consider splitting out the subjects into multiple focus interviews.
+    AppLesson(
+      title: "The Interview Itself",
+      body: """The senior software engineer technical focus interview is typically a sixty to ninety-minute conversation between the candidate and a lead interviewer, ideally with a primarily silent second interviewer on hand to take notes. Depending on the length of your focus guide and how many subjects you want to cover, you may consider splitting out the subjects into multiple focus interviews.
 
 I emphasize that this interview should be conversational; you're looking to find out which areas of software engineering the candidate is most knowledgeable and passionate about, and in which areas they've either never been held accountable or have historically delegated. Doing this does not require brainteasers, pair programming, or any problem-solving. Simply ask!
 
@@ -1131,38 +1048,34 @@ If a candidate completely misses, or admits they are not familiar with a topic, 
 On the other hand, if a candidate nails the first question, they may well be a true expert in that area, but you likely won't be confident of their mastery until they've provided insightful answers to multiple questions across the subject. Typically, it takes more time and questioning to identify mastery than a lack of qualification.
 
 Don't hesitate to politely cut off a candidate's answer and move on to the next category when you know you've heard enough. Your goal is to help the candidate demonstrate their skill and knowledge across all the topics that you've decided are important for this role and chosen to evaluate in this interview. Letting a candidate rabbit-hole and consume time on a single topic when you already have all the information you need for a score robs them of the opportunity to demonstrate their capabilities in other topics if you run out of time in the interview. It is your job, not the candidate's, to manage the pace of the interview.""",
-),
+    ),
 
-AppLesson(
-id: "l89",
-title: "Executive interviews",
-content: """By the time a candidate gets to an executive round interview, you should have already confirmed that they have the skills required in your job description and will be a suitable culture fit for your company. The executive interview, in most scenarios, is less about an executive screening a candidate and more a chance for the candidate to meet and ask questions of the executive.
+    AppLesson(
+      title: "Executive interviews",
+      body: """By the time a candidate gets to an executive round interview, you should have already confirmed that they have the skills required in your job description and will be a suitable culture fit for your company. The executive interview, in most scenarios, is less about an executive screening a candidate and more a chance for the candidate to meet and ask questions of the executive.
 
 If, however, the candidate is applying for a very senior role, or is going to be reporting directly to the executive, then it may be appropriate for this last interview to be longer or more thorough than simply candidate Q&A.""",
-),
+    ),
 
-AppLesson(
-id: "l90",
-title: "Reference Checks",
-content: """With reference checks, you need to strike a balance between scheduling them early enough in the interview process to ensure that they don't create a bottleneck and not wasting time on reference checks for candidates who will not get offers. Keep in mind that candidates, rightfully, may be hesitant to provide references until they're at the end of a process to protect their own relationships with the references.""",
-),
+    AppLesson(
+      title: "Reference Checks",
+      body: """With reference checks, you need to strike a balance between scheduling them early enough in the interview process to ensure that they don't create a bottleneck and not wasting time on reference checks for candidates who will not get offers. Keep in mind that candidates, rightfully, may be hesitant to provide references until they're at the end of a process to protect their own relationships with the references.""",
+    ),
 
-AppLesson(
-id: "l91",
-title: "Timing",
-content: """It follows then that reference checks almost always happen last in an interview process. To avoid having to delay an offer on completing reference checks, here are a few tips:
+    AppLesson(
+      title: "Timing",
+      body: """It follows then that reference checks almost always happen last in an interview process. To avoid having to delay an offer on completing reference checks, here are a few tips:
 
 * Begin scheduling meetings, in parallel, with all references as soon as they are provided. Given their brief nature, the most efficient strategy may be able to call references without scheduling.
 
 * Consider making an offer before completing references, but be clear with candidates that offer finalization is contingent on references coming back and meeting expectations. Reference checks, assuming you've done a good job with your filtering process up until this point, have a high success rate, so rarely will contingent offers have to be withdrawn due to failed reference interviews.
 
 * Be flexible on who conducts reference interviews, as it does not have to be a member of technical staff. It does need to be somebody who is highly responsive to email and has considerable availability in their calendar to accommodate references.""",
-),
+    ),
 
-AppLesson(
-id: "l92",
-title: "Content",
-content: """In general, reference interviews should be brief and respectful of the reference's time and willingness to help. Most reference interviews provide feedback ranging from neutral to enthusiastically positive. Very seldom will you receive overtly negative feedback, so your goal is to quickly differentiate between neutral and enthusiastically positive, confirm any strengths/weaknesses identified in the interview process, and move on. If you do get any overtly negative feedback in a reference interview, pay very close attention and try to get specific details on the criticism to bring back to the hiring manager.
+    AppLesson(
+      title: "Content",
+      body: """In general, reference interviews should be brief and respectful of the reference's time and willingness to help. Most reference interviews provide feedback ranging from neutral to enthusiastically positive. Very seldom will you receive overtly negative feedback, so your goal is to quickly differentiate between neutral and enthusiastically positive, confirm any strengths/weaknesses identified in the interview process, and move on. If you do get any overtly negative feedback in a reference interview, pay very close attention and try to get specific details on the criticism to bring back to the hiring manager.
 
 Some sample questions for a reference interview:
 
@@ -1178,7 +1091,7 @@ Some sample questions for a reference interview:
 
 * What about their performance causes you to give that rating?
 
-* [Name of candidate] mentioned that they struggled with \_\_\_\_\_\_\_ in that
+* [Name of candidate] mentioned that they struggled with \\_\\_\\_\\_\\_\\_\\_ in that
 job. Can you tell me more about that?
 
 * In what environment and under what management style would [name of candidate] be most successful?
@@ -1186,58 +1099,52 @@ job. Can you tell me more about that?
 * How does [name of candidate] manage conflict?
 
 * Would you rehire [name of candidate] given the chance?""",
-),
+    ),
 
-AppLesson(
-id: "l93",
-title: "Making an Offer",
-content: """By the time you're ready to make somebody an offer you should have a strong opinion, based on the job description and feedback from your focus interviews, on the level at which you would be bringing in the candidate. From there it should be relatively straightforward to identify a salary/ bonus/equity amount using your predefined leveling bands. (See 1.4.2 Compensation and Leveling, for more on this.)
+    AppLesson(
+      title: "Making an Offer",
+      body: """By the time you're ready to make somebody an offer you should have a strong opinion, based on the job description and feedback from your focus interviews, on the level at which you would be bringing in the candidate. From there it should be relatively straightforward to identify a salary/ bonus/equity amount using your predefined leveling bands. (See 1.4.2 Compensation and Leveling, for more on this.)
 
 Once you've calibrated your offer amounts, you should decide how to present the offer. Especially if your offer includes equity compensation, you should seriously consider providing a spreadsheet that provides context to the offer amounts. The value of a number of shares on its own is impossible for a candidate to assess. They need additional data points to value what you're offering, including numbers like total shares outstanding, share strike price, latest company valuation, etc.
 
 I've prepared a sample candidate offer spreadsheet at (ctohb.com/templates)[https://ctohb.com/templates].""",
-),
+    ),
 
-AppLesson(
-id: "l94",
-title: "Presenting The Offer",
-content: """The moment when you present the offer is when you need to be in super sales mode. Ideally, you've been selling candidates all along the way so they're already very excited about the company and the opportunity for them. Regardless, this is a big deal for the candidate, so make sure to give the occasion the respect it deserves. Throughout the process of explaining the offer, remember to be especially upbeat, congratulate the candidate, and emphasize the fun you'll have and the great things you'll build together. It's also critical that you're transparent and outline all the key points of the offer upfront, especially anything they may not be expecting or used to, such as equity compensation or probation/trial periods.
+    AppLesson(
+      title: "Presenting The Offer",
+      body: """The moment when you present the offer is when you need to be in super sales mode. Ideally, you've been selling candidates all along the way so they're already very excited about the company and the opportunity for them. Regardless, this is a big deal for the candidate, so make sure to give the occasion the respect it deserves. Throughout the process of explaining the offer, remember to be especially upbeat, congratulate the candidate, and emphasize the fun you'll have and the great things you'll build together. It's also critical that you're transparent and outline all the key points of the offer upfront, especially anything they may not be expecting or used to, such as equity compensation or probation/trial periods.
 
 I recommend making the offer in three parts: a phone call, an email, and a dinner. For the phone call, I suggest calling the candidate without prior scheduling. At this point you'll have already done a whole bunch of scheduling with the candidate, so there's no need to build up their anxiety further by scheduling yet another meeting. Alternatively, you could tell them in writing that you intend to extend an offer and schedule from there, but you lose the impact of being on the line with them when they get the news. I find it's just simpler to call the person and share the news all at once.
 
 On the call, you should express excitement, convey the key points of the offer, and answer any initial questions. Explain that, subsequent to the call, you'll email them written materials to help provide context on the equity and, of course, a formal written offer letter will be coming from the company. And finally, if logistically possible, schedule a meal with the candidate to have a more personal, in-depth conversation.""",
-),
+    ),
 
-AppLesson(
-id: "l95",
-title: "Onboarding",
-content: """Onboarding new engineers to the team, in most cases, doesn't strictly require a large investment from the team; a good engineer will figure it out eventually. That said, doing nothing will lead to a poor experience for your newest hire. It will slow down their time to productivity, and it may also make it harder to identify how well you've hired. Stated another way, good onboarding optimizes for three goals:
+    AppLesson(
+      title: "Onboarding",
+      body: """Onboarding new engineers to the team, in most cases, doesn't strictly require a large investment from the team; a good engineer will figure it out eventually. That said, doing nothing will lead to a poor experience for your newest hire. It will slow down their time to productivity, and it may also make it harder to identify how well you've hired. Stated another way, good onboarding optimizes for three goals:
 
 1. **It respects the employee:** A good onboarding experience helps a new hire to feel integrated into your company and culture and become productive as quickly as possible.
 1. **It helps evaluate the quality of the hire:** Good onboarding provides structure for both the new employee and their manager, including clear goals that, when achieved, demonstrate that you've hired well for the role.
 1. **It builds your culture:** Good onboarding emphasizes a culture of continuous improvement, helping to streamline the process for future hires and enhance the scalability of your overall processes.
 
  There are many right ways to do this. What follows are some relatively simple and inexpensive techniques and practices that I've used myself. Feel free to expand on or deviate from these ideas.""",
-),
+    ),
 
-AppLesson(
-id: "l96",
-title: "Boy Scout Rule: Onboarding",
-content: """I encourage you to emphasize to your managers, your new employees, and in your onboarding documentation that successful onboarding is the shared responsibility of all members of your team(s), recent hires included. Depending on how often you are hiring, onboarding documentation has a tendency to get stale. If a new employee encounters something that is unclear, incorrect, or missing entirely from their materials, make it clear to them that you expect them to put in the effort to clarify and improve the documentation for the next person.""",
-),
+    AppLesson(
+      title: "Boy Scout Rule: Onboarding",
+      body: """I encourage you to emphasize to your managers, your new employees, and in your onboarding documentation that successful onboarding is the shared responsibility of all members of your team(s), recent hires included. Depending on how often you are hiring, onboarding documentation has a tendency to get stale. If a new employee encounters something that is unclear, incorrect, or missing entirely from their materials, make it clear to them that you expect them to put in the effort to clarify and improve the documentation for the next person.""",
+    ),
 
-AppLesson(
-id: "l97",
-title: "Onboarding to the Team vs. the Company",
-content: """There are elements of onboarding any engineer new to your company that should be consistent across all hires. This includes the high-level process, the emphasis on organizational culture, the types of documentation that new hires receive, and the structure of sharing documentation and setting onboarding milestones. You wouldn't want your frontend teams to have a rockstar-smooth onboarding process but your backend teams to be clueless. First impressions count, and onboarding is your opportunity to ensure that all team members get a great first experience of your organization and are introduced in a consistent way to your company's values and your team's best practices.
+    AppLesson(
+      title: "Onboarding to the Team vs. the Company",
+      body: """There are elements of onboarding any engineer new to your company that should be consistent across all hires. This includes the high-level process, the emphasis on organizational culture, the types of documentation that new hires receive, and the structure of sharing documentation and setting onboarding milestones. You wouldn't want your frontend teams to have a rockstar-smooth onboarding process but your backend teams to be clueless. First impressions count, and onboarding is your opportunity to ensure that all team members get a great first experience of your organization and are introduced in a consistent way to your company's values and your team's best practices.
 
 That's not to say that the nuts and bolts of onboarding will be identical across teams. You can and should have different materials for different teams when it makes sense, and every team and individual hire should have a customized onboarding plan and milestones.""",
-),
+    ),
 
-AppLesson(
-id: "l98",
-title: "Onboarding Documentation",
-content: """There are two key elements of getting a new engineer onboarded: teaching them about your culture and best practices, and also giving them something to do by way of structure and instructions. I prefer to break these out into two written artifacts: The Engineering Guidebook and the Welcome to [Your Company Name] Engineering, Day 1 Guide.
+    AppLesson(
+      title: "Onboarding Documentation",
+      body: """There are two key elements of getting a new engineer onboarded: teaching them about your culture and best practices, and also giving them something to do by way of structure and instructions. I prefer to break these out into two written artifacts: The Engineering Guidebook and the Welcome to [Your Company Name] Engineering, Day 1 Guide.
 
 ##### The Engineering Guidebook
 
@@ -1297,12 +1204,11 @@ Instructions on how to get logins/access to required systems, including:
 - Expectations around transparency and reaching out across the organization chart for help or escalation of concerns
 - An introduction to the technical architecture
 - Relevant books, blogs, and other written resources you encourage all team members to read""",
-),
+    ),
 
-AppLesson(
-id: "l99",
-title: "Onboarding Milestones aka The Ninety-Day Scorecard",
-content: """As discussed in the hiring chapter, hiring is very hard. Even the most thoughtful hiring processes will not achieve a 100 percent success rate. Said another way, mis-hires are inevitable.
+    AppLesson(
+      title: "Onboarding Milestones aka The Ninety-Day Scorecard",
+      body: """As discussed in the hiring chapter, hiring is very hard. Even the most thoughtful hiring processes will not achieve a 100 percent success rate. Said another way, mis-hires are inevitable.
 
 The best way to handle the potential for unsuccessful hires is first to have the humility to acknowledge that your hiring process isn't perfect, and then to be thoughtful about how to measure the success of the new employees and take swift action to correct any mistakes. The process should be transparent upfront to new employees, clearly explaining expectations. Managers should work with new employees to make sure their role is a mutual fit, that the new employee is starting to feel at home in the role, and that they are delivering at a level commensurate with what they were hired for. At sixty or ninety days, it should be clear to both the new employee and the manager whether those expectations are being met.
 
@@ -1338,22 +1244,20 @@ If, after ninety days, the manager and the employee agree things are not meeting
 In general, if it's not clear after ninety days that a hire is going to work out, it likely won't magically become better after 120 or 150 days, and it's best to let them go. You should terminate this employee the same as any other, with a full severance package and as much kindness as possible.
 
 I encourage you to take full ownership of the mis-hire. If you hired them, take responsibility; it means your hiring process isn't perfect. Don't penalize the employee for it. An industry-standard severance package at a startup is four weeks salary, benefits if you can extend them, and assistance finding another job in any way you're comfortable offering.""",
-),
+    ),
 
-AppLesson(
-id: "l100",
-title: "Onboarding Timeline",
-content: """Onboarding begins the second somebody agrees to work at your company and signs their offer letter. You should be thinking about how to make your new employee successful even before their first day. Not every new employee will be eager to spend their own time learning about the company or their role in advance of their start date, but depending on the task or what's offered, many will volunteer to do so.
+    AppLesson(
+      title: "Onboarding Timeline",
+      body: """Onboarding begins the second somebody agrees to work at your company and signs their offer letter. You should be thinking about how to make your new employee successful even before their first day. Not every new employee will be eager to spend their own time learning about the company or their role in advance of their start date, but depending on the task or what's offered, many will volunteer to do so.
 
 I encourage you to send candidates your Day 1 Guide as well as your guidebook the day they sign their offer letter. If you have a company reading list, now is a good time to order those books and have them either shipped to the candidate or offer them in eBook/audiobook format. Most candidates are not at all interested in reading/writing code before Day 1, but learning about your culture or reading high-caliber books on business/culture/ engineering is rarely perceived as a burden. You shouldn't require this activity, but by making it available you'll likely get fairly healthy volunteer participation.
 
 On their actual start date, the candidate should meet with their new manager first thing in the morning and check in. If they haven't read through the materials you sent them in advance of their arrival, set the expectation that they are to do so on Day 1. They should schedule follow-up time to review the ninety-day scorecard after the candidate has had a chance to review the introductory materials and set up their environment/logins. This is also a good time to reinforce the idea of continuous improvement and encourage the candidate to take ownership of any hiccups in their onboarding and contribute to improving the documentation and process for whoever follows them next onto the team.""",
-),
+    ),
 
-AppLesson(
-id: "l101",
-title: "Performance Management",
-content: """One of the keys to improving employee morale and promoting a positive workplace culture is ensuring that everyone has a clear understanding of how they are perceived in the workplace and has reliable guidance on how to level up within the organization. The goal of any performance management system is to, as objectively and fairly as possible, provide that transparency and structure to employees. A bad performance management system will result in unwanted surprises or awkward and demotivating situations, while a strong performance management system motivates your team and encourages everybody to level up together.
+    AppLesson(
+      title: "Performance Management",
+      body: """One of the keys to improving employee morale and promoting a positive workplace culture is ensuring that everyone has a clear understanding of how they are perceived in the workplace and has reliable guidance on how to level up within the organization. The goal of any performance management system is to, as objectively and fairly as possible, provide that transparency and structure to employees. A bad performance management system will result in unwanted surprises or awkward and demotivating situations, while a strong performance management system motivates your team and encourages everybody to level up together.
 
 Poor performance management often results in negative outcomes. Here are two examples:
 
@@ -1362,12 +1266,11 @@ Person A is promoted and, as a result, Person B is surprised and feels skipped o
 Person X, having been at Level 4 for too long, feels exasperated and demoralized not knowing how to make it to Level 5 and get the associated raise.
 
 Your performance management system should give everyone clarity on exactly where they stand, what they need to improve upon (and how), when they'll be evaluated, and how those evaluations are considered for promotions and compensation adjustments.""",
-),
+    ),
 
-AppLesson(
-id: "l102",
-title: "Competency Matrix and Leveling",
-content: """Performance management and compensation design should not be done entirely by you, the technical leader. There are plenty of ways to make mistakes here that could expose your company to legal liability. These are easily avoided by ensuring that your HR lead is heavily involved in the process. In fact, ideally, your HR lead would do most of the blueprinting and lean on you only for help defining technical competencies. Regardless of who takes the lead, HR is your partner here.
+    AppLesson(
+      title: "Competency Matrix and Leveling",
+      body: """Performance management and compensation design should not be done entirely by you, the technical leader. There are plenty of ways to make mistakes here that could expose your company to legal liability. These are easily avoided by ensuring that your HR lead is heavily involved in the process. In fact, ideally, your HR lead would do most of the blueprinting and lean on you only for help defining technical competencies. Regardless of who takes the lead, HR is your partner here.
 
 ##### Overview
 
@@ -1412,12 +1315,11 @@ Having a pay band also leaves room to increase compensation outside of the perfo
 ##### Competitive Rates & Market Rate Data
 
 So, you've designed your competency matrix and decided to translate levels into pay bands. Now, you just need to calculate your pay bands. This is an area you'll definitely want your HR lead partnering with you on closely to ensure you're meeting any regulatory requirements that may exist. Defining pay bands should be as data-driven as possible, and thanks to a handful of existing platforms (both paid and those that just require data-sharing), that data is relatively straightforward. Platforms like Pave, Option Impact by Advanced-HR, Levels.fyi, and Glassdoor can provide rich data sets that can be filtered to match the size/shape/stage of your company to determine a relevant pay band for a particular role.""",
-),
+    ),
 
-AppLesson(
-id: "l103",
-title: "Job Titles",
-content: """Many startup founders will tell you their organization is very flat and that titles don't mean anything. That may actually be true from time to time in isolation, but it's the exception, not the norm. At the vast majority of companies, startups included, there are consistent trends in how titles are used. Assigning titles creates an expectation for level and scope of responsibility. Titles are also easily given and hard to take away, so it's worth being thoughtful and considerate about exactly what title you put on a job description or a promotion.
+    AppLesson(
+      title: "Job Titles",
+      body: """Many startup founders will tell you their organization is very flat and that titles don't mean anything. That may actually be true from time to time in isolation, but it's the exception, not the norm. At the vast majority of companies, startups included, there are consistent trends in how titles are used. Assigning titles creates an expectation for level and scope of responsibility. Titles are also easily given and hard to take away, so it's worth being thoughtful and considerate about exactly what title you put on a job description or a promotion.
 
 For non-executive roles, before you decide on titles I first encourage you to decide what your levels are using only numbers, e.g., Level 1, Level 2, etc., via a competency matrix (See Competency Matrix and Leveling, page 95). Once you know what to expect from each of those levels, you can map levels to titles. Don't be afraid to add a numeric suffix to titles as well; it's easier and clearer to use titles like Junior Engineer 1 and Junior Engineer 2 than it is to invent a new adjective that means slightly more experienced than junior but not yet mid-level.
 
@@ -1434,12 +1336,11 @@ Management titling has more nuanced implications than individual contributors. T
 The next level is typically a director of engineering. Directors are accountable for the performance, alignment, and output of multiple teams within single or highly adjacent products. In most organizations, a director is not expected to be a strategic role. In other words, a director isn't setting foundational technical direction or product strategy.
 
 Beyond director is the role of vice president of engineering (VPE). There isn't a universal implementation of VPE. It varies from being the organizational lead of all engineers at the company (in place of a CTO) to being the strategic technical lead across multiple product areas. Sometimes the VPE reports to the CTO, and other times the CEO. What VPEs have in common, though, is the expectation of being technically very senior, experienced, and skilled at people management a great communicator and strategic thinker.""",
-),
+    ),
 
-AppLesson(
-id: "l104",
-title: "Performance Reviews, Surveys and Promotions",
-content: """Not all skill areas in a competency matrix can be evaluated quantitatively by a manager or spreadsheet, so every team needs a performance review process that can also collect qualitative feedback from managers and peers.
+    AppLesson(
+      title: "Performance Reviews, Surveys and Promotions",
+      body: """Not all skill areas in a competency matrix can be evaluated quantitatively by a manager or spreadsheet, so every team needs a performance review process that can also collect qualitative feedback from managers and peers.
 
 The challenge is to collect qualitative feedback in such a way that it can be used to align with your leveling. In this chapter, I present a methodology I've used to collect feedback that ultimately results in a relatively easy-to-understand scoring system that can produce individual performance levels.
 
@@ -1514,12 +1415,11 @@ The agenda for the performance review meeting should be simple:
 ##### Compensation Adjustment Rollout
 
 At many companies, review feedback and compensation changes are handled at different times. I don't believe it is critical, or even advantageous, to discuss compensation changes in a performance review meeting, as this can distract from what can otherwise be a challenging but important discussion. The key thing is to set expectations for when compensation changes will be decided, communicated, and implemented before the performance review process, so they know what to expect before they walk into the meeting.""",
-),
+    ),
 
-AppLesson(
-id: "l105",
-title: "Performance Improvement Plans (PIPs)",
-content: """Performance improvement plans, commonly referred to as PIPs, are a tool that provides structure to either improve an employee's performance or fire them. Some key aspects of PIPs:
+    AppLesson(
+      title: "Performance Improvement Plans (PIPs)",
+      body: """Performance improvement plans, commonly referred to as PIPs, are a tool that provides structure to either improve an employee's performance or fire them. Some key aspects of PIPs:
 
 * Everyone on your team should understand your company's PIP process.
 * Many people go into work with the same searing questions at the back of their minds: Will I be fired today? or Am I doing well enough?
@@ -1535,26 +1435,23 @@ There are a few situations in which you should bypass a PIP process and proceed 
 
 * Breaks in company policy, HR violations, inappropriate workplace behavior, etc., are not correctable with a PIP and should be met with zero tolerance.
 * Certain skill gaps are not correctable with a PIP, such as general lack of good judgment on a certain topic, poor culture fit, or lack of experience in critical skill areas. This is most commonly a consideration for management or very senior staff positions where good skill judgment is critical to the role.""",
-),
+    ),
 
-AppLesson(
-id: "l106",
-title: "Changing Seats",
-content: """Before developing a PIP or terminating an underperforming employee, it's worth asking the question of whether that person might be a better fit for a different team or role in the company. If the nature of the underperformance is skill-based, and the employee has skills that might be better applied in a different role, then changing teams can be very productive. If the underperformance is culture-based, then you'll likely find neither side has the motivation to attempt an internal transfer.""",
-),
+    AppLesson(
+      title: "Changing Seats",
+      body: """Before developing a PIP or terminating an underperforming employee, it's worth asking the question of whether that person might be a better fit for a different team or role in the company. If the nature of the underperformance is skill-based, and the employee has skills that might be better applied in a different role, then changing teams can be very productive. If the underperformance is culture-based, then you'll likely find neither side has the motivation to attempt an internal transfer.""",
+    ),
 
-AppLesson(
-id: "l107",
-title: "Brilliant Jerks",
-content: """A brilliant jerk is an industry-standard term used to describe an individual who is highly productive on their own, but whose presence hurts the morale or productivity of the people around them. They are often described as toxic personalities.
+    AppLesson(
+      title: "Brilliant Jerks",
+      body: """A brilliant jerk is an industry-standard term used to describe an individual who is highly productive on their own, but whose presence hurts the morale or productivity of the people around them. They are often described as toxic personalities.
 
 Due to their sometimes extraordinary individual productivity, choosing to fire a brilliant jerk can often feel difficult or wrong. The nearly universal recommendation is to fire them anyway. Each day that you, as a manager, allow toxic behavior to persist can increase your team's resentment toward you for allowing it to continue. There's no amount of individual productivity that makes up for the hit to company culture and to your credibility as a manager that retaining a toxic individual entails.""",
-),
+    ),
 
-AppLesson(
-id: "l108",
-title: "Firing",
-content: """Your company should have a clear procedure for how to actually terminate an employee. My best advice: follow it. This is an area that, if handled incorrectly, can become a substantial liability to the company. Key considerations include:
+    AppLesson(
+      title: "Firing",
+      body: """Your company should have a clear procedure for how to actually terminate an employee. My best advice: follow it. This is an area that, if handled incorrectly, can become a substantial liability to the company. Key considerations include:
 
 **Documentation:** Ensure you have sufficient documentation to justify the decision to let this individual go and to prove that the termination is based on performance or another for-cause reason.
 
@@ -1565,31 +1462,28 @@ content: """Your company should have a clear procedure for how to actually termi
 **Offboarding:** Develop a plan in advance of termination for how and when to turn off the employee's access to company systems and recover any company hardware.
 
 **Severance:** Letting an employee go is most often just as much a failure of the company/management as it is the employee. Letting someone go is not a place to be spiteful or petty; that person has invested time and energy into your company, and you should do everything you can to set them up for success at their next role, including an industry-standard severance package (the range is somewhat broad, from a few weeks for an individual contributor up to two to three months for a senior executive, with packages also often factoring in tenure).""",
-),
+    ),
 
-AppLesson(
-id: "l109",
-title: "Team Makeup",
-content: """The key difference in impact between junior and senior talent is the consistency with which they can reliably solve different kinds of problems. As engineers become more experienced, their judgment and decision-making improve on larger and larger surface areas. Similarly, you should expect that more senior talent will develop solutions that have fewer defects, last longer, and are more durable to requirements change along the way. That's not to say everyone has to be senior; in fact, it's rare that a majority of projects involve architecting brand-new greenfield solutions.
+    AppLesson(
+      title: "Team Makeup",
+      body: """The key difference in impact between junior and senior talent is the consistency with which they can reliably solve different kinds of problems. As engineers become more experienced, their judgment and decision-making improve on larger and larger surface areas. Similarly, you should expect that more senior talent will develop solutions that have fewer defects, last longer, and are more durable to requirements change along the way. That's not to say everyone has to be senior; in fact, it's rare that a majority of projects involve architecting brand-new greenfield solutions.
 
 The right blend for any given team considers the types of work to be done and staffs the team thoughtfully as a result.""",
-),
+    ),
 
-AppLesson(
-id: "l110",
-title: "Seniority Makeup",
-content: """Your team should be more heavily weighted with senior engineering talent if your codebase is:
+    AppLesson(
+      title: "Seniority Makeup",
+      body: """Your team should be more heavily weighted with senior engineering talent if your codebase is:
 * Very new, requiring lots of architecture and foundational contract creation
 * Is very old, poorly maintained, or poorly thought up and considered difficult to work in - in short, a brownfield codebase
 * Is meaningfully changing in requirements, especially if new requirements do not look very much like old requirements
 * Is using new tools, techniques, or patterns that require validation for your problem
 * Requires establishing new patterns/ways of doing work, especially with ecosystems that don't provide tight guardrails that encourage healthy patterns.""",
-),
+    ),
 
-AppLesson(
-id: "l111",
-title: "Technical Specialization",
-content: """On Day 1 of most startups, the team will consist of a small handful of engineers, typically two or three. Having a team of three leaves limited opportunity for specialization. There are twenty categories of technical work to do and only three people, so by the pigeonhole principle, at least one person and more likely all three will be doing many types of technical work. Said another way, early on at your company, everyone is expected to wear many technical hats. As your company grows and you add more people to the team, you and your employees will find more opportunities for specialization.
+    AppLesson(
+      title: "Technical Specialization",
+      body: """On Day 1 of most startups, the team will consist of a small handful of engineers, typically two or three. Having a team of three leaves limited opportunity for specialization. There are twenty categories of technical work to do and only three people, so by the pigeonhole principle, at least one person and more likely all three will be doing many types of technical work. Said another way, early on at your company, everyone is expected to wear many technical hats. As your company grows and you add more people to the team, you and your employees will find more opportunities for specialization.
 
 So, you've raised a round of funding and you're looking to expand your team for the first time. How do you decide whether you need frontend engineers, backend engineers, DevOps engineers, etc.? Here are some general guidelines:
 
@@ -1614,12 +1508,11 @@ Here are some rough numbers for team composition based on startup experience:
 * Team size 30-plus
   * At this stage there are many methodologies for breaking out teams into smaller units to ensure work stays efficient. If you have multiple product lines, aligning team members with specific product lines is a fairly natural place to start organizing.
   * Many companies at this stage use a concept of pods, where a pod has a focus area and is made up of a diverse/cross-functional team capable of independently executing tasks in that area.""",
-),
+    ),
 
-AppLesson(
-id: "l112",
-title: "Project Maintenance: The Two Crews Philosophy",
-content: """If you are shipping end-user software, your engineering team has to strike a balance between doing new work and handling support tickets that come in from active customers. Left unchecked, the need to handle support tickets can become a major distraction to the team, hurting efficiency, draining morale, and burning out your best people. There are many right answers to solving this problem; the important thing is that you recognize its effect on your team and architect a solution to help them be productive and drive great customer outcomes.
+    AppLesson(
+      title: "Project Maintenance: The Two Crews Philosophy",
+      body: """If you are shipping end-user software, your engineering team has to strike a balance between doing new work and handling support tickets that come in from active customers. Left unchecked, the need to handle support tickets can become a major distraction to the team, hurting efficiency, draining morale, and burning out your best people. There are many right answers to solving this problem; the important thing is that you recognize its effect on your team and architect a solution to help them be productive and drive great customer outcomes.
 
 Microsoft has published a great article on this topic titled Building productive teams (ctohb.com/teams) describing what they call the two crews model. The two crews model outlines a feature crew and a customer crew.
 
@@ -1652,86 +1545,74 @@ The first question I get asked about the two crews approach is: how long does so
 * Define the customer crew as a temporary team. This can mean either that the customer crew itself doesn't exist full-time (perhaps for only one week per month), or that team members are constantly rotating between the customer and feature crews.
 
 I recommend creating a dedicated, permanent customer crew only for teams or products where customer issues are costly enough for the team to warrant it. If you're in a high-support business, a dedicated customer crew can be a force multiplier for both engineering productivity and customer satisfaction.""",
-),
+    ),
 
-AppLesson(
-id: "l113",
-title: "Team Organization",
-content: """In general, you'll find technical organization charts organized in one of two ways: functional organization and product organization. A functional group is organized around the type of work team members do, such as frontend engineering, testing, or a particular internal service. Product groupings, sometimes called business units, are organized around a particular business-related/product focus, such as the enterprise core application team or the consumer mobile app team. How you choose to organize your team can have a significant impact on team collaboration, productivity, and morale. Product-organized teams, often called pods, are the right answer most of the time.
+    AppLesson(
+      title: "Team Organization",
+      body: """In general, you'll find technical organization charts organized in one of two ways: functional organization and product organization. A functional group is organized around the type of work team members do, such as frontend engineering, testing, or a particular internal service. Product groupings, sometimes called business units, are organized around a particular business-related/product focus, such as the enterprise core application team or the consumer mobile app team. How you choose to organize your team can have a significant impact on team collaboration, productivity, and morale. Product-organized teams, often called pods, are the right answer most of the time.
 
 When you're designing an organization chart you should consider what you're optimizing for. For a startup, the primary goal of an organization chart is to ensure that different people who need to collaborate closely with one another are enabled and encouraged to do so by the organizational structure. The best way to achieve that is to have all the people who directly contribute to the feasibility and success of a product be organized together, to hold them accountable to a common set of goals, and to develop a shared sense of ownership over that product.
 
 When your team is small, and you have just one product, the question of how to organize is moot it's one cross-functional team all working on the same product. By the time your team has grown to 12 or more people, you'll need to start being more deliberate about defining what a pod is, and finding a method that is easy to understand and grounded in your product reality, before breaking your team out into pods.
 
 The advantages of pods are greater team cohesion, autonomy ownership, accountability, and overall execution velocity. This approach is not without tradeoffs, however. Having a long-lived group of engineers work on one product can create knowledge silos. As organizations scale, it's also more likely for a product team to make architectural decisions that might optimize locally and lead to duplicate work or inefficient use of compute resources. If you anticipate and plan for these issues arising, the pain they induce when well-managed will be far outweighed by the benefits of autonomous, high-performing pods.""",
-),
+    ),
 
-AppLesson(
-id: "l114",
-title: "Managing Remote Teams",
-content: """There are a sufficient number of successful 100 percent remote software engineering teams that it is incontrovertible that remote organizations can work. That's not to say all remote teams are successful, or that it's necessarily easy to build an entirely remote culture. I've spent nearly a decade managing remote teams. Below are some recommendations that should apply to most remote management scenarios.""",
-),
+    AppLesson(
+      title: "Managing Remote Teams",
+      body: """There are a sufficient number of successful 100 percent remote software engineering teams that it is incontrovertible that remote organizations can work. That's not to say all remote teams are successful, or that it's necessarily easy to build an entirely remote culture. I've spent nearly a decade managing remote teams. Below are some recommendations that should apply to most remote management scenarios.""",
+    ),
 
-AppLesson(
-id: "l115",
-title: "Documentation",
-content: """Being remote means that there's nobody sitting next to you to answer questions, but that doesn't mean the questions go away. Those questions still get asked, only now social context is lost and so perhaps the question goes unanswered for a while. Or, rather than holding questions until the other person takes a break, now they get asked immediately, prompting various kinds of notifications and distracting from focus work. Having a robust set of internal documentation with an effective search feature can speed up time-to-answer and reduce the number of one-on-one context switches that become barriers to getting work done.""",
-),
+    AppLesson(
+      title: "Documentation",
+      body: """Being remote means that there's nobody sitting next to you to answer questions, but that doesn't mean the questions go away. Those questions still get asked, only now social context is lost and so perhaps the question goes unanswered for a while. Or, rather than holding questions until the other person takes a break, now they get asked immediately, prompting various kinds of notifications and distracting from focus work. Having a robust set of internal documentation with an effective search feature can speed up time-to-answer and reduce the number of one-on-one context switches that become barriers to getting work done.""",
+    ),
 
-AppLesson(
-id: "l116",
-title: "Asynchronous Work",
-content: """A great way to turn remote work into an asset rather than a liability is to lean into asynchronous working practices. A strong asynchronous culture reduces the burden of time zone mismatches and reduces the amount of time spent in remote meetings/dealing with remote context switches. (See Benefits of Overcommunication, page 20, for more on asynchronous communication and the value of asynchronous work.)""",
-),
+    AppLesson(
+      title: "Asynchronous Work",
+      body: """A great way to turn remote work into an asset rather than a liability is to lean into asynchronous working practices. A strong asynchronous culture reduces the burden of time zone mismatches and reduces the amount of time spent in remote meetings/dealing with remote context switches. (See Benefits of Overcommunication, page 20, for more on asynchronous communication and the value of asynchronous work.)""",
+    ),
 
-AppLesson(
-id: "l117",
-title: "In-Person Meetups",
-content: """As useful as they are, video calls are no substitute for sitting down and having a meal as a team. The bonds that are formed by in-person meetings tend to endure over a long period of time, so an investment in even infrequent in-person meetings can improve the quality of social relationships between team members for months. As a general rule, it's healthy for a team to meet in person once per quarter to maintain these relationships and minimize remote social frustration.""",
-),
+    AppLesson(
+      title: "In-Person Meetups",
+      body: """As useful as they are, video calls are no substitute for sitting down and having a meal as a team. The bonds that are formed by in-person meetings tend to endure over a long period of time, so an investment in even infrequent in-person meetings can improve the quality of social relationships between team members for months. As a general rule, it's healthy for a team to meet in person once per quarter to maintain these relationships and minimize remote social frustration.""",
+    ),
 
-AppLesson(
-id: "l118",
-title: "Time Zone Overlap",
-content: """My overall recommendation is for teams that are working on the same project to have a minimum of four working hours of overlap. That leaves a sufficient window for any regularly scheduled meetings and an opportunity for ad-hoc conversation and questions.""",
-),
+    AppLesson(
+      title: "Time Zone Overlap",
+      body: """My overall recommendation is for teams that are working on the same project to have a minimum of four working hours of overlap. That leaves a sufficient window for any regularly scheduled meetings and an opportunity for ad-hoc conversation and questions.""",
+    ),
 
-AppLesson(
-id: "l119",
-title: "Create Social Opportunities",
-content: """In general, people's default mode with video calls is to multitask during the call and then get off the call as fast as possible. Once a work conversation is over, everyone hangs up. That isn't how people interact in person; for example, the meeting ends and then you talk about sports in the hallway when walking back to your desks. That bit of social time before/after meetings is a valuable way for people to build relationships and trust, and it won't happen unless the leadership and culture actively support it. A cheap and easy way to do that on a regular basis is to ask a lighthearted, round-the-room, ice- breaker style question on a regular basis, such as What's one bit of good news personally, and professionally, you can share?
+    AppLesson(
+      title: "Create Social Opportunities",
+      body: """In general, people's default mode with video calls is to multitask during the call and then get off the call as fast as possible. Once a work conversation is over, everyone hangs up. That isn't how people interact in person; for example, the meeting ends and then you talk about sports in the hallway when walking back to your desks. That bit of social time before/after meetings is a valuable way for people to build relationships and trust, and it won't happen unless the leadership and culture actively support it. A cheap and easy way to do that on a regular basis is to ask a lighthearted, round-the-room, ice- breaker style question on a regular basis, such as What's one bit of good news personally, and professionally, you can share?
 
 You can support remote social building with remote happy hours, or virtual team dinners and social activities. Post-COVID-19, there are many online social facilitators who run remote events ranging from digital casino nights to virtual escape rooms.""",
-),
+    ),
 
-AppLesson(
-id: "l120",
-title: "Camera On",
-content: """Depending on which article you read, 70 90 percent of communication is nonverbal. Using a webcam during a video call doesn't replace all of that 70 percent, but it is unquestionably an improvement over having no video at all. Since webcams are so cheap now, there's really no justification for not having that additional social communication bandwidth within your company. The common objection is that employees are worried that others may judge their appearance on camera. If that's a concern you are facing, I encourage you to walk through the business justification for wanting as high-quality communication as possible in a remote setting, and have a zero-tolerance policy for any employee who makes inappropriate remarks on another's appearance. It can also be helpful to create a space for people to do whatever they feel appropriate to get themselves ready, such as allowing/encouraging background blurs, and occasional video-off to deal with something in reality or to tidy up.""",
-),
+    AppLesson(
+      title: "Camera On",
+      body: """Depending on which article you read, 70 90 percent of communication is nonverbal. Using a webcam during a video call doesn't replace all of that 70 percent, but it is unquestionably an improvement over having no video at all. Since webcams are so cheap now, there's really no justification for not having that additional social communication bandwidth within your company. The common objection is that employees are worried that others may judge their appearance on camera. If that's a concern you are facing, I encourage you to walk through the business justification for wanting as high-quality communication as possible in a remote setting, and have a zero-tolerance policy for any employee who makes inappropriate remarks on another's appearance. It can also be helpful to create a space for people to do whatever they feel appropriate to get themselves ready, such as allowing/encouraging background blurs, and occasional video-off to deal with something in reality or to tidy up.""",
+    ),
 
-AppLesson(
-id: "l121",
-title: "Recording Meetings",
-content: """Recorded meetings provide a great way to allow employees to get up to speed on a topic without requiring a work stoppage for a calendared meeting. In general, you'll find that very few employees or candidates are opposed to the idea of recording video calls. Recordings are also a great way to expose more people to some content than is perhaps comfortable in the moment. For example, you may want a hiring team of four or five people to watch an interview with a candidate, but having five people in the room at the time may be intimidating. Making a recording of a 1:1 interview is an excellent way to ensure everyone has the opportunity to evaluate the candidate without creating an uncomfortable or unfair situation by overloading the interview meeting itself.""",
-),
+    AppLesson(
+      title: "Recording Meetings",
+      body: """Recorded meetings provide a great way to allow employees to get up to speed on a topic without requiring a work stoppage for a calendared meeting. In general, you'll find that very few employees or candidates are opposed to the idea of recording video calls. Recordings are also a great way to expose more people to some content than is perhaps comfortable in the moment. For example, you may want a hiring team of four or five people to watch an interview with a candidate, but having five people in the room at the time may be intimidating. Making a recording of a 1:1 interview is an excellent way to ensure everyone has the opportunity to evaluate the candidate without creating an uncomfortable or unfair situation by overloading the interview meeting itself.""",
+    ),
 
-AppLesson(
-id: "l122",
-title: "Leadership Responsibilities",
-content: """As an executive, your leadership responsibilities extend beyond the technical components of developing and growing an engineering team. You should be looking to help the company be successful as a whole, with a particular bent toward how technology contributes to that success. Doing that means keeping an eye on how technology is working with the rest of the company by facilitating healthy collaboration with other teams, both in-house and external, as well as putting into place good process and management practices surrounding technology and product development.""",
-),
+    AppLesson(
+      title: "Leadership Responsibilities",
+      body: """As an executive, your leadership responsibilities extend beyond the technical components of developing and growing an engineering team. You should be looking to help the company be successful as a whole, with a particular bent toward how technology contributes to that success. Doing that means keeping an eye on how technology is working with the rest of the company by facilitating healthy collaboration with other teams, both in-house and external, as well as putting into place good process and management practices surrounding technology and product development.""",
+    ),
 
-AppLesson(
-id: "l123",
-title: "Product and Design Teams",
-content: """It's your responsibility as a technical leader to ensure that your engineering team is working efficiently with the product and design teams, even if those teams report to somebody else. When designing this process, as a general rule, throwing things over walls between groups isn't efficient. Good interaction between product, engineering, and design teams requires empathy and understanding. What does the other team do, what challenges do they face, and how can you and your team make their lives easier? Below I'll provide a little background on these other functions and some concrete suggestions on how to work together efficiently.""",
-),
+    AppLesson(
+      title: "Product and Design Teams",
+      body: """It's your responsibility as a technical leader to ensure that your engineering team is working efficiently with the product and design teams, even if those teams report to somebody else. When designing this process, as a general rule, throwing things over walls between groups isn't efficient. Good interaction between product, engineering, and design teams requires empathy and understanding. What does the other team do, what challenges do they face, and how can you and your team make their lives easier? Below I'll provide a little background on these other functions and some concrete suggestions on how to work together efficiently.""",
+    ),
 
-AppLesson(
-id: "l124",
-title: "Design Systems",
-content: """Design teams would ideally like their work to be implemented faithfully, pixel-perfect, by the software engineering team. Absent any sort of structure or set of constraints, actually achieving pixel perfection is expensive or even impossible; however, a bit of shared understanding and a design system can make the task dramatically cheaper.
+    AppLesson(
+      title: "Design Systems",
+      body: """Design teams would ideally like their work to be implemented faithfully, pixel-perfect, by the software engineering team. Absent any sort of structure or set of constraints, actually achieving pixel perfection is expensive or even impossible; however, a bit of shared understanding and a design system can make the task dramatically cheaper.
 
 A design system is a set of standards for managing design at scale using reusable components and patterns. Large companies tend to create their own design systems. Atlassian, for example, makes theirs available publicly (ctohb.com/design). As a small startup, innovating on design systems is likely not key to your success, so it follows that you should use an off-the-shelf design system. Nowadays you can choose from a plethora of off-the-shelf systems with rich feature sets and a variety of aesthetic styles that, more likely than not, can be customized to match your brand.
 
@@ -1740,54 +1621,48 @@ Not only do design systems provide a time-saving set of guardrails and component
 By adopting a system like Material (or AntD, Chakra UI, Blueprint, Bootstrap, Semantic UI, etc.) you not only get a suite of prebuilt technical components but you also get a system that integrates neatly with designer tools. By integrating the same system with the tools of both engineers and designers, you'll ensure that what your designers create will map cleanly to the components available to engineers. This cuts down or even eliminates the need for engineering to do custom styling or frontend UI, and makes it easy to match a design down to the pixel.
 
 Beyond the efficiency gained by having consistency between design and engineering, most design system component implementations also take into account or automatically solve for other design priorities, such as accessibility (both for screen readers and color contrast management for the colorblind), adherence to UI standards, and even out-of-the-box dark mode support.""",
-),
+    ),
 
-AppLesson(
-id: "l125",
-title: "PRDs and Specs",
-content: """A Product Requirements Document (PRD), sometimes also called a product specification, or just a spec, is an essential part of the product development process. Note that a product spec has a different purpose and is a distinct document from a technical spec (see Technical Planning and Specifications, page 164). There are many methodologies and templates for PRDs. Sources like lennysnewsletter.com regularly catalog some of the most common and thorough ones. PRDs have a shared purpose, which is to describe the problem background as well as the why that justifies a project or feature. PRDs often include lists of requirements that need to be met to meet a business objective. Most PRDs leave the how of a feature to a technical spec.
+    AppLesson(
+      title: "PRDs and Specs",
+      body: """A Product Requirements Document (PRD), sometimes also called a product specification, or just a spec, is an essential part of the product development process. Note that a product spec has a different purpose and is a distinct document from a technical spec (see Technical Planning and Specifications, page 164). There are many methodologies and templates for PRDs. Sources like lennysnewsletter.com regularly catalog some of the most common and thorough ones. PRDs have a shared purpose, which is to describe the problem background as well as the why that justifies a project or feature. PRDs often include lists of requirements that need to be met to meet a business objective. Most PRDs leave the how of a feature to a technical spec.
 
 A PRD, like a technical spec, is a living document. As your team learns more about the problem, or as factors in the outside world change, these documents can and should change and be updated to match. I encourage you and your team to use these documents as a continually updated source of truth to document your considerations and ultimate decisions made during the product development process.""",
-),
+    ),
 
-AppLesson(
-id: "l126",
-title: "EPD",
-content: """EPD is an industry acronym for Engineering Product and Design. The implication is that all three departments are essential to the product development lifecycle and need a healthy way of working together to produce great results. From the business's perspective, all three departments together are responsible for producing a product the customers love, so it's helpful to have a single person with a single set of business goals setting the direction for all three units.""",
-),
+    AppLesson(
+      title: "EPD",
+      body: """EPD is an industry acronym for Engineering Product and Design. The implication is that all three departments are essential to the product development lifecycle and need a healthy way of working together to produce great results. From the business's perspective, all three departments together are responsible for producing a product the customers love, so it's helpful to have a single person with a single set of business goals setting the direction for all three units.""",
+    ),
 
-AppLesson(
-id: "l127",
-title: "Product vs. Project Management",
-content: """Product and project management are industry terms with distinct meanings. A product manager is accountable for the design and creation of the product as well as the key performance indicators (KPIs) the product should meet for the business. Melissa Perri's *Escaping the Build Trap* is a phenomenal resource that dives deeply into the role and impact a great product manager can have on your organization. A project manager is accountable for guiding the internal organization of the team, managing internal communication, and adhering to the roadmap and deadlines.
+    AppLesson(
+      title: "Product vs. Project Management",
+      body: """Product and project management are industry terms with distinct meanings. A product manager is accountable for the design and creation of the product as well as the key performance indicators (KPIs) the product should meet for the business. Melissa Perri's *Escaping the Build Trap* is a phenomenal resource that dives deeply into the role and impact a great product manager can have on your organization. A project manager is accountable for guiding the internal organization of the team, managing internal communication, and adhering to the roadmap and deadlines.
 
 Early on in your startup, as CTO you may be filling both of these roles. Very early in your hiring roadmap you should plan to have a great product manager who can take some of these responsibilities from you. Some product managers excel at project management, while others don't find joy in it and therefore don't put time and attention into it. Arguably, early on at your startup, it's okay either way; with a small team, the consequences of lax project management are minimal. However, as you get larger, formalizing project management becomes more important, and if your product manager isn't filling the role, you should aim to augment them with a project manager.
 
 My general recommendation is to formally delegate project management when EPD has grown to around twenty people. That will mean formally assigning yourself that role, having the product manager do it, or hiring a dedicated project manager. you'll want to be involved early on in setting up project management processes, ensure that the mechanisms being put in place for project management support the kind of culture you're looking to build, and are empathetic to all parties involved.""",
-),
+    ),
 
-AppLesson(
-id: "l128",
-title: "Managing Managers and Manager Training",
-content: """There's an industry expression that your company is ultimately run by your middle managers. The implication is that, despite whatever strategies and processes executives put in place, it's the middle managers who ultimately have the highest impact on the quantity and quality of output. Middle managers hire individual contributors, set their day-to-day objectives, and hold them accountable for quality standards. The best middle managers are mini executives, focused on culture, building collaborative teams, and working to enable them to do their best work. It follows then that, as an executive, you should put a lot of effort into hiring, managing, and training those middle managers.
+    AppLesson(
+      title: "Managing Managers and Manager Training",
+      body: """There's an industry expression that your company is ultimately run by your middle managers. The implication is that, despite whatever strategies and processes executives put in place, it's the middle managers who ultimately have the highest impact on the quantity and quality of output. Middle managers hire individual contributors, set their day-to-day objectives, and hold them accountable for quality standards. The best middle managers are mini executives, focused on culture, building collaborative teams, and working to enable them to do their best work. It follows then that, as an executive, you should put a lot of effort into hiring, managing, and training those middle managers.
 
 The complicated topic of training managers deserves an entire book on its own, and it's a skill that takes time to master. That said, the top two lessons I can offer you that will provide leverage to all other skills here is to set an example yourself and build a culture of continuous management learning. The minute you hire or promote somebody into management you should make it clear that your expectation is that they will commit to putting time and effort into refining their craft of management. you'll go out of your way to make that easy for them by including management training in their personal goals and development plan, providing them resources to level up on management skills, helping them work through management problems, and teaching them everything you know.
 
 Management training doesn't have to be over-the-top burdensome and expensive. If budgets permit, I highly recommend hiring outside management coaches for your managers. An internal manager monthly book reading/review can also be effective at kickstarting the continuous development flywheel.""",
-),
+    ),
 
-AppLesson(
-id: "l129",
-title: "Finances and Budgeting",
-content: """Part of your role is likely shouldering accountability for the present and future cost of the software engineering department (and sometimes design and product departments). As a responsible steward of that budget, you should know how much was spent on various items in the past, and how much your company as a whole has allocated in the future. Most importantly, you'll need a plan to justify spending that allocation wisely.
+    AppLesson(
+      title: "Finances and Budgeting",
+      body: """Part of your role is likely shouldering accountability for the present and future cost of the software engineering department (and sometimes design and product departments). As a responsible steward of that budget, you should know how much was spent on various items in the past, and how much your company as a whole has allocated in the future. Most importantly, you'll need a plan to justify spending that allocation wisely.
 
 In general, you'll find the two largest line items in a technical department are people (payroll) and infrastructure/SaaS. Keep in mind that the actual cash cost of an employee is higher than just their salary, as it will include benefits and payroll taxes. A good rule of thumb is that the cash cost of an employee is 20 percent above their salary; this percentage is referred to as the burden rate.""",
-),
+    ),
 
-AppLesson(
-id: "l130",
-title: "The Budget",
-content: """Most finance teams use sophisticated accounting and budgeting software to manage the company's books. If not, they'll have a company-wide spreadsheet that's far larger and more complex than you need as CTO. In my experience, finance departments are not usually willing to let people outside of finance make changes to the core budgeting system, so unless they give you something to start with, it's on you to make a financial model for your department.
+    AppLesson(
+      title: "The Budget",
+      body: """Most finance teams use sophisticated accounting and budgeting software to manage the company's books. If not, they'll have a company-wide spreadsheet that's far larger and more complex than you need as CTO. In my experience, finance departments are not usually willing to let people outside of finance make changes to the core budgeting system, so unless they give you something to start with, it's on you to make a financial model for your department.
 
 Given that your department's costs are fairly predictable, and centralized in a few line items, the model you make doesn't have to be very sophisticated. My recommendation is that you maintain a spreadsheet that includes the following:
 
@@ -1797,12 +1672,11 @@ Given that your department's costs are fairly predictable, and centralized in a 
 * Other tab (including travel, hardware) Summary tab
 
 You can find a sample technical department budget spreadsheet on (ctohb.com/templates)[https://ctohb.com/templates] that will get you most of the way there on the actual modeling.""",
-),
+    ),
 
-AppLesson(
-id: "l131",
-title: "Working with your CFO",
-content: """If your company is like most startups, you'll be the most expensive department, and your CFO should be well aware of that. Some things to consider that are helpful for you and will make your CFO your best friend:
+    AppLesson(
+      title: "Working with your CFO",
+      body: """If your company is like most startups, you'll be the most expensive department, and your CFO should be well aware of that. Some things to consider that are helpful for you and will make your CFO your best friend:
 
 * Help your CFO know how money is and will be spent. Avoid surprises wherever possible. Provide guidance for things like hardware cost, travel/conference cost, and cloud cost upfront.
 * Maintain a budget for your department and keep it up to date with changes in your forecast.
@@ -1810,39 +1684,35 @@ content: """If your company is like most startups, you'll be the most expensive 
 * Establish a plan for hiring and include estimated salaries.
 * SaaS bills are often a burden to track. Consider either using a credit card statement analysis tool (i.e., a SaaS Management Platform, aka SMP) or hiring an assistant to regularly categorize and reconcile these expenses with your budget.
 * Finance departments often care a lot about cost attribution to differentiate; for example, costs that are part of Costs of Goods Sold (COGS). Indicating in your budget a very coarse-grained why for each line item can win you friends in finance.""",
-),
+    ),
 
-AppLesson(
-id: "l132",
-title: "Measuring Engineering Velocity/Health",
-content: """I have yet to encounter a technical team or leader who has managed to consistently and usefully quantify actual engineering output. This includes measuring velocity as the sum of estimates of completed tasks. (See the Estimates section of Workflow, page 160, for a discussion on the unreliability of technical estimates.)
+    AppLesson(
+      title: "Measuring Engineering Velocity/Health",
+      body: """I have yet to encounter a technical team or leader who has managed to consistently and usefully quantify actual engineering output. This includes measuring velocity as the sum of estimates of completed tasks. (See the Estimates section of Workflow, page 160, for a discussion on the unreliability of technical estimates.)
 
 I have, however, seen many companies effectively measure engineering health and contributing factors to engineering velocity namely, cycle time and work time allocation.""",
-),
+    ),
 
-AppLesson(
-id: "l133",
-title: "Cycle Time",
-content: """Cycle time is a measurement of how long it takes to go from idea to shipped feature, and is often broken down into these sub-milestones:
+    AppLesson(
+      title: "Cycle Time",
+      body: """Cycle time is a measurement of how long it takes to go from idea to shipped feature, and is often broken down into these sub-milestones:
 
 * Time spent coding
 * Time to start a code review Time until code is approved Time to deployed code
 
 In general, low-cycle teams are more efficient and able to iterate, innovate, and deliver value to customers faster. There are many tools that facilitate measuring cycle time, including LinearB (linearb.io) and Code Climate (codeclimate.com). LinearB has published a set of benchmarks, using data from thousands of engineering teams, on metrics associated with cycle time.""",
-),
+    ),
 
-AppLesson(
-id: "l134",
-title: "Work Time Allocation",
-content: """The idea of measuring work time allocation is that, while measuring how much work is done is difficult, it's comparatively easy to measure what types of work team members are spending their time on. This resulting information is directionally useful. For example, if a team is spending the majority of its time addressing bugs, then it's a good hypothesis that improving software quality and bringing down that time percentage will result in more time allocated to developing new features, and thus an overall improvement in health and velocity.
+    AppLesson(
+      title: "Work Time Allocation",
+      body: """The idea of measuring work time allocation is that, while measuring how much work is done is difficult, it's comparatively easy to measure what types of work team members are spending their time on. This resulting information is directionally useful. For example, if a team is spending the majority of its time addressing bugs, then it's a good hypothesis that improving software quality and bringing down that time percentage will result in more time allocated to developing new features, and thus an overall improvement in health and velocity.
 
 Actually measuring work time allocation can be done in a semi-automated way by pulling reports from ticket systems, or it can be measured with regular lightweight pulse surveys to the team.""",
-),
+    ),
 
-AppLesson(
-id: "l135",
-title: "Fundraising and Due Diligence",
-content: """Generally speaking, as CTO, your role in fundraising and due diligence is fairly minimal. At most startups, the CEO and perhaps the CFO do the lion's share of that work. Your involvement likely comes toward the end of the process as investors do due diligence on the company. Many (though sadly not all) of the requests made in due diligence are for information that a well-organized engineering team already maintains as part of doing business. Keep an eye on on the following, and be ready to produce for due diligence:
+    AppLesson(
+      title: "Fundraising and Due Diligence",
+      body: """Generally speaking, as CTO, your role in fundraising and due diligence is fairly minimal. At most startups, the CEO and perhaps the CFO do the lion's share of that work. Your involvement likely comes toward the end of the process as investors do due diligence on the company. Many (though sadly not all) of the requests made in due diligence are for information that a well-organized engineering team already maintains as part of doing business. Keep an eye on on the following, and be ready to produce for due diligence:
 
 * Organization chart
 * Department budget
@@ -1857,24 +1727,21 @@ content: """Generally speaking, as CTO, your role in fundraising and due diligen
 It's not uncommon for an investor to hire a third-party firm to conduct a technical diligence audit. These audits may involve interviews or meetings with you and perhaps a few other senior members of the team. Be prepared to discuss your engineering process, assess the general productivity of the team, and do a code walkthrough of parts of your system.
 
 My advice is to be candid with these auditors. They've looked at a lot of tech companies and are well aware that all engineering teams have debt and parts of the system that teams are more proud of than others. The more your investors know about your strengths and weaknesses, the better they can support and hold your team accountable for improving the weaknesses going forward.""",
-),
+    ),
 
-AppLesson(
-id: "l136",
-title: "Vendor Management",
-content: """In general, the responsibility for sourcing, negotiating with, and managing third-party technical vendors will fall to you as the CTO. For most, this is an unenjoyable but necessary part of the job, and consequently, it doesn't get much thought. Performing this responsibility well, however, can provide significant cost savings for a business. Here, I'll walk you step by step through a typical SaaS negotiation/signing process and provide some tips for how to add efficiency and save cost.""",
-),
+    AppLesson(
+      title: "Vendor Management",
+      body: """In general, the responsibility for sourcing, negotiating with, and managing third-party technical vendors will fall to you as the CTO. For most, this is an unenjoyable but necessary part of the job, and consequently, it doesn't get much thought. Performing this responsibility well, however, can provide significant cost savings for a business. Here, I'll walk you step by step through a typical SaaS negotiation/signing process and provide some tips for how to add efficiency and save cost.""",
+    ),
 
-AppLesson(
-id: "l137",
-title: "Self-Service Signup Tools",
-content: """Typically, either you or a member of your engineering team will highlight a need for a type of tool, and if it's one of your engineers or managers they'll ask either for you to approve the expenditure or for you to sign up for the tool. Many tools are inconsequential in cost and have trivial self-service signup flows. I recommend you work with your budget and finance team and set a threshold below which your managers are authorized to simply sign up for the tool independently. For tools that are above the cost threshold or don't have self-service signup, you'll need to enter into a discovery and negotiation process with an enterprise vendor, which typically has four steps.""",
-),
+    AppLesson(
+      title: "Self-Service Signup Tools",
+      body: """Typically, either you or a member of your engineering team will highlight a need for a type of tool, and if it's one of your engineers or managers they'll ask either for you to approve the expenditure or for you to sign up for the tool. Many tools are inconsequential in cost and have trivial self-service signup flows. I recommend you work with your budget and finance team and set a threshold below which your managers are authorized to simply sign up for the tool independently. For tools that are above the cost threshold or don't have self-service signup, you'll need to enter into a discovery and negotiation process with an enterprise vendor, which typically has four steps.""",
+    ),
 
-AppLesson(
-id: "l138",
-title: "Enterprise Tooling",
-content: """You're now facing an enterprise sales process. Before reaching out to the vendor's sales team, be sure that this particular company is the one best suited to solve your problem. In most instances, I recommend starting a spreadsheet, doing some diligence on all the vendors in the space, and filtering down to a top two or three. Even if one of them is by far your preferred choice, it doesn't hurt to have some deeper context on the space and for negotiating knowledge/leverage/BATNA (best alternative to a negotiated agreement).
+    AppLesson(
+      title: "Enterprise Tooling",
+      body: """You're now facing an enterprise sales process. Before reaching out to the vendor's sales team, be sure that this particular company is the one best suited to solve your problem. In most instances, I recommend starting a spreadsheet, doing some diligence on all the vendors in the space, and filtering down to a top two or three. Even if one of them is by far your preferred choice, it doesn't hurt to have some deeper context on the space and for negotiating knowledge/leverage/BATNA (best alternative to a negotiated agreement).
 
 ##### Sales Qualification
 
@@ -1908,12 +1775,11 @@ Do not lose or misplace these contracts as they'll be useful for future negotiat
 ##### Post-Sales
 
 After the deal is signed you will likely be handed off to a different representative at your vendor, someone whose title is similar to either post-sales support or customer service manager (CSM). These individuals are incentivized by, measured by, and focused on customer retention or product upsells. They're knowledgeable about the product, and at least somewhat technical. Going forward, they'll serve as your advocate for new features and getting defects resolved.""",
-),
+    ),
 
-AppLesson(
-id: "l139",
-title: "Which Type of Startup CTO Are You?",
-content: """Whether you're the CTO, a CEO playing the role of CTO, or a founder hoping to hire a CTO, it's helpful to have a clear understanding of what exactly it is a CTO does in a startup, and how that role differs from executive and leadership roles in more established companies. As with most things, the answer depends on context and will change over time. Calvin French-Owen has
+    AppLesson(
+      title: "Which Type of Startup CTO Are You?",
+      body: """Whether you're the CTO, a CEO playing the role of CTO, or a founder hoping to hire a CTO, it's helpful to have a clear understanding of what exactly it is a CTO does in a startup, and how that role differs from executive and leadership roles in more established companies. As with most things, the answer depends on context and will change over time. Calvin French-Owen has
 
 a great article (ctohb.com/founder2cto) breaking down the CTO into four archetypes: People Leader, Architect, R&D, and Marketing/Consumer- facing. I like this breakdown and will refine it a bit here to three types:
 
@@ -1922,38 +1788,34 @@ a great article (ctohb.com/founder2cto) breaking down the CTO into four archetyp
 * People-Focused
 
 * Externally Focused""",
-),
+    ),
 
-AppLesson(
-id: "l140",
-title: "The Tech-Focused CTO *AKA The Chief Architect*",
-content: """The tech-focused CTO may also be the office of the CTO, leading an internal technical skunkworks whose primary output is forward-thinking strategy, architecture, and sometimes proof-of-concept implementation on how to help the business down the road. This CTO will have fewer reports, with the bulk of the engineering organization reporting to a separate vice president of engineering. In this case, it's not uncommon for the vice president of engineering (VPE) to report to somebody other than the CTO most commonly, directly to a CEO or to a chief product officer (CPO).
+    AppLesson(
+      title: "The Tech-Focused CTO *AKA The Chief Architect*",
+      body: """The tech-focused CTO may also be the office of the CTO, leading an internal technical skunkworks whose primary output is forward-thinking strategy, architecture, and sometimes proof-of-concept implementation on how to help the business down the road. This CTO will have fewer reports, with the bulk of the engineering organization reporting to a separate vice president of engineering. In this case, it's not uncommon for the vice president of engineering (VPE) to report to somebody other than the CTO most commonly, directly to a CEO or to a chief product officer (CPO).
 
 The internal tech-focused CTO may also be the chief technical process architect, setting up tools, systems, and processes for how technical work gets done.
 
 As an internal tech-focused CTO, you may also function as a product manager if your company's product is highly technical in nature (i.e., developer tools, API-as-a-service, etc.)""",
-),
+    ),
 
-AppLesson(
-id: "l141",
-title: "The People-Focused CTO *AKA the VP of Engineering (VPE)*",
-content: """A typical startup will not have both a VPE and a CTO, and so it often falls on the CTO to fill the VPE role. This is often also the hardest role for a cofounder CTO to fill, as the responsibilities of the day one technical cofounder don't much overlap with the responsibilities of the internally people-focused technical leader.
+    AppLesson(
+      title: "The People-Focused CTO *AKA the VP of Engineering (VPE)*",
+      body: """A typical startup will not have both a VPE and a CTO, and so it often falls on the CTO to fill the VPE role. This is often also the hardest role for a cofounder CTO to fill, as the responsibilities of the day one technical cofounder don't much overlap with the responsibilities of the internally people-focused technical leader.
 
 The people-focused CTO is responsible for setting internal technical culture, the hiring process, and overseeing internal processes. This CTO spends much of their time actually managing either independent contributors or other technical managers. This is the most critical of the three focus areas to get right. If a company isn't hiring well, or its technical staff is poorly managed, unmotivated, unfocused, or not aligned, it can impact productivity, and even lead to bad decision-making that will hurt the organization in the long term.""",
-),
+    ),
 
-AppLesson(
-id: "l142",
-title: "The Externally Focused CTO *AKA The Head of Technical Sales/Marketing*",
-content: """This is likely the least common focus for a startup CTO, but no less critical at the right time or place. Most often, you see this CTO at companies that build products for a technical audience developer tools, for example. These CTOs spend lots of time writing blog articles or speaking at conferences. Perhaps they are brought into sales meetings to act as an executive technical representative to close large deals. Note that building a brand around the technical team not only has a positive effect on product sales, but also can be a great recruiting tool and can reduce your time and cost of hires.
+    AppLesson(
+      title: "The Externally Focused CTO *AKA The Head of Technical Sales/Marketing*",
+      body: """This is likely the least common focus for a startup CTO, but no less critical at the right time or place. Most often, you see this CTO at companies that build products for a technical audience developer tools, for example. These CTOs spend lots of time writing blog articles or speaking at conferences. Perhaps they are brought into sales meetings to act as an executive technical representative to close large deals. Note that building a brand around the technical team not only has a positive effect on product sales, but also can be a great recruiting tool and can reduce your time and cost of hires.
 
 This is perhaps the easiest role for the founder CTO to step into, as they have the historical context for the company and can most genuinely and passionately tell the company story and evangelize its product and value.""",
-),
+    ),
 
-AppLesson(
-id: "l143",
-title: "Transitioning Between Types",
-content: """Ideally, a startup CTO will prove adept in all three areas, though most people will specialize in just one or two. If your business needs a focus that isn't your expertise, it may be worth asking yourself if you can execute that task more effectively by delegating it to a coworker. Especially at an early stage startup, most technical cofounder/cofounder CTOs will be internal tech-focused. Usually There's not much other work to be done at this stage!
+    AppLesson(
+      title: "Transitioning Between Types",
+      body: """Ideally, a startup CTO will prove adept in all three areas, though most people will specialize in just one or two. If your business needs a focus that isn't your expertise, it may be worth asking yourself if you can execute that task more effectively by delegating it to a coworker. Especially at an early stage startup, most technical cofounder/cofounder CTOs will be internal tech-focused. Usually There's not much other work to be done at this stage!
 
 It's a very common pattern for that person to find themselves stretching into internal people or external focuses as the company grows, and that's not always a desirable transition for that person. It's not a personal failure to admit that your specialty or your motivation is in tech and that people management isn't a great fit, but quite the opposite. Identifying your superpowers and architecting a role in the company to leverage that superpower is how you add the most value, and the company should hire somebody else whose superpower is, for example, people management to fill that role.
 
@@ -1980,29 +1842,32 @@ Some thoughts on various transitions:
     * Internal People: Hire a people-focused VP of Engineering.
 
 In many cases, the end outcome may mean hiring a CTO whose superpower is better aligned with what the company needs at the time. In other cases, it might mean hiring a very capable people-focused VP of Engineering to complement a highly technical CTO.""",
-),
-],
+    ),
+
+  ],
 ),
 
 AppCourse(
-id: "entrepreneurship_2",
-title: "Technical Team Management",
-description: "Technical Team Management",
-category: AppCategory.business,
-lessons: [
-
-AppLesson(
-id: "l1",
-title: "Tech Culture and General Philosophy",
-content: """I encourage all leaders to adopt the general leadership style known as *servant leadership*. As a servant leader your main focus is on serving the needs of your team. This means focusing on empowering others, building
+  id: "entrepreneurship_3",
+  title: "Technical Team Management",
+  description: "Technical Team Management",
+  instructor: "Hustle Academy",
+  category: "Entrepreneurship",
+  difficulty: "Intermediate",
+  icon: Icons.business_center,
+  color: Colors.orange,
+  duration: "38 Lessons",
+  lessons: [
+    AppLesson(
+      title: "Tech Culture and General Philosophy",
+      body: """I encourage all leaders to adopt the general leadership style known as *servant leadership*. As a servant leader your main focus is on serving the needs of your team. This means focusing on empowering others, building
 
 a culture of transparency, communication, collaboration, and growth. As you think about your team and culture, and about decisions on a day-to- day basis, ask yourself which option enables the team to do their best work and thus deliver the most for the business.""",
-),
+    ),
 
-AppLesson(
-id: "l2",
-title: "Ten Pillars of Tech Culture",
-content: """*1. Spend Team Time on Things That Matter to the Business*
+    AppLesson(
+      title: "Ten Pillars of Tech Culture",
+      body: """*1. Spend Team Time on Things That Matter to the Business*
 
 In general, you want your team to be spending time on things that move the needle for the business, and it's your responsibility as technical leader to create an environment where your engineers can focus their efforts in this way with consistency and minimal distractions. This frame may seem obvious, but when used properly, it's a powerful tool for decision-making.
 
@@ -2038,7 +1903,7 @@ My suggestion is to lean into the tools you have and, for example, create a mark
 
 You should also set clear expectations for what kinds of decisions get put to RFC. I recommend limiting it to high-level processes, technical opinions, and culture, and not using it for tool choice or system architecture. Some good examples of topics to RFC:
 
-* Standardizing naming conventions (master vs. main, black/whitelist vs. allow/denylist, camelCase vs snake\_case in various contexts)
+* Standardizing naming conventions (master vs. main, black/whitelist vs. allow/denylist, camelCase vs snake\\_case in various contexts)
 * Usage of code formatters/static code analysis Meeting cadences/agenda/artifacts
 * Monorepo vs. manyrepo
 * API Design opinions/philosophies
@@ -2086,30 +1951,27 @@ I guarantee you'll get relatively poor watch rates upfront as you make and distr
 *10. Onboarding Is Everybody's Responsibility*
 
 Your team is continuously creating tribal knowledge, be it how to start a service, or how code patterns are used across your codebase. There are two ways to deal with this: you can do nothing, and on a daily basis you'll increase the size of the knowledge gap for new employees, or you can actively work on converting siloed tribal knowledge into scalable documentation for current and future employees. For obvious reasons, I recommend the latter. This means everyone should always be asking themselves, How can I document what I've just created/learned/discovered? And when you have new employees who come across something that they can't find in your knowledge base, it's up to them to seek out an answer and document it.""",
-),
+    ),
 
-AppLesson(
-id: "l3",
-title: "Tech Debt",
-content: """San Francisco's Golden Gate Bridge is made out of steel, which is not actually golden in color. The bridge is painted, and maintaining the iconic color of the bridge is so important to San Franciscans that they paint it continuously (ctohb.com/painting). Once repainting is finished, the process immediately restarts. This form of continuous investment or perpetual maintenance is what's required to keep the most important and sophisticated systems performing to expectations, from the Golden Gate Bridge to your team's software project. Only for your project, the maintenance doesn't require paint buckets; it comes in the form of technical debt.
+    AppLesson(
+      title: "Tech Debt",
+      body: """San Francisco's Golden Gate Bridge is made out of steel, which is not actually golden in color. The bridge is painted, and maintaining the iconic color of the bridge is so important to San Franciscans that they paint it continuously (ctohb.com/painting). Once repainting is finished, the process immediately restarts. This form of continuous investment or perpetual maintenance is what's required to keep the most important and sophisticated systems performing to expectations, from the Golden Gate Bridge to your team's software project. Only for your project, the maintenance doesn't require paint buckets; it comes in the form of technical debt.
 
 Every feature a software development team delivers brings with it some level of need for future work, or debt. That debt can take the form of bugs that need fixing, fast-follows to the feature to deliver incremental customer value, or sloppiness in the code that should be fixed to improve maintainability, performance, or security. A certain amount of debt naturally accrues even if your team is out on vacation: security vulnerabilities in dependent software are found, packages go out of date, new versions of tools are released, third-party APIs are deprecated or changed, etc. Debt is unavoidable and you need to account for it.""",
-),
+    ),
 
-AppLesson(
-id: "l4",
-title: "Tech Debt And The Product Lifecycle",
-content: """Another way to think of tech debt is like financial debt, such as a mortgage on a house. When you take out a mortgage to buy a house, you're making a deliberate decision to take on debt, knowing the consequences (interest), to enable you to do something you want now (get a house). Then you pay down that debt on a consistent basis over an extended period of time (monthly payments).
+    AppLesson(
+      title: "Tech Debt And The Product Lifecycle",
+      body: """Another way to think of tech debt is like financial debt, such as a mortgage on a house. When you take out a mortgage to buy a house, you're making a deliberate decision to take on debt, knowing the consequences (interest), to enable you to do something you want now (get a house). Then you pay down that debt on a consistent basis over an extended period of time (monthly payments).
 
 The same happens with technology debt. Your startup may accumulate it deliberately as part of a conscious tradeoff, and part of that tradeoff is establishing a realistic plan for paying it down. You should apply the same kind of logic you would to pay down financial debt to addressing your technical debt: either pay it off upfront because you have extra resources (and no better place to put those resources), pay it off continuously over time, or pay it all off down the road but perhaps at a higher total price that includes interest.
 
 However you choose to pay down your tech debt, the key to doing so successfully is to recognize that debt is an inevitable part of the software engineering process, and proactively paying down debt is a necessary investment in overall engineering health.""",
-),
+    ),
 
-AppLesson(
-id: "l5",
-title: "Defining Tech Debt",
-content: """Another way to define technical debt is as a technical decision, implementation, or nuance that actively reduces the efficiency or effectiveness of the business today or in the future. The point is that tech debt has a consequence that matters. Some of your code might be objectively ugly or inefficient, but if that inefficiency has no impact on the business and There's no need to modify that code in the future to maintain quality, performance, or iteration, then that code isn't costly in terms of tech debt. After all, the goal of software development, especially at a startup, is not to write the perfect codebase, but to build software that enables the business.
+    AppLesson(
+      title: "Defining Tech Debt",
+      body: """Another way to define technical debt is as a technical decision, implementation, or nuance that actively reduces the efficiency or effectiveness of the business today or in the future. The point is that tech debt has a consequence that matters. Some of your code might be objectively ugly or inefficient, but if that inefficiency has no impact on the business and There's no need to modify that code in the future to maintain quality, performance, or iteration, then that code isn't costly in terms of tech debt. After all, the goal of software development, especially at a startup, is not to write the perfect codebase, but to build software that enables the business.
 
 Don't be afraid of debt. It can serve a purpose. For example, when building Version 1 of a product that's not yet been validated in the market, a technical team may decide on an architecture that will not scale past a hundred users. If that decision allows the team to rapidly validate the product and determine whether or not a hundred users will ever use the product, that path may be worthwhile especially given the fact that it may take several versions of these prototypes to find one that users love.
 
@@ -2122,12 +1984,11 @@ There are at least seven types of technical debt:
 1. **Documentation Debt** results when There's insufficient documentation, or the documentation is stale/inaccurate, which can make it difficult for team members to onboard a project.
 1. **Skill Debt** rises when the team members lack the needed skills to maintain or update the code or surrounding infrastructure.
 1. **Process Debt** accrues when the team is inconsistent in how it solves problems, leading to mistakes, delays, or increased costs.""",
-),
+    ),
 
-AppLesson(
-id: "l6",
-title: "Tech Debt Bankruptcy",
-content: """If your startup neglects or ignores tech debt for long enough, it can become a major impediment to future progress. Teams can unintentionally find themselves spending 80 or even 100 percent of their time sorting through system problems or inefficiencies as a result of tech debt, a state known as tech debt bankruptcy.
+    AppLesson(
+      title: "Tech Debt Bankruptcy",
+      body: """If your startup neglects or ignores tech debt for long enough, it can become a major impediment to future progress. Teams can unintentionally find themselves spending 80 or even 100 percent of their time sorting through system problems or inefficiencies as a result of tech debt, a state known as tech debt bankruptcy.
 
 Some signs your team may be tech debt-bankrupt:
 
@@ -2139,24 +2000,22 @@ Some signs your team may be tech debt-bankrupt:
 If you find yourself in tech debt bankruptcy, it's time to raise the alarm, reset expectations with stakeholders, devise a plan to consolidate the debt, and begin paying it down immediately.
 
 If you've been honest with your peers in leadership (see Delivering Bad News, page 46), you should have the necessary credibility to explain the tech debt problem and develop a common understanding of the ROI for an investment in resolving tech debt.""",
-),
+    ),
 
-AppLesson(
-id: "l7",
-title: "Measuring Debt The Debt Inventory",
-content: """Unlike with a mortgage or car loan, There's no website you can visit that will give you a statement of your exact amount of tech debt and remaining payments. Some forms of debt can be measured quantitatively, but most of the analysis is qualitative. For healthy and responsible debt management at scale, I recommend a debt inventory survey.
+    AppLesson(
+      title: "Measuring Debt The Debt Inventory",
+      body: """Unlike with a mortgage or car loan, There's no website you can visit that will give you a statement of your exact amount of tech debt and remaining payments. Some forms of debt can be measured quantitatively, but most of the analysis is qualitative. For healthy and responsible debt management at scale, I recommend a debt inventory survey.
 
 The survey should be taken at regular intervals. Somewhere from one to four times per year, do a sober analysis across the varying kinds of debt, producing an honest assessment of where the team is operating. Don't take the survey independently; rather, do so in collaboration with other engineers on the team who are working in the code every day and interacting with the debt on a regular basis.
 
 A survey can be as simple as this: for each of the following types of debt, rate how much we have on a scale of 1 to 10, then provide a few sentences justifying the score.
 
 Use the results of the survey to inform how your team spends its energy paying down debt, and compare results between surveys over time to ensure debt stays at a reasonable level and your team is regularly solving its biggest debt pain points.""",
-),
+    ),
 
-AppLesson(
-id: "l8",
-title: "Strategies For Paying Down Debt",
-content: """In order to decide when to pay down tech debt, you should first consider how much of your team's time is worth spending on it. Key considerations include:
+    AppLesson(
+      title: "Strategies For Paying Down Debt",
+      body: """In order to decide when to pay down tech debt, you should first consider how much of your team's time is worth spending on it. Key considerations include:
 
 * How much debt exists, as indicated by your most recent debt inventory survey
 * How much it is hindering your company's ability to run day to day i.e., via outages, customer churn, or defect rates
@@ -2179,50 +2038,44 @@ The most common way to handle tech debt is to pay it off on a Just-in- Time basi
 Periodic paydown is akin to how one might pay down a car loan or a mortgage. The team makes space to pay off debt on a fixed interval (e.g., a day per sprint, a couple of days per month, or a couple of weeks per quarter). Google famously allowed their engineers 20 percent time to work on whatever they wanted, including paying down debt or innovating on new projects and tools. The idea here is the same: as a manager, you explicitly make time and encourage the team to make investments into the tools and processes used to do engineering.
 
 For example, the Shape Up method (see Tech Process, page 157) describes a two-week cooldown period after a six-week cycle, or 25 percent of an eight-week period, for making technical investments. Keep in mind that 25 percent isn't a magic number; the right percentage will depend on your team's debt inventory.""",
-),
+    ),
 
-AppLesson(
-id: "l9",
-title: "Continuous Paydown",
-content: """Depending on how expensive debt is for your team, you may want to dedicate more resources to overall system quality than a periodic strategy allows. This looks like having a dedicated team what I call a customer crew in a two-crew scenario (see Project Maintenance: TheTwo Crews Philosophy, page 113) pay down tech debt as part of their everyday work and objectives.
+    AppLesson(
+      title: "Continuous Paydown",
+      body: """Depending on how expensive debt is for your team, you may want to dedicate more resources to overall system quality than a periodic strategy allows. This looks like having a dedicated team what I call a customer crew in a two-crew scenario (see Project Maintenance: TheTwo Crews Philosophy, page 113) pay down tech debt as part of their everyday work and objectives.
 
 It's important to ensure that any team whose primary objective is internal efficiency, such as a tech debt team or a customer crew, has clear and measurable goals for their work. For example, if your debt inventory ranks test debt as your highest debt category, then measure defect rates and code coverage and hold the customer crew accountable for improving those metrics. If your infrastructure debt is the largest, then focus on uptime and Mean Time to Recovery metrics.""",
-),
+    ),
 
-AppLesson(
-id: "l10",
-title: "Communication of Tech Debt",
-content: """Non-technical leaders don't expect perfection from their technical teams. But they do expect high performance and consistently met expectations.
+    AppLesson(
+      title: "Communication of Tech Debt",
+      body: """Non-technical leaders don't expect perfection from their technical teams. But they do expect high performance and consistently met expectations.
 
 When it comes to debt, that means clearly communicating your strategy for keeping debt at a manageable level, and also providing upfront and honest communication about when debt may get in the way of business goals, as well as your strategy for paying it down so it's no longer a blocker.""",
-),
+    ),
 
-AppLesson(
-id: "l11",
-title: "Timeframes",
-content: """I find it useful to think of a technology roadmap in three timeframes, sometimes labeled as short-, medium-, and long-term or horizon one, two, and three. Each timeframe should be managed by a different process and is often owned by different stakeholders.""",
-),
+    AppLesson(
+      title: "Timeframes",
+      body: """I find it useful to think of a technology roadmap in three timeframes, sometimes labeled as short-, medium-, and long-term or horizon one, two, and three. Each timeframe should be managed by a different process and is often owned by different stakeholders.""",
+    ),
 
-AppLesson(
-id: "l12",
-title: "Short-Term/Horizon One",
-content: """Your short-term roadmap is what your team is working on now. This includes any in-flight features, actively worked-on defects, tech debt, or urgent work items. For more detail on managing your short-term roadmap, see Workflow in the Tech Process section, page 157.""",
-),
+    AppLesson(
+      title: "Short-Term/Horizon One",
+      body: """Your short-term roadmap is what your team is working on now. This includes any in-flight features, actively worked-on defects, tech debt, or urgent work items. For more detail on managing your short-term roadmap, see Workflow in the Tech Process section, page 157.""",
+    ),
 
-AppLesson(
-id: "l13",
-title: "Medium-Term/Horizon Two",
-content: """If you're the only technical manager on the team, then you are responsible for both the medium- and long-term roadmaps. If you have directors or senior managers reporting to you, you'll likely be collaborating on the medium-term roadmap. The medium-term roadmap is a very useful artifact not only for your own planning and organization but also as a tool to communicate with other departments/stakeholders on what the engineering team is doing.
+    AppLesson(
+      title: "Medium-Term/Horizon Two",
+      body: """If you're the only technical manager on the team, then you are responsible for both the medium- and long-term roadmaps. If you have directors or senior managers reporting to you, you'll likely be collaborating on the medium-term roadmap. The medium-term roadmap is a very useful artifact not only for your own planning and organization but also as a tool to communicate with other departments/stakeholders on what the engineering team is doing.
 
 Typically, a medium-term roadmap is implemented as a spreadsheet where teams or individuals are rows, and columns are time periods often weeks or sprints and the contents of the table are high-level work items or work areas. The purpose of the roadmap is not to predict precisely when any given task will be completed; doing so would require accurate and precise estimates of work which is tenuous at best (even at a granularity of weeks) and never a guarantee. Instead, the idea is to outline an order of operations and set a direction for the team.
 
 You can and should expect to update the actual duration of any given activity as engineering progresses. Updating the number of weeks on a given task is a great point in time to evaluate whether continued investment in a project makes sense, and also to update external stakeholders on current completion estimates. Finally, the roadmap is helpful as a retrospective tool for tracking how long major initiatives took, and also to assess where a team is investing time at a very high level.""",
-),
+    ),
 
-AppLesson(
-id: "l14",
-title: "Long-Term/Horizon Three",
-content: """As the leader of your team, it falls on you to focus on the long-term health and productivity of the team. You should spend time designing these goals and producing a well-thought-out, clear document (or slide deck, video, wiki article, etc.) that explains the goals to the team. Once you've set initial goals, revisit them infrequently as changing strategic goals causes churn in an organization. Just as problematically, frequent changes in direction can be confusing and demotivating for the team. I encourage you to provide an update on progress towards long-term initiatives on a quarterly basis, both to the entire engineering team as well as to other executive leaders.
+    AppLesson(
+      title: "Long-Term/Horizon Three",
+      body: """As the leader of your team, it falls on you to focus on the long-term health and productivity of the team. You should spend time designing these goals and producing a well-thought-out, clear document (or slide deck, video, wiki article, etc.) that explains the goals to the team. Once you've set initial goals, revisit them infrequently as changing strategic goals causes churn in an organization. Just as problematically, frequent changes in direction can be confusing and demotivating for the team. I encourage you to provide an update on progress towards long-term initiatives on a quarterly basis, both to the entire engineering team as well as to other executive leaders.
 
 Some examples of long-term initiatives:
 
@@ -2246,24 +2099,21 @@ Some examples of long-term initiatives:
 
 - Growing or reorganizing teams
 - Hiring specialists or building new technical departments""",
-),
+    ),
 
-AppLesson(
-id: "l15",
-title: "Timeline Communication",
-content: """Every leader in sales, marketing, product, or support I've worked with has been appreciative of transparency in the technical process and technical roadmap. By contrast, I've spoken to leaders at some companies who describe their technical teams as a black hole. It goes without saying that you don't want to be called a black hole. Not being a black hole is simple; it looks like somewhere in your organization having a regular process to provide transparency to other leaders. Ideally, you're also helping other departments feel heard by having a forum, or a mechanism, to take input and incorporate that into the roadmap process. You can and should close the loop with other departments in your process by communicating back to stakeholders where their request is in the development process and manage expectations for when it will be completed.""",
-),
+    AppLesson(
+      title: "Timeline Communication",
+      body: """Every leader in sales, marketing, product, or support I've worked with has been appreciative of transparency in the technical process and technical roadmap. By contrast, I've spoken to leaders at some companies who describe their technical teams as a black hole. It goes without saying that you don't want to be called a black hole. Not being a black hole is simple; it looks like somewhere in your organization having a regular process to provide transparency to other leaders. Ideally, you're also helping other departments feel heard by having a forum, or a mechanism, to take input and incorporate that into the roadmap process. You can and should close the loop with other departments in your process by communicating back to stakeholders where their request is in the development process and manage expectations for when it will be completed.""",
+    ),
 
-AppLesson(
-id: "l16",
-title: "Tech Process",
-content: """Conway's Law states that Organizations, who design systems, are constrained to produce designs which are copies of the communication structures of these organizations. Said another way, how you structure your teams, and importantly the process of work within and between those teams, will have a significant impact on the product you make. Teams working in information silos are unlikely to produce products that beautifully integrate with another team's designs, so it's up to you, as the overseer and ultimate architect of these communication structures, to ensure those structures meet the needs of the product you're developing.""",
-),
+    AppLesson(
+      title: "Tech Process",
+      body: """Conway's Law states that Organizations, who design systems, are constrained to produce designs which are copies of the communication structures of these organizations. Said another way, how you structure your teams, and importantly the process of work within and between those teams, will have a significant impact on the product you make. Teams working in information silos are unlikely to produce products that beautifully integrate with another team's designs, so it's up to you, as the overseer and ultimate architect of these communication structures, to ensure those structures meet the needs of the product you're developing.""",
+    ),
 
-AppLesson(
-id: "l17",
-title: "Workflow",
-content: """Technical work is a highly nuanced matter with thousands of minute decisions that will affect how things ultimately interoperate and behave. To have any hope of maintaining productivity within your organization you need a set of standards and guiding principles to ensure the everyday technical decisions are broadly consistent and thus manageable for the team. That means you need to actually set those standards, train the team on them and have a day-to-day process to enforce and modify them as necessary.
+    AppLesson(
+      title: "Workflow",
+      body: """Technical work is a highly nuanced matter with thousands of minute decisions that will affect how things ultimately interoperate and behave. To have any hope of maintaining productivity within your organization you need a set of standards and guiding principles to ensure the everyday technical decisions are broadly consistent and thus manageable for the team. That means you need to actually set those standards, train the team on them and have a day-to-day process to enforce and modify them as necessary.
 
 The pattern a team follows to determine how to decide what to build and how work gets done is referred to as a workflow. The five most popular workflow patterns are:
 
@@ -2284,34 +2134,30 @@ A good development process respects the following truisms about software develop
 * There is no such thing as a perfect specification; there are always gaps and things to be discovered along the way in building technology.
 
 Generally, the goal of a workflow process is to ensure that a team is well organized and delivering at an acceptable pace. In a roundabout way, some workflow processes even attempt to quantify engineering team velocity, allowing for reporting on how velocity changes over time to non-technical stakeholders.""",
-),
+    ),
 
-AppLesson(
-id: "l18",
-title: "Waterfall",
-content: """The oldest workflow process, dating back to the 1950s, is waterfall (see ctohb.com/waterfall). The waterfall model breaks down project activities into sequential steps, where each step is dependent on and starts after the prior step is completed. In software engineering that looks something like first having a product vision, then doing product concepting, then product design, then software development, and finally testing, deployment, and maintenance. The most common criticism of waterfall is that this structure is rigid, inflexible, and doesn't promote iterative development.""",
-),
+    AppLesson(
+      title: "Waterfall",
+      body: """The oldest workflow process, dating back to the 1950s, is waterfall (see ctohb.com/waterfall). The waterfall model breaks down project activities into sequential steps, where each step is dependent on and starts after the prior step is completed. In software engineering that looks something like first having a product vision, then doing product concepting, then product design, then software development, and finally testing, deployment, and maintenance. The most common criticism of waterfall is that this structure is rigid, inflexible, and doesn't promote iterative development.""",
+    ),
 
-AppLesson(
-id: "l19",
-title: "Agile/Scrum",
-content: """Agile and SCRUM process is a more nuanced and prescriptive methodology than waterfall. There are many great resources that cover these nuances in detail, including Sutherland's *Scrum*, *Agile Estimating and Planning* by Mike Cohn, *e Art of Agile Development* by James Shore & Shane Warders.
+    AppLesson(
+      title: "Agile/Scrum",
+      body: """Agile and SCRUM process is a more nuanced and prescriptive methodology than waterfall. There are many great resources that cover these nuances in detail, including Sutherland's *Scrum*, *Agile Estimating and Planning* by Mike Cohn, *e Art of Agile Development* by James Shore & Shane Warders.
 
 The key thing to realize about these processes is that they are guidelines, not scripture. To get the best out of your engineering team, start with a process and see how well it works for your particular group of people with your particular type of technical challenges. Some teams have work that lends itself much more to estimation and story pointing, while others have much more ambiguous brownfield projects where estimation is near impossible. Pay attention to whether any particular ceremony from the process is really adding value to the engineering team, or if it's just a lengthy meeting everyone dreads.
 
 Do not hesitate to skip ceremonies that are not obvious wins for the team. For example, I find SCRUM's prescription for planning poker to be inefficient for most teams.""",
-),
+    ),
 
-AppLesson(
-id: "l20",
-title: "Shape Up",
-content: """Shape Up is a methodology formalized by the company Basecamp and published in an eBook available at basecamp.com/shapeup. The core cycle in Shape Up is six weeks long, a much longer sprint than espoused by SCRUM. This cycle uses fixed-time and variable scoping. The idea is that a longer time period provides more space to produce clear pitches (specifications) and do good work on a project. Shape Up places considerably less emphasis on estimation than other models which, as I'll soon discuss, is a good thing for engineering teams.""",
-),
+    AppLesson(
+      title: "Shape Up",
+      body: """Shape Up is a methodology formalized by the company Basecamp and published in an eBook available at basecamp.com/shapeup. The core cycle in Shape Up is six weeks long, a much longer sprint than espoused by SCRUM. This cycle uses fixed-time and variable scoping. The idea is that a longer time period provides more space to produce clear pitches (specifications) and do good work on a project. Shape Up places considerably less emphasis on estimation than other models which, as I'll soon discuss, is a good thing for engineering teams.""",
+    ),
 
-AppLesson(
-id: "l21",
-title: "Engineering Estimates",
-content: """According to Google, the technical definition of accuracy is the degree to which the result of a measurement, calculation, or specification conforms to the correct value or a standard. That is to say, accuracy is an indicator of overall correctness. When you're throwing darts at a dartboard and aiming for the bullseye, an accurate set of throws is a set of throws that tends towards the center.
+    AppLesson(
+      title: "Engineering Estimates",
+      body: """According to Google, the technical definition of accuracy is the degree to which the result of a measurement, calculation, or specification conforms to the correct value or a standard. That is to say, accuracy is an indicator of overall correctness. When you're throwing darts at a dartboard and aiming for the bullseye, an accurate set of throws is a set of throws that tends towards the center.
 
 Precision, by contrast, is defined technically as refinement in a measurement, calculation, or specification, especially as represented by the number of digits given. In other words, precision indicates a level of exactness. When throwing darts, if all of your throws, regardless of their target, are tightly grouped together, that can be said to be a precise grouping.
 
@@ -2322,22 +2168,20 @@ You should expect and hold your team accountable for accurate but not necessaril
 There's no need to try to estimate hours or days per ticket if you plan your work/resource allocation out by week, month, or quarter. Pay attention over time to whether or not your estimates are actually giving you the planning capability you hope for. If they're not, don't punish the team by continuing the process, or worse, using it as a contributing factor in performance reviews. Instead, adjust the estimates so they help instead of hurting you. Change your expectations, and instead of reacting to missing estimates, react to the challenges the team is facing as they struggle to meet the estimates.
 
 A final note on estimates: don't conflate missing estimates with poor total output/velocity. Some teams will be highly effective, have high output, and still miss estimates. Velocity is the more important metric, and a high output but imperfectly estimating team should not be punished. Conversely, a team that regularly misses estimates *and* has trouble delivering new value is underperforming and needs to change.""",
-),
+    ),
 
-AppLesson(
-id: "l22",
-title: "Burndown Charts",
-content: """SCRUM burndown charts show team progress against estimates and can be a great tool for measuring sprint productivity. However, estimates are imperfect and, for various reasons, a burndown chart may show a flat line or even burn up. This can be because a team legitimately is not making progress, or it could be an artifact of estimation issues or bad data collection.
+    AppLesson(
+      title: "Burndown Charts",
+      body: """SCRUM burndown charts show team progress against estimates and can be a great tool for measuring sprint productivity. However, estimates are imperfect and, for various reasons, a burndown chart may show a flat line or even burn up. This can be because a team legitimately is not making progress, or it could be an artifact of estimation issues or bad data collection.
 
 A burndown chart that burns up consistently, despite teams shipping and doing good work, is demoralizing and not achieving the intended benefit. If there are easy adjustments that will help you better capture data and fix the chart, make that change. But if you find a particular way of measuring output still isn't working, just get rid of it. It's okay to admit that your method of estimating these particular types of stories with this team isn't precise enough and move on to other methods of monitoring and improving performance.
 
 In my experience, only a small percentage of teams find success with burndown charts, so don't be disheartened if that one technique isn't helpful for your engineering team.""",
-),
+    ),
 
-AppLesson(
-id: "l23",
-title: "Choosing A Workflow",
-content: """I contend that which workflow you choose will not be a significant factor in the ultimate success and velocity of your engineering team. The key factor is that you are paying attention to your team's workflow and continuously iterating on the workflow itself to ensure your patterns are adding value and are a good match, both for your team and the types of problems your team faces.
+    AppLesson(
+      title: "Choosing A Workflow",
+      body: """I contend that which workflow you choose will not be a significant factor in the ultimate success and velocity of your engineering team. The key factor is that you are paying attention to your team's workflow and continuously iterating on the workflow itself to ensure your patterns are adding value and are a good match, both for your team and the types of problems your team faces.
 
 That said, here is a rough model for thinking about which type of workflow is likely to be a better starting place: well-understood work (i.e., tasks that are concrete, greenfield, and easy to explain) is easier to manage and will generate more benefit with a more nuanced or prescriptive planning process. Said another way, if your work is ambiguous and hard to estimate, it's likely better managed with Kanban than SCRUM.
 
@@ -2353,22 +2197,20 @@ Conversely, you're perhaps better with Kanban if your work is:
 * Regularly changing or saddled with unpredictable priorities
 * Dependent on adopting new and different tools and patterns that can introduce unexpected costs in the first few implementations
 * Assigned to a brand-new team that doesn't have a history working together or on these types of projects""",
-),
+    ),
 
-AppLesson(
-id: "l24",
-title: "Cooldown/Innovation Sprints",
-content: """When using a regular cadence like sprints, the major peril teams find themselves in is the expectation that a sprint will finish, features will be shipped, and the team can immediately shift to the next set of features. Due to the accumulation of debt and need to iterate on product features, that is simply not possible to sustain. There has to be either continuous or periodic time set aside to pay for debt.
+    AppLesson(
+      title: "Cooldown/Innovation Sprints",
+      body: """When using a regular cadence like sprints, the major peril teams find themselves in is the expectation that a sprint will finish, features will be shipped, and the team can immediately shift to the next set of features. Due to the accumulation of debt and need to iterate on product features, that is simply not possible to sustain. There has to be either continuous or periodic time set aside to pay for debt.
 
 A common practice for periodically paying down debt is the notion of a cooldown sprint. Sometimes called a tech debt sprint, or innovation sprint, the idea is the same: give the team time to clean up their digital workspace, do some code-housekeeping and ensure that they and the code are in a good place for high velocity work going forward. As discussed in Strategies for Paying Down Debt, page 150, it's reasonable to dedicate anywhere from 5 20 percent of your total development time on cooldown work.
 
 If you're doing two-week sprints, that might mean that one in four or five sprints is dedicated to cooldown.""",
-),
+    ),
 
-AppLesson(
-id: "l25",
-title: "Technical Planning And Specifications",
-content: """When discussing the process for writing tech specs with engineers, I'm often asked, How do you have time to write specs? Usually I counter with, How do you have time *not* to write tech specs? Implied in my response is that taking time to think through what you're building before you build it is a net time saver.
+    AppLesson(
+      title: "Technical Planning And Specifications",
+      body: """When discussing the process for writing tech specs with engineers, I'm often asked, How do you have time to write specs? Usually I counter with, How do you have time *not* to write tech specs? Implied in my response is that taking time to think through what you're building before you build it is a net time saver.
 
 Software engineering is inherently a creative process, meaning we re not doing the same thing every time and there is more than one way to do any particular story. A great planning process recognizes that there is value to be gained in thinking through a story in advance but balances that emphasis on pre-planning with the knowledge that the only real way to truly know everything about a feature is to actually build it.
 
@@ -2381,22 +2223,20 @@ A great tech planning process can accomplish several goals:
 * Provide valuable documentation for how and why a feature was built a certain way for future maintenance, improvement, or expansion
 * Keep the team thoughtful and aligned on irreversible/expensive technical considerations (e.g., tooling and architecture), as well as unlikely-to-forget key details
 * Prove lightweight enough that it is completable in reasonable time and doesn't force decisions on minor details that either don't matter or don't have enough information upfront""",
-),
+    ),
 
-AppLesson(
-id: "l26",
-title: "Tech Spec Leads",
-content: """I recommend that you designate a lead for any project that needs planning: a single person to be accountable for producing the technical specification and getting that specification through your approval workflow.
+    AppLesson(
+      title: "Tech Spec Leads",
+      body: """I recommend that you designate a lead for any project that needs planning: a single person to be accountable for producing the technical specification and getting that specification through your approval workflow.
 
 That doesn't mean they're the only contributor. On the contrary, if other team members are available during the planning window and have helpful knowledge, they can and should contribute.
 
 Planning can be synchronous (i.e., everyone is in a room for the whole time period) or asynchronous. I recommend asynchronous planning as much of the work in planning will involve research (e.g., reading product documentation, reading code, prototyping/proof of concepting, evaluating tools and APIs, etc.) which can be done fine independently.""",
-),
+    ),
 
-AppLesson(
-id: "l27",
-title: "Time For Planning",
-content: """Your tech planning process should save you time in your initial implementation. It should also save time in the future by minimizing tech debt and leaving behind documentation that can accelerate future improvements.
+    AppLesson(
+      title: "Time For Planning",
+      body: """Your tech planning process should save you time in your initial implementation. It should also save time in the future by minimizing tech debt and leaving behind documentation that can accelerate future improvements.
 
 The wrong amount of time to put into planning doesn't meet these goals, either because it's too short and doesn't save you time/produce good documentation, or is so lengthy that it doesn't pay for itself in savings.
 
@@ -2405,18 +2245,16 @@ There is no universal formula for the correct amount of time, but I'll provide a
 If your team refuses to invest time into planning, you're likely pushing too hard for results over process. The way to ensure the engineering process produces good results for the business is not to crack the whip harder, but to establish a healthy process that enables good results. You wouldn't speed up a structural engineering team designing a bridge by having them work longer hours. You would make sure they have the best bridge-designing tools available to them with the best possible information about the span being bridged. Software engineering is no different. But instead of using CAD software or real-world measurements of soil/rock, we have product specifications, design process, and software tools.
 
 Conversely, an overly lengthy planning process where team members insist on getting every minute detail upfront can be an indicator of a serious cultural problem, where team members are paralyzed by fear of making a mistake. Effective planning won't eliminate risk, but thinking through important, high-level decisions in advance can minimize it. A team that obsesses over details may be afraid of making mistakes or unwilling to iterate on their work both symptoms of overly results-driven management. Individuals should not be punished for reasonable mistakes or planning oversights. It's fine if a tech spec isn't perfect upfront; expect your team to find mistakes or gaps during implementation, and update the spec when those issues are found.""",
-),
+    ),
 
-AppLesson(
-id: "l28",
-title: "Prototyping as Part of Spec Writing!",
-content: """Often when writing a technical specification you'll have multiple options for how to achieve a goal without any overtly compelling arguments on paper to go one way or another. Or you'll discover unknowns about the effectiveness of a particular option, which makes the decision ambiguous. If possible especially if it can be done efficiently I encourage you to give your engineering teams space to prototype one or more of these solutions to gain data to make better decisions in planning. Half a day devoted to building a toy with a new tool to validate that the tool will achieve the desired results upfront is half a day well spent.""",
-),
+    AppLesson(
+      title: "Prototyping as Part of Spec Writing!",
+      body: """Often when writing a technical specification you'll have multiple options for how to achieve a goal without any overtly compelling arguments on paper to go one way or another. Or you'll discover unknowns about the effectiveness of a particular option, which makes the decision ambiguous. If possible especially if it can be done efficiently I encourage you to give your engineering teams space to prototype one or more of these solutions to gain data to make better decisions in planning. Half a day devoted to building a toy with a new tool to validate that the tool will achieve the desired results upfront is half a day well spent.""",
+    ),
 
-AppLesson(
-id: "l29",
-title: "Tech Spec Content",
-content: """Having a template that your team uses when starting to write a technical specification is a great way to speed things up and ensure important topics are not neglected. I recommend your template primarily be a sequence of headings with topic areas to be covered, perhaps with a bit of instruction or reminder for tech spec authors. I've included a sample tech spec at (ctohb.com/templates)[https://ctohb.com/templates].
+    AppLesson(
+      title: "Tech Spec Content",
+      body: """Having a template that your team uses when starting to write a technical specification is a great way to speed things up and ensure important topics are not neglected. I recommend your template primarily be a sequence of headings with topic areas to be covered, perhaps with a bit of instruction or reminder for tech spec authors. I've included a sample tech spec at (ctohb.com/templates)[https://ctohb.com/templates].
 
 A quick aside before jumping into content: technical documents can be a bit dry and serious. If it aligns with your culture, I encourage you to inject lightheartedness where it's appropriate and not distracting. A good example is a clever meme at the top of the document that references the subject of the specification. In my experience, it takes only a manager/leader making a meme once in a spec to encourage others on the team (read: open the floodgates) to add their own.
 
@@ -2437,51 +2275,45 @@ Some suggested components to include in the template:
 * Feature toggles/flags
 * Implications on overall system reliability or disaster recovery Security and privacy
 * Deliverable milestones""",
-),
+    ),
 
-AppLesson(
-id: "l30",
-title: "Tech Spec Approval",
-content: """To achieve the goal of ensuring consistency and alignment across projects and between team members, you must ensure team members are reading and contributing to each other's planning process. My recommendation to achieve this is to have a lightweight approval process for a specification before it can be considered complete.""",
-),
+    AppLesson(
+      title: "Tech Spec Approval",
+      body: """To achieve the goal of ensuring consistency and alignment across projects and between team members, you must ensure team members are reading and contributing to each other's planning process. My recommendation to achieve this is to have a lightweight approval process for a specification before it can be considered complete.""",
+    ),
 
-AppLesson(
-id: "l31",
-title: "Review Goals",
-content: """Your tech spec review goals should include the following:
+    AppLesson(
+      title: "Review Goals",
+      body: """Your tech spec review goals should include the following:
 
 * Ensure all teams/projects are aligned on technical direction and building consistently.
 * Review and educate the team on important data concepts/technical contracts.
 * Ensure universal and consistent understanding of the problem at hand.
 * Minimize chance of missing important edge cases or other non-business visible requirements.""",
-),
+    ),
 
-AppLesson(
-id: "l32",
-title: "Review Process",
-content: """My recommendation for a lightweight review process is an asynchronous conversation in the document followed by a synchronous conflict resolution meeting (see Meetings and Time Management, page 28, for more on conflict resolution meetings). The author of the technical specification should, once they've made some progress on the key elements of the project, circulate the document with other engineers who have sufficient context. The idea is for others to read the document and leave comments and questions in their own time. Many of these issues can be resolved quickly and asynchronously by the lead author, but some may be contentious or highly nuanced, requiring higher bandwidth communication.
+    AppLesson(
+      title: "Review Process",
+      body: """My recommendation for a lightweight review process is an asynchronous conversation in the document followed by a synchronous conflict resolution meeting (see Meetings and Time Management, page 28, for more on conflict resolution meetings). The author of the technical specification should, once they've made some progress on the key elements of the project, circulate the document with other engineers who have sufficient context. The idea is for others to read the document and leave comments and questions in their own time. Many of these issues can be resolved quickly and asynchronously by the lead author, but some may be contentious or highly nuanced, requiring higher bandwidth communication.
 
 To close out the process, the author should schedule a meeting whose attendees are only those who have read the document and contributed in advance. The purpose of the meeting is to review open questions and conflicts and come to a resolution. The purpose of the meeting is not for the author to simply read the specification out loud to a bored or disinterested audience. If there are open questions that require further diligence to learn about and resolve, then do that offline and review the results with only the interested parties afterward.
 
 Once all open questions are resolved, document who contributed to the specification (so a future reader knows to whom they should direct further questions), and consider the document approved.""",
-),
+    ),
 
-AppLesson(
-id: "l33",
-title: "Leaders In Specification Review Meetings",
-content: """The technical leader or manager does not have to be the approver for all technical documents. I encourage you to build a culture where the team as a whole feels safe to contribute and doesn't rely on you to provide technical guardrails or support. Early on, when the department is relatively small, you should be heavily involved in most or all specifications, but that approach won't scale. As soon as you've hired other senior individual contributors, architects, or managers, empower them to be lead reviewers and defer to them, allowing them to do the job you hired them for. If you find a senior member is not guiding the team well in these reviews, don't walk all over them in a public forum. Discuss and course-correct with them in private.""",
-),
+    AppLesson(
+      title: "Leaders In Specification Review Meetings",
+      body: """The technical leader or manager does not have to be the approver for all technical documents. I encourage you to build a culture where the team as a whole feels safe to contribute and doesn't rely on you to provide technical guardrails or support. Early on, when the department is relatively small, you should be heavily involved in most or all specifications, but that approach won't scale. As soon as you've hired other senior individual contributors, architects, or managers, empower them to be lead reviewers and defer to them, allowing them to do the job you hired them for. If you find a senior member is not guiding the team well in these reviews, don't walk all over them in a public forum. Discuss and course-correct with them in private.""",
+    ),
 
-AppLesson(
-id: "l34",
-title: "Technical Specifications As Documentation",
-content: """Your tech team is now spending time creating thoughtful documents that cover how you're engineering your product, and the team should be making fewer mistakes as a result. The last way that technical specifications help you is by providing useful resources for future engineers who need to augment or modify the work that's been done. I recommend that you create a well-organized and searchable directory (e.g., an internal wiki such as Confluence or Notion, or document storage like Google Drive), and that your team be diligent about ensuring all specification documents are added to the directory. It may also be helpful to link or refer to the specification in code comments to explain why something is implemented the way it is.""",
-),
+    AppLesson(
+      title: "Technical Specifications As Documentation",
+      body: """Your tech team is now spending time creating thoughtful documents that cover how you're engineering your product, and the team should be making fewer mistakes as a result. The last way that technical specifications help you is by providing useful resources for future engineers who need to augment or modify the work that's been done. I recommend that you create a well-organized and searchable directory (e.g., an internal wiki such as Confluence or Notion, or document storage like Google Drive), and that your team be diligent about ensuring all specification documents are added to the directory. It may also be helpful to link or refer to the specification in code comments to explain why something is implemented the way it is.""",
+    ),
 
-AppLesson(
-id: "l35",
-title: "Developer Experience (DX)",
-content: """DevOps tooling company Harness (harness.io) defines Developer Experience (DX) as the overall interactions and feelings that the developer feels when working towards a goal. It is similar to the definition of User Experience (UX), except in this case the primary user is a software engineer.
+    AppLesson(
+      title: "Developer Experience (DX)",
+      body: """DevOps tooling company Harness (harness.io) defines Developer Experience (DX) as the overall interactions and feelings that the developer feels when working towards a goal. It is similar to the definition of User Experience (UX), except in this case the primary user is a software engineer.
 
 Developer experience may not always be measured on a dashboard, but when it's designed poorly, the team knows it, and they may complain loudly about it. Bad developer experience can derail an engineer an entire afternoon for example, an attempt to boot up the microservice to test it throws a cryptic traceback and the maintainer of the service is on vacation, so a mid-level engineer spins their wheels for hours just trying to get to a reliable build-execute-test loop.
 
@@ -2503,22 +2335,20 @@ Often the difference between good DX and bad DX is twenty or thirty minutes of u
 It doesn't take long to ensure that basic build commands work in a fresh install, and that those commands are documented in a local README.
 
 One opportunity for you as CTO to make this easier is to ensure that the build commands used across repositories and codebases at your company are consistent. Maybe it's always docker compose up or always yarn run. Whatever it is, any developer should be able to git clone any repository, and then the first command that comes to mind to build and run the software works.""",
-),
+    ),
 
-AppLesson(
-id: "l36",
-title: "Prioritizing Developer Experience",
-content: """Anything not on the product roadmap can be difficult to prioritize.
+    AppLesson(
+      title: "Prioritizing Developer Experience",
+      body: """Anything not on the product roadmap can be difficult to prioritize.
 
 Thankfully, DX rarely requires a large enough investment of time that it needs triaging on the roadmap. In the early days of your company, I prefer follow the Boy Scout Rule leave the codebase (or developer experience) better than you found it. Any time a developer encounters a problem building, running, or testing something, it is their responsibility to fix, document, or otherwise ensure that whoever comes to that code next has an easier time of it.
 
 As systems start to get larger it can become an increasingly sizeable chore to get everything running locally together to test functionality. At this point it may be worth investing in DX more formally on the roadmap, or even with dedicated headcount, to ensure that tools are working and developers don't lose large chunks of time fighting the system instead of writing productive code.""",
-),
+    ),
 
-AppLesson(
-id: "l37",
-title: "Easy Developer Experience Wins",
-content: """Here are a few easy wins to upgrade DX across your software engineering team:
+    AppLesson(
+      title: "Easy Developer Experience Wins",
+      body: """Here are a few easy wins to upgrade DX across your software engineering team:
 
 * Have a README file with instructions to run a codebase ideally a one-liner to install dependencies then build and run the code.
 * Enforce that all code be linted with a strict set of linting rules that is consistent across all usages of that language at your company. Fail your builds if linting doesn't pass. If all developers have their IDE configured to auto-lint, builds should rarely fail for lint issues.
@@ -2528,12 +2358,11 @@ content: """Here are a few easy wins to upgrade DX across your software engineer
 * Invest time in making sure that local test data can be set up in local databases from scratch. Often a quick data generator or seed data script can short-circuit a lot of developer headaches. Better yet if the seed data can be easily augmented to add additional corner cases/use cases as the system evolves, so that the base set of test data can be as comprehensive/representative as possible.
 
 * Develop a plan for how to either mock or actually spin up dependent services locally to test multiple-service interactions when necessary. Ideally, with good contracts and domain-driven design, the need for this will be rare, though it should still be easy when necessary.""",
-),
+    ),
 
-AppLesson(
-id: "l38",
-title: "Changing Tools For Developer Experience",
-content: """In 2022, Stripe, the fintech decacorn (i.e., a company valued at more than $10 billion), decided that Flow, its current programming language, had become too expensive to use. It was using too much memory, locking up laptops, and integrated poorly with developer IDEs.
+    AppLesson(
+      title: "Changing Tools For Developer Experience",
+      body: """In 2022, Stripe, the fintech decacorn (i.e., a company valued at more than $10 billion), decided that Flow, its current programming language, had become too expensive to use. It was using too much memory, locking up laptops, and integrated poorly with developer IDEs.
 
 TypeScript, like Flow, is an optional type language built on top of JavaScript. TypeScript has seen far wider adoption than Flow, and thus has solved many of the problems the Stripe teams were encountering with Flow, which had become more painful to work with over time. It was increasingly clear that TypeScript offered a major DX improvement over Flow. The only problem is, how do you convert millions of lines of code from one language to another?
 
@@ -2542,27 +2371,30 @@ The answer, it turns out, is an eighteen-month project by a team of engineers to
 The lesson here is that if the pain of poor developer experience is severe enough, then almost no cost is too high or any project out of reach to make improvements. Your team is almost certainly smaller than Stripe s, and you're likely not dealing with millions of lines of code, but the same calculus applies: if your team is encountering friction in DX that is slowing it down, you must invest the necessary developer time and effort to improve it to gain that efficiency back.
 
 Another problem teams often face is changing tooling too often. In certain tech ecosystems (particularly the JavaScript world), it seems something new and shiny comes out every month that could provide a productivity boost for your team. I encourage you to be disciplined about adopting new tools, make sure you've spent the time to really understand the pain that exists, diligence the new tool, see if it meets *all* your requirements not just the shiny headline and make decisions accordingly. For more on my recommended process here, see Implementing Internal Technology Radar, page 204.""",
-),
-],
+    ),
+
+  ],
 ),
 
 AppCourse(
-id: "entrepreneurship_3",
-title: "Tech Architecture",
-description: "Tech Architecture",
-category: AppCategory.business,
-lessons: [
+  id: "entrepreneurship_4",
+  title: "Tech Architecture",
+  description: "Tech Architecture",
+  instructor: "Hustle Academy",
+  category: "Entrepreneurship",
+  difficulty: "Intermediate",
+  icon: Icons.business_center,
+  color: Colors.orange,
+  duration: "81 Lessons",
+  lessons: [
+    AppLesson(
+      title: "Architecture",
+      body: """There are many excellent resources that explore various architectural patterns deeply; one of my favorites is Martin Fowler's *Patterns of Enterprise Application Architecture*. In this chapter, I'll provide a summary of some key phrases you'll hear so you have context when exploring these topics in depth elsewhere.""",
+    ),
 
-AppLesson(
-id: "l1",
-title: "Architecture",
-content: """There are many excellent resources that explore various architectural patterns deeply; one of my favorites is Martin Fowler's *Patterns of Enterprise Application Architecture*. In this chapter, I'll provide a summary of some key phrases you'll hear so you have context when exploring these topics in depth elsewhere.""",
-),
-
-AppLesson(
-id: "l2",
-title: "Domain-Driven Design",
-content: """Domain-driven design (DDD) is an approach to software development that focuses on understanding and modeling the problem domain in order to design better software solutions.
+    AppLesson(
+      title: "Domain-Driven Design",
+      body: """Domain-driven design (DDD) is an approach to software development that focuses on understanding and modeling the problem domain in order to design better software solutions.
 
 The core concepts of DDD include:
 
@@ -2571,12 +2403,11 @@ The core concepts of DDD include:
 **Ubiquitous language:** A common, consistent vocabulary and language that is used across your company to minimize confusion;
 
 **Bounded context:** The boundary within which the domain model applies and where the ubiquitous language is used.""",
-),
+    ),
 
-AppLesson(
-id: "l3",
-title: "High-Level Patterns",
-content: """When somebody uses the phrase technical architecture, they are usually referring to how code is executed and how information moves around in a system. Most descriptions of architecture involve the phrases services, monoliths, or message transports. This is in contrast to coding patterns, in which phrases such as object-oriented, functional programming, or dependency injection appear frequently. Coding patterns may sometimes be called code architecture and are discussed in Coding Patterns, page 188.
+    AppLesson(
+      title: "High-Level Patterns",
+      body: """When somebody uses the phrase technical architecture, they are usually referring to how code is executed and how information moves around in a system. Most descriptions of architecture involve the phrases services, monoliths, or message transports. This is in contrast to coding patterns, in which phrases such as object-oriented, functional programming, or dependency injection appear frequently. Coding patterns may sometimes be called code architecture and are discussed in Coding Patterns, page 188.
 
 The highest-impact decision in technical architecture is whether code runs as a monolith or as a set of services (commonly referred to as microservices). I'll start here with a description of what each pattern looks like, and then provide some guidance on the tradeoffs between them.
 
@@ -2653,18 +2484,16 @@ My general advice is to keep things simple. For small-to- medium-sized projects,
 A distributed monolith is a system deployed as multiple services that are not designed with sufficient independence or isolation and thus are not independently deployable. To be clear, this is the worst of both worlds. Rather than enabling a developer to go to any service and to work on it in isolation, not thinking about any other service, this setup requires that developer to reason about how that service affects other services. Not only that, but they have to then make changes potentially in multiple services and coordinate deployments in a particular order between services to ensure compatibility during releases. This development and deployment complexity negates the key benefits of a microservice system.
 
 If you notice your team falling into these patterns or complaining about coordinating releases between services, this should be a red flag for you to look closer and consider paying down some tech debt to get back to independently deployable services. That tech debt is usually located in your contracts, the design of your APIs, and how data is handled in your system.""",
-),
+    ),
 
-AppLesson(
-id: "l4",
-title: "Writing Readable, Good Code",
-content: """In a professional environment, the principal audience for any given line of code is not the computer but the developer who has to read that code at some point in the future for further development. This is the golden rule of programming: engineers should be writing code with the same level of readability that they expect of anyone else's code.""",
-),
+    AppLesson(
+      title: "Writing Readable, Good Code",
+      body: """In a professional environment, the principal audience for any given line of code is not the computer but the developer who has to read that code at some point in the future for further development. This is the golden rule of programming: engineers should be writing code with the same level of readability that they expect of anyone else's code.""",
+    ),
 
-AppLesson(
-id: "l5",
-title: "Choice Of Language And Ecosystem",
-content: """Per the golden rule of programming, your choice of language should enable your team to write code that is highly readable and maintainable. In general, a good engineer can do that in any language; however, some languages make it easier than others to do so consistently. Some other considerations for what language or ecosystem to choose:
+    AppLesson(
+      title: "Choice Of Language And Ecosystem",
+      body: """Per the golden rule of programming, your choice of language should enable your team to write code that is highly readable and maintainable. In general, a good engineer can do that in any language; however, some languages make it easier than others to do so consistently. Some other considerations for what language or ecosystem to choose:
 
 * How large is the talent pool that is familiar with that language, and more specifically is familiar with that environment and also interested in startups like yours?
 * Are there existing implementations that you can use as a starting point?
@@ -2672,118 +2501,104 @@ content: """Per the golden rule of programming, your choice of language should e
 * Is there a particular framework that might be a good starting point in a particular language? React Native, for example, is a powerful cross-platform mobile language that requires JavaScript or TypeScript.
 
 In the enterprise setting, I recommend languages with static type systems, such as Golang, TypeScript, Rust, etc.  With a static type system the compiler does more of the heavy lifting for ensuring code correctness. You should strive for a local development environment where the tools are finding errors before your code is executed. Fixing a compile time issue is in general much faster and cheaper than fixing a runtime issue.""",
-),
+    ),
 
-AppLesson(
-id: "l6",
-title: "Code Style And Formatting",
-content: """In any widely used language, there will be either a published standard for how code should be formatted (e.g., PEP8 in Python) or a configurable tool that can enforce a particular code style and formatting (e.g., ESLint or Prettier in JavaScript, or ReSharper in C#). Most of these tools are very good at ensuring that code, regardless of who wrote it, is stylistically identical. In the spirit of ensuring your codebase is readable, there is no excuse for not using one of these tools and ensuring 100 percent of your codebase is formatted according to the same rules. Which rules you use is entirely you and your team's preference, but just make sure it's consistent and produces a readable result.
+    AppLesson(
+      title: "Code Style And Formatting",
+      body: """In any widely used language, there will be either a published standard for how code should be formatted (e.g., PEP8 in Python) or a configurable tool that can enforce a particular code style and formatting (e.g., ESLint or Prettier in JavaScript, or ReSharper in C#). Most of these tools are very good at ensuring that code, regardless of who wrote it, is stylistically identical. In the spirit of ensuring your codebase is readable, there is no excuse for not using one of these tools and ensuring 100 percent of your codebase is formatted according to the same rules. Which rules you use is entirely you and your team's preference, but just make sure it's consistent and produces a readable result.
 
 I recommend you have a set of configuration options or instructions for the integrated development environments (IDEs) your developers use on how to auto format code when a file is saved. You should then, in your continuous integration system, ensure that all new code is formatted correctly.
 
 Be careful: enforcing style in your continuous integration system without automatic formatting is very frustrating for engineers, so make sure to train everyone in setting up their IDE correctly on day one to avoid consistent surprises and wasted cycle time from lint failures in CI.""",
-),
+    ),
 
-AppLesson(
-id: "l7",
-title: "Static Code Analysis",
-content: """Modern static code analysis is capable of identifying and alerting on a wide range of common code issues, ranging from security gaps to outright bugs to stylistic inconsistencies. These tools are fairly inexpensive and integrate neatly with a wide range of commonly used continuous integration systems and developer IDEs. From experience using these tools on a range of projects and programming languages, the signal-to-noise ratio is very good, and the output is a net gain in productivity and software quality. Relatively early on in your software project's life, you should integrate static code analysis. I encourage you to look at tools that are specific both to your programming language of choice e.g., ESLint for JavaScript as well as generic analysis platforms such as SonarCloud, Codebeat, Scrutinizer-CI, Code Climate, or Cloudacity.""",
-),
+    AppLesson(
+      title: "Static Code Analysis",
+      body: """Modern static code analysis is capable of identifying and alerting on a wide range of common code issues, ranging from security gaps to outright bugs to stylistic inconsistencies. These tools are fairly inexpensive and integrate neatly with a wide range of commonly used continuous integration systems and developer IDEs. From experience using these tools on a range of projects and programming languages, the signal-to-noise ratio is very good, and the output is a net gain in productivity and software quality. Relatively early on in your software project's life, you should integrate static code analysis. I encourage you to look at tools that are specific both to your programming language of choice e.g., ESLint for JavaScript as well as generic analysis platforms such as SonarCloud, Codebeat, Scrutinizer-CI, Code Climate, or Cloudacity.""",
+    ),
 
-AppLesson(
-id: "l8",
-title: "Greenfield vs. Brownfield",
-content: """Greenfield software development refers to development work in a new environment with minimal pre-existing legacy code and free choice on tools, patterns, and architecture. This has the obvious advantage of allowing the thoughtful choice of the right architecture and tooling for the job, and no distraction from existing tech debt. The subtle downside is that, with so much choice and so few constraints, the risks of making poor decisions are higher. There is also usually a considerable bootstrap cost for new projects that is underestimated things like setting up testing, build systems, static code analysis, etc.
+    AppLesson(
+      title: "Greenfield vs. Brownfield",
+      body: """Greenfield software development refers to development work in a new environment with minimal pre-existing legacy code and free choice on tools, patterns, and architecture. This has the obvious advantage of allowing the thoughtful choice of the right architecture and tooling for the job, and no distraction from existing tech debt. The subtle downside is that, with so much choice and so few constraints, the risks of making poor decisions are higher. There is also usually a considerable bootstrap cost for new projects that is underestimated things like setting up testing, build systems, static code analysis, etc.
 
 Brownfield software development refers to the opposite of greenfield, working with existing legacy systems. The tradeoffs are essentially inverted: for better or worse, you're stuck with the high-level decisions that have been made by those before you.
 
 The largest risk in brownfield development is not invented here syndrome. Not invented here is the tendency for individuals to avoid taking responsibility for or paying sufficient attention to things they did not create themselves. In brownfield software development, this can lead to systematic underinvestment in understanding existing work, causing frustration and inefficiency in augmenting or modifying existing systems. I strongly encourage managers to make explicit space for a team to read and understand an existing system before asking them to modify it in any way. The time spent in comprehension upfront will be paid back by fewer surprises and faster velocity down the road.""",
-),
+    ),
 
-AppLesson(
-id: "l9",
-title: "Coding Patterns",
-content: """The subject of what style of code to write is a religious discussion for many coders. My intention in this chapter is to provide a brief description of what the most common phrases in coding patterns mean, and refer you to more extensive resources on each practice.
+    AppLesson(
+      title: "Coding Patterns",
+      body: """The subject of what style of code to write is a religious discussion for many coders. My intention in this chapter is to provide a brief description of what the most common phrases in coding patterns mean, and refer you to more extensive resources on each practice.
 
 If you're faced with what feels like an emotional conversation on this topic, keep in mind that many successful companies exist that use each of these patterns. Everything is a tradeoff. A bad programmer can make a mess with any tool, and conversely a great programmer will find a way to make a readable solution even with suboptimal tools.""",
-),
+    ),
 
-AppLesson(
-id: "l10",
-title: "Object-Oriented Programming (OOP)",
-content: """Object-oriented programming (OOP) is a methodology of designing code to mirror real-world nouns and verbs. A typical example would be to model an interaction between two people as two Person objects, and any actions for people, such as talking, would be functions on those objects. Many languages are inherently object-oriented, such as Python, Ruby, and C#. Some, like JavaScript or C++, are Object-Optional (supporting to an extent both object-oriented and functional styles) and others are something else entirely.""",
-),
+    AppLesson(
+      title: "Object-Oriented Programming (OOP)",
+      body: """Object-oriented programming (OOP) is a methodology of designing code to mirror real-world nouns and verbs. A typical example would be to model an interaction between two people as two Person objects, and any actions for people, such as talking, would be functions on those objects. Many languages are inherently object-oriented, such as Python, Ruby, and C#. Some, like JavaScript or C++, are Object-Optional (supporting to an extent both object-oriented and functional styles) and others are something else entirely.""",
+    ),
 
-AppLesson(
-id: "l11",
-title: "Purity",
-content: """Code that is pure has no external dependencies or side effects. Said another way, given the same inputs, a pure piece of code will always produce the same outputs. The advantage of pure code is that it is easily testable and requires no external setup or mocking. Pure code is also easier to read and understand, as it does not require reading any additional code to understand what it does. A simple example of pure code would be a function that sums together two numbers; given any two input numbers, the sum function always produces the same output.
+    AppLesson(
+      title: "Purity",
+      body: """Code that is pure has no external dependencies or side effects. Said another way, given the same inputs, a pure piece of code will always produce the same outputs. The advantage of pure code is that it is easily testable and requires no external setup or mocking. Pure code is also easier to read and understand, as it does not require reading any additional code to understand what it does. A simple example of pure code would be a function that sums together two numbers; given any two input numbers, the sum function always produces the same output.
 
 Some code is inherently impure for example, code that interacts with the outside world, such as a filesystem, network, or database. For most other scenarios it's possible to model business logic in a pure way. Where possible, I encourage you and your team to write pure code.""",
-),
+    ),
 
-AppLesson(
-id: "l12",
-title: "Functional Programming",
-content: """To stick with the parts-of-speech model for describing coding patterns, functional programming treats verbs (functions) as a first-class part of the system. Most functional programming starts with very tiny pieces of functionality and composes it together to create more sophisticated and complex systems. When it's done well, the benefit of functional code is that it tends to be more pure, and thus easier to read, reason about, and test in isolation. Academic examples of functional code even exist that can be formally reasoned about, meaning one can produce a mathematical proof that code runs correctly.
+    AppLesson(
+      title: "Functional Programming",
+      body: """To stick with the parts-of-speech model for describing coding patterns, functional programming treats verbs (functions) as a first-class part of the system. Most functional programming starts with very tiny pieces of functionality and composes it together to create more sophisticated and complex systems. When it's done well, the benefit of functional code is that it tends to be more pure, and thus easier to read, reason about, and test in isolation. Academic examples of functional code even exist that can be formally reasoned about, meaning one can produce a mathematical proof that code runs correctly.
 
 Functional programming, done poorly, can create very verbose and hard-to-read code. For example, when composing together multiple functions, it's important to consider how many functions are being composed, and how obvious the behavior of each function is in the composition chain.
 
 A worst-case scenario: Imagine a function chain of ten functions in a row, each with names that have no meaning to you (e.g., a(b(c(d(e(f(g(h(i(j(input))))))))))). The only thing worse would be if the definitions of these alphabet functions were in ten different files in different places of the codebase, or worse, came from different imported libraries.""",
-),
+    ),
 
-AppLesson(
-id: "l13",
-title: "Extreme Programming And Test-Driven Development (TDD)",
-content: """Extreme programming is a development methodology, akin to Agile or SCRUM. It may be used to reference the formal methodology described in the book *Extreme Programming Explained* by Kent Beck, or more informally to address some of the coding practices espoused by the methodology. The informal usage of the phrase describes the testing practices in the methodology, specifically the idea of test-driven development.
+    AppLesson(
+      title: "Extreme Programming And Test-Driven Development (TDD)",
+      body: """Extreme programming is a development methodology, akin to Agile or SCRUM. It may be used to reference the formal methodology described in the book *Extreme Programming Explained* by Kent Beck, or more informally to address some of the coding practices espoused by the methodology. The informal usage of the phrase describes the testing practices in the methodology, specifically the idea of test-driven development.
 
 Test-driven development (TDD) is a process where tests are written before functional software, as opposed to writing functional code first and tests after. Behavior-driven development (BDD) and acceptance-test driven development (ATDD) are similar practices.""",
-),
+    ),
 
-AppLesson(
-id: "l14",
-title: "Dependency Injection",
-content: """Dependency injection is a pattern where the service dependencies of a particular object, module, or block of code are passed in, rather than instantiated. For example, a data object can instantiate its own connection to a database by looking up a connection string in a configuration file and creating the database client. Alternatively, a parent-calling block of code can create the database service, then pass the single database service into each instance of the data object.
+    AppLesson(
+      title: "Dependency Injection",
+      body: """Dependency injection is a pattern where the service dependencies of a particular object, module, or block of code are passed in, rather than instantiated. For example, a data object can instantiate its own connection to a database by looking up a connection string in a configuration file and creating the database client. Alternatively, a parent-calling block of code can create the database service, then pass the single database service into each instance of the data object.
 
 The main advantage of dependency injection is that it decreases the coupling between a service and its dependencies, effectively adding a documented interface between them. This interface allows, for example, other implementations of the interface to be used, such as a mock service in a testing context.
 
 There are subtleties inherent to doing dependency injection cleanly. I encourage you to adopt frameworks or patterns that are commonly used and well thought out for your programming language.""",
-),
+    ),
 
-AppLesson(
-id: "l15",
-title: "Domain-Driven Design",
-content: """The term Domain-Driven Design comes from a book by Eric Evans, *Domain-Driven Design*, published in 2003. The core idea is to create a model be it for objects in object-oriented design or for a schema for your database that models the nouns in your business domain. This may seem simple and intuitive; however, with complex business domains, it's easy for code either to inconsistently model the domain, or to model it in a way that hinders comprehension by the team. Especially with larger and more complex problems, I always insist that the team sit down and agree on a consistent way to model the problem, using consistent terminology to refer to the same concepts across the entire system.""",
-),
+    AppLesson(
+      title: "Domain-Driven Design",
+      body: """The term Domain-Driven Design comes from a book by Eric Evans, *Domain-Driven Design*, published in 2003. The core idea is to create a model be it for objects in object-oriented design or for a schema for your database that models the nouns in your business domain. This may seem simple and intuitive; however, with complex business domains, it's easy for code either to inconsistently model the domain, or to model it in a way that hinders comprehension by the team. Especially with larger and more complex problems, I always insist that the team sit down and agree on a consistent way to model the problem, using consistent terminology to refer to the same concepts across the entire system.""",
+    ),
 
-AppLesson(
-id: "l16",
-title: "API Contracts",
-content: """An application programming interface (API) is not unlike a legal contract.
+    AppLesson(
+      title: "API Contracts",
+      body: """An application programming interface (API) is not unlike a legal contract.
 
 It is designed, tweaked, and agreed upon in advance of implementation, and both parties expect the other to conform to the contract to achieve a desired outcome. When you design and implement an API, you're making a commitment to the consumers of your API that it will work in a certain way. Like a legal contract, you may have a specific idea of how your API will function, but if the nuances are interpreted differently by the other party, you may be unable to achieve your purpose. API details truly do matter, and as a technical leader it's your role to ensure that your team is designing and building APIs in a consistent, efficient manner.
 
 All that said, building a high-quality API is a surprisingly complex task. It requires taking into account many things: designing the interface, implementing the code that handles the logic/data, testing the functionality, building the documentation, addressing versioning/change management, keeping the documentation up to date as the API changes, and making it easy for developers to interact with the API. Doing these things well can mean the difference between building an API that developers love and an API that stymies implementation and slows down time to launch important projects. There are two main levers at your disposal as a leader to ensure you're handling these things well: governance and architecture.""",
-),
+    ),
 
-AppLesson(
-id: "l17",
-title: "API Design Governance",
-content: """Countless decisions go into every element of building an API. What separates good APIs from bad APIs is the consistency, predictability, and correctness of those decisions. As a technical leader the job falls on you to make sure that, across your organization, you have a structure in place to help developers build APIs that are consistent with one another, predictable in that they use common patterns that are appropriate for the problem at hand, and correct.
+    AppLesson(
+      title: "API Design Governance",
+      body: """Countless decisions go into every element of building an API. What separates good APIs from bad APIs is the consistency, predictability, and correctness of those decisions. As a technical leader the job falls on you to make sure that, across your organization, you have a structure in place to help developers build APIs that are consistent with one another, predictable in that they use common patterns that are appropriate for the problem at hand, and correct.
 
 Achieving these goals requires some form of governance system. This can range from a set of clearly documented guidelines and standards to a group of people who are responsible for reviewing and approving all APIs on a regular basis. The larger your team, the more time and effort you'll need to invest in process and governance to maintain a high standard.""",
-),
+    ),
 
-AppLesson(
-id: "l18",
-title: "API Architecture",
-content: """Out in the wild you're likely to encounter two main types of APIs: HTTP- based and non-HTTP based. As with any tool, HTTP has its tradeoffs and isn't ideal for every job, so if your business requirements dictate ultra-low latency, or ultra-high throughput/low overhead, or real-time streaming applications, you'll likely be looking for something beyond HTTP. Below I discuss a handful of HTTP API types and then briefly cover some non- HTTP APIs you're likely to run into.""",
-),
+    AppLesson(
+      title: "API Architecture",
+      body: """Out in the wild you're likely to encounter two main types of APIs: HTTP- based and non-HTTP based. As with any tool, HTTP has its tradeoffs and isn't ideal for every job, so if your business requirements dictate ultra-low latency, or ultra-high throughput/low overhead, or real-time streaming applications, you'll likely be looking for something beyond HTTP. Below I discuss a handful of HTTP API types and then briefly cover some non- HTTP APIs you're likely to run into.""",
+    ),
 
-AppLesson(
-id: "l19",
-title: "HTTP-Based APIs",
-content: """If you're building a web or mobile application, or even most system backends, chances are very high you'll primarily be dealing with HTTP APIs.
+    AppLesson(
+      title: "HTTP-Based APIs",
+      body: """If you're building a web or mobile application, or even most system backends, chances are very high you'll primarily be dealing with HTTP APIs.
 
 *XML and SOAP APIs*
 
@@ -2802,12 +2617,11 @@ GraphQL is similar to REST in that it's JSON over HTTP; however, it does not rel
 I like to think of GraphQL as REST with types and a self-documenting schema. As a result, GraphQL APIs tend to come with automatically generated documentation and schema explorers. GraphQL also, by virtue of its schema system, allows for the composition of multiple schemas from multiple services to form a larger, more powerful, and more complex data graph, sometimes called a federated schema. The company Apollo provides sophisticated solutions for managing and scaling a graph.
 
 There's a lot to be said for the benefits of building a graph to model your company's data, and the good habits that being forced to design a schema bring about. That said, no system comes without tradeoffs. Because GraphQL forgoes standard HTTP verbs, it does not play nicely with some elements of the web stack. GET request caching and developer tooling are still catching up to deal nicely with GraphQL requests. If those drawbacks are not a significant concern for your business, I strongly encourage you to check out apollographql.com and consider using GraphQL especially for internal use cases for your APIs.""",
-),
+    ),
 
-AppLesson(
-id: "l20",
-title: "Non-HTTP APIs",
-content: """In general, for traditional synchronous request/response- (aka remote procedure call or RPC-) style APIs, you'll want to use an HTTP API due to its ubiquitous nature. However, there are several API patterns especially for asynchronous operations that don't map neatly to HTTP and have commonly used alternative implementations.
+    AppLesson(
+      title: "Non-HTTP APIs",
+      body: """In general, for traditional synchronous request/response- (aka remote procedure call or RPC-) style APIs, you'll want to use an HTTP API due to its ubiquitous nature. However, there are several API patterns especially for asynchronous operations that don't map neatly to HTTP and have commonly used alternative implementations.
 
 *Queueing systems*
 
@@ -2839,12 +2653,11 @@ Jobs, or cron jobs, are a type of backend API that are rarely triggered by a pub
   - allows for jobs to be run inside your environment/private networks/security groups as necessary to access other internal system APIs/resources;
   - integrates with your secret management system.
   - allows for easily setting up jobs locally in development and production environments, and easy testing in each of those environments.""",
-),
+    ),
 
-AppLesson(
-id: "l21",
-title: "Documentation",
-content: """Having thorough, clear, and current documentation for your API is just as critical as how you build and maintain it. Some key characteristics of great API documentation:
+    AppLesson(
+      title: "Documentation",
+      body: """Having thorough, clear, and current documentation for your API is just as critical as how you build and maintain it. Some key characteristics of great API documentation:
 
 * Always up to date with the implementation
 * Documents all possible inputs and their types Documents all possible errors
@@ -2857,28 +2670,25 @@ If you're using GraphQL, the GraphQL Playground or Apollo Studio explorer can pr
 These are gaps you need to fill elsewhere.
 
 Another benefit of using either OpenAPI or GraphQL is that the resulting API specification is portable not only to documentation generators and test frameworks but also to developer IDEs such as Insomnia or Postman. These IDEs enable developers to quickly interact with an API to validate functionality without writing code. Formal specifications can also be used with code generation tools to ensure typing consistency in code.""",
-),
+    ),
 
-AppLesson(
-id: "l22",
-title: "Idempotency",
-content: """An API request is said to be idempotent when making the same request multiple times has the same effect as making it a single time. Idempotency is an important concept in building robust systems and avoiding data corruption. As with all things, idempotency gives you useful guarantees about a system but it comes with a cost: implementing idempotency adds complexity to backend systems.
+    AppLesson(
+      title: "Idempotency",
+      body: """An API request is said to be idempotent when making the same request multiple times has the same effect as making it a single time. Idempotency is an important concept in building robust systems and avoiding data corruption. As with all things, idempotency gives you useful guarantees about a system but it comes with a cost: implementing idempotency adds complexity to backend systems.
 
 In REST APIs, it is widely assumed that every HTTP verb except POST should be idempotent. GET requests, for example, by definition should always return the same result for the same input (unless the underlying data changes, of course). In general, PUT requests are modifying existing objects and should naturally be idempotent. Multiple calls to a POST request, however, in most systems signal the intention to create multiple objects.""",
-),
+    ),
 
-AppLesson(
-id: "l23",
-title: "Idempotency Keys",
-content: """For HTTP POST requests in REST and for GraphQL mutation APIs, idempotency is not provided by the standard/specification. If you want a client to be able to retry these kinds of requests and have idempotent behavior, you should implement the idempotency key pattern. An idempotency key is an arbitrary string, provided by the client (either as an HTTP header or perhaps in GraphQL as an input variable), that backends use to de-duplicate incoming requests. This requires the backend to store the idempotency key, and also store the response to a request with that key, to be provided to clients later on.
+    AppLesson(
+      title: "Idempotency Keys",
+      body: """For HTTP POST requests in REST and for GraphQL mutation APIs, idempotency is not provided by the standard/specification. If you want a client to be able to retry these kinds of requests and have idempotent behavior, you should implement the idempotency key pattern. An idempotency key is an arbitrary string, provided by the client (either as an HTTP header or perhaps in GraphQL as an input variable), that backends use to de-duplicate incoming requests. This requires the backend to store the idempotency key, and also store the response to a request with that key, to be provided to clients later on.
 
 Note that implementing an idempotency key is non-trivial, as it will require additional database writes, logic around capturing request responses, and dealing with concurrency/locking issues for duplicate requests that arrive at the same time. If idempotency is important in your application say, if you're dealing with financial transactions I encourage you to adopt a backend API implementation that provides a robust idempotency system out of the box rather than building it yourself from scratch.""",
-),
+    ),
 
-AppLesson(
-id: "l24",
-title: "Data And Analytics",
-content: """Most startups have at least three different kinds of data they use as part of their business:
+    AppLesson(
+      title: "Data And Analytics",
+      body: """Most startups have at least three different kinds of data they use as part of their business:
 
 * Transactional data
 
@@ -2889,12 +2699,11 @@ content: """Most startups have at least three different kinds of data they use a
 Each of these types of data will come in different volumes, have different read/write patterns, and require different tools to visualize and glean insights.
 
 A quick note on the phrase big data. As a startup, the chances are very good that you do *not* have big data in the sense that it needs to be architected with infinity-scale (or web scale) in mind. Typical off-the-shelf databases with reasonable quantities of hardware and half-decent data model design are more than capable of handling tens of millions of rows and hundreds of gigabytes of data with acceptable performance. Most big data solutions, such as data pipelines or data warehouse appliances, involve significant added setup complexity, latency, and cost, and they're likely overkill for your startup. For the sake of simplicity, big data solutions should only be considered if you can make a compelling argument that a regular (e.g., PostgreSQL) database cannot do the job. Said another way, don't prematurely optimize your database architecture.""",
-),
+    ),
 
-AppLesson(
-id: "l25",
-title: "Transactional Data",
-content: """Transactional data is the data that powers your application itself, typically your primary NoSQL or SQL database. Transactional data requires very low latency and high availability, and is modest in total size compared to the other forms of data. My recommendation is to choose an off-the-shelf SQL or NoSQL solution, preferably something hosted for you such as MongoDB Atlas or Google Cloud SQL. Some nice-to-haves in your production database:
+    AppLesson(
+      title: "Transactional Data",
+      body: """Transactional data is the data that powers your application itself, typically your primary NoSQL or SQL database. Transactional data requires very low latency and high availability, and is modest in total size compared to the other forms of data. My recommendation is to choose an off-the-shelf SQL or NoSQL solution, preferably something hosted for you such as MongoDB Atlas or Google Cloud SQL. Some nice-to-haves in your production database:
 
 * One-click point-in-time restore
 * Regular backups with one-click restore
@@ -2905,12 +2714,11 @@ content: """Transactional data is the data that powers your application itself, 
 * Connection/IP-level security
 * Resource (CPU, RAM, Disk, Network) monitoring and alerting One-click scaling up/down for CPU/RAM
 * Slow query monitoring""",
-),
+    ),
 
-AppLesson(
-id: "l26",
-title: "Analytical Business Intelligence Data",
-content: """Business intelligence (BI) is data that is used to gain insight into behaviors of your users, usually sourced from your transactional data. Early on, you can often get away with running business intelligence queries directly on your transactional database. As the size of data and query complexity increase, this becomes more problematic as it adds additional load to a system that requires high availability and low latency. The natural solution then is either to query a read-only replica of your transactional database, or copy/transform the data to another data storage system via a data pipeline.
+    AppLesson(
+      title: "Analytical Business Intelligence Data",
+      body: """Business intelligence (BI) is data that is used to gain insight into behaviors of your users, usually sourced from your transactional data. Early on, you can often get away with running business intelligence queries directly on your transactional database. As the size of data and query complexity increase, this becomes more problematic as it adds additional load to a system that requires high availability and low latency. The natural solution then is either to query a read-only replica of your transactional database, or copy/transform the data to another data storage system via a data pipeline.
 
 Building data pipelines and data warehousing is an entire book unto itself, and the state of the art is always evolving. I have just a few high-level bits of advice:
 
@@ -2921,62 +2729,55 @@ In modern times, a startup doesn't need to build and host sophisticated data pip
 Consider using hosted or cloud-native solutions for visualizing data such as Looker, Domo, or Preset.
 
 Make sure your engineering and product teams are collaborating closely with whichever member of your team owns data and business intelligence. Bringing in data's perspective early in the product process will save a lot of headache down the road with a measure twice, create-data-schema once mindset.""",
-),
+    ),
 
-AppLesson(
-id: "l27",
-title: "Behavioral Data",
-content: """Behavioral data also called behavioral analytics events describes how users have used your application. Behavioral data is often fairly high volume, with a somewhat limited schema, and is best used in combination with powerful visualization software.
+    AppLesson(
+      title: "Behavioral Data",
+      body: """Behavioral data also called behavioral analytics events describes how users have used your application. Behavioral data is often fairly high volume, with a somewhat limited schema, and is best used in combination with powerful visualization software.
 
 Overall, you'll want behavioral data from your application to go to multiple sources. This presents a bit of a routing problem: you have a single data source (your application), but you want events to go to many places. The nearly universally adopted solution to this problem is Twilio's Segment platform, though there are some up-and-coming alternatives called Customer Data Platforms (CDP) such as RudderStack. A CDP can ingest data from your application, then send it to your data warehouse and to as many other SaaS platforms as you like.
 
 One important distinction between behavioral data generated by your application and transactional data is its precision. Most behavioral data is lossy users have ad blockers, requests get dropped, or firewalls get in the way. There are many reasons why events might not make it from a client device to your CDP. That doesn't mean behavioral data is not useful, but being aware of its lossiness should inform your expectations for the data and limit the use cases when querying it. If you need exact numbers, expect to derive those from your BI platform and your transactional data.""",
-),
+    ),
 
-AppLesson(
-id: "l28",
-title: "General Tips And Best Practices For Architecture Design",
-content: """Let's close out this section with a few overall recommendations for designing your architecture.""",
-),
+    AppLesson(
+      title: "General Tips And Best Practices For Architecture Design",
+      body: """Let's close out this section with a few overall recommendations for designing your architecture.""",
+    ),
 
-AppLesson(
-id: "l29",
-title: "Put Business Logic In The Backend",
-content: """As you build out your application you're often confronted with the choice of where logic should live: on the client (e.g., web browser, mobile device, physical hardware) or some form of backend server. For certain types of logic, such as anything related to authentication, value calculations, anti-cheating/tampering mechanisms, this is a firm requirement. For most other logic it's still a good idea for the following reasons:
+    AppLesson(
+      title: "Put Business Logic In The Backend",
+      body: """As you build out your application you're often confronted with the choice of where logic should live: on the client (e.g., web browser, mobile device, physical hardware) or some form of backend server. For certain types of logic, such as anything related to authentication, value calculations, anti-cheating/tampering mechanisms, this is a firm requirement. For most other logic it's still a good idea for the following reasons:
 
 Backends are often easier to test than clients, so you can more confidently confirm the correctness of business logic on the backend.
 
 More logic on the backend means thinner clients, and also means you can produce clients for multiple platforms that can leverage a single source for logic, reducing code duplication.
 
 Logic on the backend can't be tampered with or modified by the client.""",
-),
+    ),
 
-AppLesson(
-id: "l30",
-title: "Make Services Externalizable",
-content: """The APIs from your backend to other backends, or your backend to frontends, should be thought of as generic-purpose APIs that could be consumed by third parties. This forces you to maintain several good design habits, including ensuring that interfaces are comprehensible on their own (domain-driven design), and using sensible authentication mechanisms and appropriate high-level ownership abstractions in data design. And, on the off chance you do one day wish to externalize a service, the road to doing so will be much shorter.""",
-),
+    AppLesson(
+      title: "Make Services Externalizable",
+      body: """The APIs from your backend to other backends, or your backend to frontends, should be thought of as generic-purpose APIs that could be consumed by third parties. This forces you to maintain several good design habits, including ensuring that interfaces are comprehensible on their own (domain-driven design), and using sensible authentication mechanisms and appropriate high-level ownership abstractions in data design. And, on the off chance you do one day wish to externalize a service, the road to doing so will be much shorter.""",
+    ),
 
-AppLesson(
-id: "l31",
-title: "Use As Few Languages As Possible",
-content: """With every programming language comes an associated build system, dependency management system, programming best practices, and interfaces. Your team should be putting in considerable effort to ensure your primary language and ecosystem are well integrated and working well for local developers, test environments, and production environments.
+    AppLesson(
+      title: "Use As Few Languages As Possible",
+      body: """With every programming language comes an associated build system, dependency management system, programming best practices, and interfaces. Your team should be putting in considerable effort to ensure your primary language and ecosystem are well integrated and working well for local developers, test environments, and production environments.
 
 For every additional language you add to your stack, you'll need to replicate all of that effort, and you'll suffer from an inability to share code between the runtimes. Before allowing an additional language in your stack you should be able to build a robust and bulletproof argument that the benefits of the new language dwarf the operational and maintenance burdens that the new language adds. Otherwise you're better off without it.""",
-),
+    ),
 
-AppLesson(
-id: "l32",
-title: "Tools",
-content: """The tooling ecosystem and patterns for software engineering are constantly evolving and changing. You will inevitably be tempted either on your own or by members of your team to change something about how you're doing engineering, such as adopting a new library, framework, language, or pattern. Adopting each of these changes quickly leads to a patchwork quilt of poorly thought-out architecture. Conversely, ignoring all change leaves you with a stale codebase that, over time, will be less efficient and harder for newly hired talent to work on. The right approach is to formalize the process
+    AppLesson(
+      title: "Tools",
+      body: """The tooling ecosystem and patterns for software engineering are constantly evolving and changing. You will inevitably be tempted either on your own or by members of your team to change something about how you're doing engineering, such as adopting a new library, framework, language, or pattern. Adopting each of these changes quickly leads to a patchwork quilt of poorly thought-out architecture. Conversely, ignoring all change leaves you with a stale codebase that, over time, will be less efficient and harder for newly hired talent to work on. The right approach is to formalize the process
 
 of changing your tech stack and provide some guardrails to motivate your team to be curious and thoughtful about tooling changes.""",
-),
+    ),
 
-AppLesson(
-id: "l33",
-title: "Implementing Internal Technology Radar",
-content: """Thoughtworks, a leading software consultancy based out of San Francisco, publishes a tool called the Technology Radar (ctohb.com/radar) that evaluates the hundreds of projects Thoughtworks sees every year. They put new tools, techniques, patterns, and languages (which they call blips) in one of four categories based on how effective they are in the real world.
+    AppLesson(
+      title: "Implementing Internal Technology Radar",
+      body: """Thoughtworks, a leading software consultancy based out of San Francisco, publishes a tool called the Technology Radar (ctohb.com/radar) that evaluates the hundreds of projects Thoughtworks sees every year. They put new tools, techniques, patterns, and languages (which they call blips) in one of four categories based on how effective they are in the real world.
 
 The categories are hold, assess, trial, and adopt.
 
@@ -2984,61 +2785,55 @@ If you've never read through a Thoughtworks Radar, I highly recommend it as a ge
 
 My preferred way to balance the challenge of keeping engineers motivated and a codebase relevant with tool churn is to follow Thoughtworks lead and implement an internal technology radar. Rather than weigh something new for its universal appeal as Thoughtworks does, my approach evaluates blips for their fit and effectiveness for our organization using the same four levels. To be concrete:
 
-1. Somebody proposes using a new tool, technique, platform, or language (blip). That proposal at first is categorized as "assess". The proposer has to make the case in a technical document that the new blip would provide a material benefit to a project that was already selected by the business (or as an experiment in an innovation sprint see Cooldown/Innovation Sprints, page 163). Then, if approved, it moves to a trial.
+1. Somebody proposes using a new tool, technique, platform, or language (blip). That proposal at first is categorized as \"assess\". The proposer has to make the case in a technical document that the new blip would provide a material benefit to a project that was already selected by the business (or as an experiment in an innovation sprint see Cooldown/Innovation Sprints, page 163). Then, if approved, it moves to a trial.
 2. The new blip is used by the developer in a project, either selected by the business or in their innovation sprint window. At the end of the project, the author produces a follow-up written document describing their experience with the blip, including pros and cons and how well the blip plays with the rest of the tooling ecosystem at the company.
 3. Based on the results of the trial, the team as a whole will move to either adopt the blip, unlocking that blip to be used by the rest of the team without further ceremony, or move it to hold, which would require a new trial and a new evaluation for it to be used again. If a trial fails in a business project, the team is advised to think carefully about whether to remove the blip from that implementation to avoid future maintenance concerns.
 
 In most cases, I find that when a blip trial fails, it fails relatively early on and the engineer leading the project doesn't include the blip in the final delivered implementation.""",
-),
+    ),
 
-AppLesson(
-id: "l34",
-title: "Boring Technology",
-content: """Boring Technology is a phrase coined by Dan McKinley and outlined at ctohb.com/boring. The key idea is that your team's job is to deliver functionality to support the business, and most of the time that doesn't depend on using fancy new tools. In fact, using something that's not boring often has many hidden costs, and only if your team is fully cognizant of those costs and believes the benefits are larger, should the new tool be adopted. As Boring Technology describes it, total cost = maintenance costvelocity benefit. Some hidden costs to consider:
+    AppLesson(
+      title: "Boring Technology",
+      body: """Boring Technology is a phrase coined by Dan McKinley and outlined at ctohb.com/boring. The key idea is that your team's job is to deliver functionality to support the business, and most of the time that doesn't depend on using fancy new tools. In fact, using something that's not boring often has many hidden costs, and only if your team is fully cognizant of those costs and believes the benefits are larger, should the new tool be adopted. As Boring Technology describes it, total cost = maintenance costvelocity benefit. Some hidden costs to consider:
 
 * Incomplete, inaccurate, or immature documentation
 * Not fully developed ecosystems around the tool/technology, including SDKs and integrations with other tools
 * A higher likelihood of encountering defects or missing functionality/features
 * Additional training cost for members of your team to adopt the new tool
 * Burden in keeping that tool or package up to date, patch ing security holes, etc.""",
-),
+    ),
 
-AppLesson(
-id: "l35",
-title: "Tool Cost",
-content: """It's a fact of life that modern startups will spend a lot of money on Software As A Service (SaaS). Your company is likely no exception, so don't be surprised when you find you are spending an entire headcount or more on infrastructure and tools before your Series B fundraise.""",
-),
+    AppLesson(
+      title: "Tool Cost",
+      body: """It's a fact of life that modern startups will spend a lot of money on Software As A Service (SaaS). Your company is likely no exception, so don't be surprised when you find you are spending an entire headcount or more on infrastructure and tools before your Series B fundraise.""",
+    ),
 
-AppLesson(
-id: "l36",
-title: "Budget",
-content: """There are a handful of published benchmarks for SaaS and tool spend at various company stages as a percentage of either company revenue or total spend.
+    AppLesson(
+      title: "Budget",
+      body: """There are a handful of published benchmarks for SaaS and tool spend at various company stages as a percentage of either company revenue or total spend.
 
 There's not a single precise benchmark, but it seems that typical SaaS Costs of Goods Sold (COGS) fall somewhere between 10 and 30 percent of revenue.
 
 Know your spend and keep an eye on cost growth. It's very easy to accidentally leave a couple of machines running in AWS and add $10,000 to your annual cloud hosting bills. Most cloud platforms have built-in budgeting features, so There's no excuse to not use them. If you're using infrastructure as code, it's easy to set up a module that, for every new cloud system deployed, will automatically apply a cloud budget at the same time that will monitor and alert on cost for that particular system.
 
 It's typical for SaaS costs to grow over time, be it because your infrastructure is growing, or because you discover a new SaaS vendor that can save your team time. I recommend not using cost as a reason to avoid adopting a typical SaaS tool (with a cost range in the hundreds per month). Instead, I'd advise factoring regular growth into your SaaS cost forecasts.""",
-),
+    ),
 
-AppLesson(
-id: "l37",
-title: "Tracking",
-content: """You should be tracking how much your organization spends on engineering tools, including IDEs, SaaS, and infrastructure (cloud platforms). You can do this manually in a spreadsheet or using a SaaS Management Platform (SMP). Available from various vendors such as BetterCloud, Zluri, and Vendr, these solutions link with your credit card or bank and automatically categorize cash spend.""",
-),
+    AppLesson(
+      title: "Tracking",
+      body: """You should be tracking how much your organization spends on engineering tools, including IDEs, SaaS, and infrastructure (cloud platforms). You can do this manually in a spreadsheet or using a SaaS Management Platform (SMP). Available from various vendors such as BetterCloud, Zluri, and Vendr, these solutions link with your credit card or bank and automatically categorize cash spend.""",
+    ),
 
-AppLesson(
-id: "l38",
-title: "DevOps",
-content: """Wikipedia describes DevOps as a set of practices that combines software development and IT operations. It aims to shorten the systems development lifecycle and provide continuous delivery with high software quality.
+    AppLesson(
+      title: "DevOps",
+      body: """Wikipedia describes DevOps as a set of practices that combines software development and IT operations. It aims to shorten the systems development lifecycle and provide continuous delivery with high software quality.
 
 To me the key piece of this definition is that devops aims to shorten the software development lifecycle, in other words DevOps is an enabler of broader team productivity.  If you're not already specifically thinking about DevOps, you're likely underprioritizing or underinvesting in DevOps to some degree. It's not just my opinion; it's becoming widely accepted throughout tech industries that high-quality DevOps is a key driver of overall engineering velocity.""",
-),
+    ),
 
-AppLesson(
-id: "l39",
-title: "Four Key Metrics (DORA)",
-content: """The highest-rated blip in 2022 of the Thoughtworks Technology Radar (ctohb.com/techradar) is the Four Key Metrics. These metrics are described by a team within Google Cloud called DORA (DevOps Research and Assessment), and the system of metrics comes from a seven-plus-year research program validating the results and their impact on technology, process, culture, and quantitative results. The four metrics are as follows:
+    AppLesson(
+      title: "Four Key Metrics (DORA)",
+      body: """The highest-rated blip in 2022 of the Thoughtworks Technology Radar (ctohb.com/techradar) is the Four Key Metrics. These metrics are described by a team within Google Cloud called DORA (DevOps Research and Assessment), and the system of metrics comes from a seven-plus-year research program validating the results and their impact on technology, process, culture, and quantitative results. The four metrics are as follows:
 
 **Lead Time:** How long it takes for code to go from commit to running in production
 
@@ -3051,30 +2846,27 @@ content: """The highest-rated blip in 2022 of the Thoughtworks Technology Radar 
 Together these metrics quantify the idea of how confidently your team can deploy software. Scoring high on all four metrics requires an investment in automation, DevOps, testing, and culture. As Thoughtworks is quick to point out, drawing value from these metrics doesn't necessarily require highly detailed instrumentation, metrics, or dashboards. DORA publishes a quick check survey (ctohb.com/dora) that your team can take to track its progress at a coarse-grained level. There are also plenty of tools that have fairly low barriers to entry that will yield data quality that's more than sufficient to inform your progress, such as LinearB or Code Climate.
 
 The following subsections on DevOps present concepts, disciplines, and focus areas that contribute in some way to improving these metrics.""",
-),
+    ),
 
-AppLesson(
-id: "l40",
-title: "Reproducibility",
-content: """Deploying code is a highly nuanced activity that requires extreme precision. A single misplaced character in a configuration file can lead to a service failing to start. Worse still, debugging DevOps problems for most engineers is slow and painful, and identifying and fixing that single character error can mean potentially hours of time lost in debugging and fixing. We re all human; these kinds of errors are inevitable. Since they're so expensive in DevOps, it is imperative that we put systems in place to minimize the opportunity for human error. A key component of minimizing the frequency and impact of human error in DevOps is the concept of reproducibility.
+    AppLesson(
+      title: "Reproducibility",
+      body: """Deploying code is a highly nuanced activity that requires extreme precision. A single misplaced character in a configuration file can lead to a service failing to start. Worse still, debugging DevOps problems for most engineers is slow and painful, and identifying and fixing that single character error can mean potentially hours of time lost in debugging and fixing. We re all human; these kinds of errors are inevitable. Since they're so expensive in DevOps, it is imperative that we put systems in place to minimize the opportunity for human error. A key component of minimizing the frequency and impact of human error in DevOps is the concept of reproducibility.
 
 Reproducibility implies that we have the capability of doing something a second time that is both inexpensive and guaranteed to be identical to how it was done the first time. Reproducibility in DevOps requires automation and tooling. Arguably, the most important tool in the DevOps tool belt for improving reproducibility and accelerating development time is containerization. A close second is the idea of Infrastructure as Code (IaC). Since these techniques are so fundamental, I'll spend a bit of time introducing each of them here.""",
-),
+    ),
 
-AppLesson(
-id: "l41",
-title: "Containerization",
-content: """The most common way of explaining the role of containers in the DevOps context is to consider where the name originated: from shipping containers. Prior to the standardization of shipping containers, if you wantedto transport goods across the ocean, you would package your cargo in a variety of forms ranging from placing it on pallets, storing it in boxes or barrels, or simply wrapping it in cloth. Loading and unloading goods that arrived packaged in all these different ways was inefficient and error- prone, mainly because There's no single kind of crane or wheelbarrow that could effectively move all of the cargo.
+    AppLesson(
+      title: "Containerization",
+      body: """The most common way of explaining the role of containers in the DevOps context is to consider where the name originated: from shipping containers. Prior to the standardization of shipping containers, if you wantedto transport goods across the ocean, you would package your cargo in a variety of forms ranging from placing it on pallets, storing it in boxes or barrels, or simply wrapping it in cloth. Loading and unloading goods that arrived packaged in all these different ways was inefficient and error- prone, mainly because There's no single kind of crane or wheelbarrow that could effectively move all of the cargo.
 
 Compare that haphazard approach to deploying a standardized shipping container where the boat and port operator can work with a single form factor, using standardized equipment and shippers and a single, flexible form of packaging for all of their goods. Historically, the usage of standardized shipping containers unlocked a paradigm shift that reduced costs of global shipping by orders of magnitude. Packaging software in a standardized container that can be run on any system in the same way provides an analogous advancement in capability and efficiency.
 
 The most common way you'll interact with containers is through a software system called Docker. Docker provides a declarative programming language that lets you describe, in a file called Dockerfile, how you want the system set up i.e., what programs need to be installed, what files go where, what dependencies need to exist. Then you build that file into a container image which provides a representation of the entire file system specified by your Dockerfile. That image can then be moved to and run on any other machine with a Docker-compatible container runtime, with the guarantee that it will start in an isolated environment with the exact same files and data, every time.""",
-),
+    ),
 
-AppLesson(
-id: "l42",
-title: "Container Management Best Practices",
-content: """##### Design Containers to Build Once/Run Anywhere
+    AppLesson(
+      title: "Container Management Best Practices",
+      body: """##### Design Containers to Build Once/Run Anywhere
 
 Build the container once (say, in CI) so that it can run in your various environments production, development, etc. By using a single image, you guarantee that exactly the same code with exactly the same setup will transition intact from development to production.
 
@@ -3097,22 +2889,20 @@ Many hosted registries will also provide vulnerability scanning and other securi
 ##### Keep Image Sizes as Small as Possible
 
 Smaller Docker images upload faster from CI, download faster to application servers, and start up faster. The difference between uploading a 50MB image and a 5GB image, from an operational perspective, can be the difference between five seconds to start up a new application server and five minutes. That's five more minutes added to your time to deploy, Mean Time to Recovery/rollback, etc. It may not seem like much, but especially in a hotfix scenario, or when you're managing hundreds of application servers these delays add up and have real business impact.""",
-),
+    ),
 
-AppLesson(
-id: "l43",
-title: "Dockerfile Best Practices",
-content: """Every line or command in a Dockerfile generates what is called a layer effectively, a snapshot of the entire image's hard disk. Subsequent layers store deltas between layers. A container image is a collection and composition of those layers.
+    AppLesson(
+      title: "Dockerfile Best Practices",
+      body: """Every line or command in a Dockerfile generates what is called a layer effectively, a snapshot of the entire image's hard disk. Subsequent layers store deltas between layers. A container image is a collection and composition of those layers.
 
 It follows then that you can minimize the total image size of your container by keeping the individual layers small, and you can minimize a layer by ensuring that each command cleans up any unnecessary data before moving to the next command.
 
 Another technique for keeping image size down is to use multi-stage builds. Multi-stage builds are a bit too complex to describe here, but you can check out Docker's own article on it at ctohb.com/docker.""",
-),
+    ),
 
-AppLesson(
-id: "l44",
-title: "Container Orchestration",
-content: """Now that you've got reproducible images of reasonably small size managed in a hosted registry, you have to run and manage them in production. Management includes:
+    AppLesson(
+      title: "Container Orchestration",
+      body: """Now that you've got reproducible images of reasonably small size managed in a hosted registry, you have to run and manage them in production. Management includes:
 
 * Downloading and running containers on machines
 * Setting up secure networking between containers/machines and other services
@@ -3132,20 +2922,18 @@ Some common hosted container platforms include Heroku, Google App Engine, Elasti
 The most popular self-management solution for containers is called Kubernetes, often abbreviated K8s. Kubernetes is an extremely powerful and flexible, and thus complicated, system. The learning curve is steep, but the benefits and ROI are worthwhile if you're at the point of needing to self-manage your containers.
 
 If you're considering going this route, I strongly advise against learning Kubernetes on the job. Especially for a team leader, it's too much to take on and do well on an ad-hoc basis. Instead, I recommend buying a book on Kubernetes and committing a week or two to reading it and setting up your own sandbox to get up to speed before diving in for a professional project. It's also a good idea to seek out an advisor or mentor who has a good understanding of Kubernetes to act as an accelerator for your learning of the tool.""",
-),
+    ),
 
-AppLesson(
-id: "l45",
-title: "ClickOps vs. IaC",
-content: """ClickOps refers to the process of configuring your cloud infrastructure using the user interface, as opposed to the provided APIs. As your infrastructure grows, the quantity of nuance and detail in your system will quickly exceed your ability to reproduce it with ClickOps. ClickOps is fine for prototypes or proof of concepts, but when the time comes to actually build a production environment and mirrored development environments, using ClickOps will quickly lead to considerable frustration and cost, as well as limited capability. The alternative to ClickOps is known as Infrastructure as Code (IaC).
+    AppLesson(
+      title: "ClickOps vs. IaC",
+      body: """ClickOps refers to the process of configuring your cloud infrastructure using the user interface, as opposed to the provided APIs. As your infrastructure grows, the quantity of nuance and detail in your system will quickly exceed your ability to reproduce it with ClickOps. ClickOps is fine for prototypes or proof of concepts, but when the time comes to actually build a production environment and mirrored development environments, using ClickOps will quickly lead to considerable frustration and cost, as well as limited capability. The alternative to ClickOps is known as Infrastructure as Code (IaC).
 
 There are several tools and frameworks that allow you to define IaC. The leading one is HashiCorp's Terraform. Terraform uses HashiCorp Config Language (HCL), a declarative configuration syntax, to allow engineers to define what resources they want and how they are to be configured. Terraform code can and should then be managed like any other code, using source control and peer review practices. Once approved, Terraform can generate infrastructure change plans and apply those plans for you with your cloud provider(s) of choice. I cannot emphasize enough how easy to use, powerful, and maintainable Terraform is, and how much ROI you're likely to gain by migrating from ClickOps to IaC.""",
-),
+    ),
 
-AppLesson(
-id: "l46",
-title: "Continuous Integration",
-content: """Continuous Integration is the process of automating the incorporation of new code into a project. That may include running static analysis on new code, running tests, building the code, and generating any required build artifacts (such as container images). Most startups use hosted CI platforms such as GitLab runners, GitHub actions, Bitbucket pipelines, Jenkins, or CircleCI to do continuous integration activities.
+    AppLesson(
+      title: "Continuous Integration",
+      body: """Continuous Integration is the process of automating the incorporation of new code into a project. That may include running static analysis on new code, running tests, building the code, and generating any required build artifacts (such as container images). Most startups use hosted CI platforms such as GitLab runners, GitHub actions, Bitbucket pipelines, Jenkins, or CircleCI to do continuous integration activities.
 
 Some best practices for CI:
 
@@ -3155,12 +2943,11 @@ Some best practices for CI:
 * Learn the capabilities of your CI tool that aide in keeping builds fast, including build caches, build artifacts, and running jobs in parallel.
 * Builds can get complex. Try to keep your code for CI *dry.* Reuse code between build pipelines where possible.
 * Be consistent in how your builds access secrets. Either depend on a cloud secret manager, or build environment secrets where necessary, and try not to mix them. There should be one obvious and consistent way to handle config and secrets.""",
-),
+    ),
 
-AppLesson(
-id: "l47",
-title: "Continuous Deployment",
-content: """In the early stages of a project, it's comparatively simple to deploy new code. At that point, There's not much code or architectural complexity. Before long, however, the need to manage dependencies, dependent services, CDNs, firewalls, build artifacts, build configuration, secrets, and more leads to a complex deploy process. As these requirements accumulate, it's easy to neglect automation, and simply rely on, for example, a dedicated and highly trusted individual as release manager. There are countless teams out there following this pattern, and I guarantee you most of those release managers have release dates circled on their calendar in advance and dread the stress, long hours, and frustration that those days inevitably entail.
+    AppLesson(
+      title: "Continuous Deployment",
+      body: """In the early stages of a project, it's comparatively simple to deploy new code. At that point, There's not much code or architectural complexity. Before long, however, the need to manage dependencies, dependent services, CDNs, firewalls, build artifacts, build configuration, secrets, and more leads to a complex deploy process. As these requirements accumulate, it's easy to neglect automation, and simply rely on, for example, a dedicated and highly trusted individual as release manager. There are countless teams out there following this pattern, and I guarantee you most of those release managers have release dates circled on their calendar in advance and dread the stress, long hours, and frustration that those days inevitably entail.
 
 Fortunately There'sa cure for the error-prone stress concentration that is the monthly (or longer!) release day. It's to release every day, or heck, every hour! It follows logically from one of the Ten Pillars of Tech Culture (see page 138), Frequency Reduces Difficulty, that more frequent releases will force your release manager, and team, to automate the hard parts of deployments. With enough iteration, releases can become entirely automated, and with sufficient testing giving you confidence in new changes, you can get to the point of triggering new releases for every code change set, referred to as Continuous Deployment.
 
@@ -3171,12 +2958,11 @@ An automated release process tends to also imply an improved ability to roll bac
 In summary, automating releases means code goes out faster (reducing lead time*)*, means you can deploy more often (increasing deployment frequency), and improves MTTR. That's three of the four key DORA metrics (see page 208) with one initiative!
 
 In the companies I've worked with, either directly or in an advisory capacity, I've seen at least a dozen teams invest effort into either partially or fully moving to continuous deployment. It's not always a straightforward journey, it doesn't happen overnight, and often there are well-reasoned objections. Yet in every circumstance, when the team looks back on the time invested be it three weeks, three months, or two years later the difference is nothing short of transformational to the culture and overall output and velocity of the team by every metric.""",
-),
+    ),
 
-AppLesson(
-id: "l48",
-title: "Feature Branch Environments",
-content: """A feature branch environment is a hosted environment and set of infrastructure that is available internally to your company, running the code from a specific branch. Feature branch environments are incredibly useful for validating that code works in a production-like setting and for enabling team members at your company to use or test changes without having to build and run code themselves. Do not underestimate human laziness; every extra step it takes somebody to test and validate your code means that they'll do the testing that much less often. Checking out code, installing dependencies, and starting servers is significantly more work than going to an automatically generated feature branch URL, and thus the feature branch will get used far more.
+    AppLesson(
+      title: "Feature Branch Environments",
+      body: """A feature branch environment is a hosted environment and set of infrastructure that is available internally to your company, running the code from a specific branch. Feature branch environments are incredibly useful for validating that code works in a production-like setting and for enabling team members at your company to use or test changes without having to build and run code themselves. Do not underestimate human laziness; every extra step it takes somebody to test and validate your code means that they'll do the testing that much less often. Checking out code, installing dependencies, and starting servers is significantly more work than going to an automatically generated feature branch URL, and thus the feature branch will get used far more.
 
 Feature branch environments also solve the contention problem encountered by teams that have only a single staging environment. I advocate giving every branch its own staging environment.
 
@@ -3192,62 +2978,56 @@ Some considerations for feature branch environments:
   - How does service discovery work in feature branch environments for service-oriented architectures? Often you can get away with having a common set of services and deploy feature branch versions of just the service under test. I recommend that you have an environment for every service that is always running called integration. Have all feature branches reference the integration environment of other services. Each integration environment update should be a production update, but you should also allow developers to deploy feature branch code temporarily to integration environments for cross-service integration testing.
 
 Having looked at this list of concerns, you may be daunted by the burden of setting up and maintaining feature branches. Indeed, a proper feature branch setup is not cheap, but the value it offers is substantial in improving your ability to test, and in reducing the logistical overhead required to verify different kinds of software changes.""",
-),
+    ),
 
-AppLesson(
-id: "l49",
-title: "Managing DNS",
-content: """Knowing how the domain name system (DNS) works, and knowing how to manage DNS and its security implications for your company, is a critical job that often lands on the startup CTO. If you're not already familiar with the basics of how DNS works and the different record types, I recommend you spend a few minutes browsing Wikipedia now to get a grounding on the subject.
+    AppLesson(
+      title: "Managing DNS",
+      body: """Knowing how the domain name system (DNS) works, and knowing how to manage DNS and its security implications for your company, is a critical job that often lands on the startup CTO. If you're not already familiar with the basics of how DNS works and the different record types, I recommend you spend a few minutes browsing Wikipedia now to get a grounding on the subject.
 
 You should also know how DNS is used for email in your organization. In particular, become familiar with Sender Policy Framework (SPF) records and DKIM/DMARC.
 
 You should also set up your DNS records using Infrastructure as Code (IaC). I've seen countless companies where DNS is managed exclusively by an executive whose two-factor authentication is the only one allowed to update a zone record, and when that person is on vacation There's no fallback mechanism to manage the site.
 
 A better solution is to set up DNS with Terraform (which has integrations with all the major DNS providers) and then manage DNS records with source control, empowering individual developers to add new records in a responsible way that isn't gated on any one individual.""",
-),
+    ),
 
-AppLesson(
-id: "l50",
-title: "Decoupling Shipping Code from Shipping Features (Feature Toggles)",
-content: """At a high level, a feature toggle is a switch that allows you to change system behavior without changing the actual code. I strongly advocate using feature toggles, in particular because they allow your team to have separate processes and timelines for shipping code and shipping features. Pete Hodgson has a wonderful, in-depth explanation of feature toggles at ctohb.com/hodgson.
+    AppLesson(
+      title: "Decoupling Shipping Code from Shipping Features (Feature Toggles)",
+      body: """At a high level, a feature toggle is a switch that allows you to change system behavior without changing the actual code. I strongly advocate using feature toggles, in particular because they allow your team to have separate processes and timelines for shipping code and shipping features. Pete Hodgson has a wonderful, in-depth explanation of feature toggles at ctohb.com/hodgson.
 
 The Four Key Metrics advocate for shipping code as frequently as possible. Doing so leads to many great positive benefits for the health of your engineering process. A natural concern, however, is that your business may not be ready for a particular feature to go live the second the code is done. There are many reasons why your development and release schedules might be out of sync in this way, such as the need to coordinate timing with a marketing activation, the creation of customer support documentation, awaiting regulatory approvals, pausing for internal communication, etc. Feature toggles enable your engineering team to focus on shipping as quickly and reliably as possible and delegate the problem of coordinating when features are enabled to an out-of-band process likely owned by other teams.""",
-),
+    ),
 
-AppLesson(
-id: "l51",
-title: "System Monitoring: APMs and RUMs",
-content: """Application performance monitoring (APM) and real user monitoring (RUM) are two types of tools that help teams understand how an application is performing in production and identify or prevent user-facing outages.
+    AppLesson(
+      title: "System Monitoring: APMs and RUMs",
+      body: """Application performance monitoring (APM) and real user monitoring (RUM) are two types of tools that help teams understand how an application is performing in production and identify or prevent user-facing outages.
 
 An APM tool usually sits inside or alongside your application in the production environment and provides analytics and insights into resource usage and request latency and throughput from the perspective of your backend. RUM is an external tool that pretends to be a user and provides analytics on latency from the frontend's perspective, or the perspective of a real user.
 
 If you had to choose one (and these tools are often very expensive, so you may be forced to go with one or the other), choose the one that covers the blind spot more likely to be problematic for your application. If you have tons of users and you get inundated with real-time complaints for every minor bug or edge case, then an APM monitoring backend load may prove more valuable than a RUM producing redundant alerts to your users. For most startups in seed or growth stages, though, you'll likely have inconsistent application usage, especially covering your edge cases, in which case RUM may be more valuable than an APM on a mostly idle backend.
 
 Some common tools in this space are New Relic, Datadog, and Akamai mPulse.""",
-),
+    ),
 
-AppLesson(
-id: "l52",
-title: "Testing",
-content: """Imagine that, instead of testing software code, your job was to be the inspector for a municipal bridge. The bridge is built and now it's your job to inspect it and decide whether or not to allow it to open to the public. Do you inspect every single bolt and rivet on the bridge? Doing so would probably give you high confidence the bridge was safe, but it would also take a long time and derail the mayor's plans to open the bridge next week.
+    AppLesson(
+      title: "Testing",
+      body: """Imagine that, instead of testing software code, your job was to be the inspector for a municipal bridge. The bridge is built and now it's your job to inspect it and decide whether or not to allow it to open to the public. Do you inspect every single bolt and rivet on the bridge? Doing so would probably give you high confidence the bridge was safe, but it would also take a long time and derail the mayor's plans to open the bridge next week.
 
 Another reasonable strategy would be to decide exactly which elements of the bridge are essential to meet the designated safety factor and test/ inspect those. Maybe that's only every other rivet, plus all the cables and structural concrete.
 
 Similarly, in software engineering testing, the goal isn't coverage for coverage's sake, but coverage that provides confidence that the software does what it is intended to do.
 
 Effective software testing is not always about 100 percent code coverage. The bar for a good software test suite is that it gives your team confidence that, when the build is green and all tests pass, the software is ready to be released to end users. That may mean 100 percent code coverage, or it may mean 30 percent code coverage. The exact number is up to you to determine and monitor, and that amount of effort may change over time if you find the tests are not providing the same confidence they once were (and, conversely, if you find you're overinvesting i.e., you're spending a lot of resources on a test suite, yet bugs are still making it out too often).""",
-),
+    ),
 
-AppLesson(
-id: "l53",
-title: "Testing/Quality Assurance Teams",
-content: """Depending on the size of your team, you'll either have no dedicated test team, one test team working on one or many types of tests, or many test teams working on various kinds of software testing. No matter who is doing the test it's important to recognize that software testing is a complicated process, and nuance matters. To test software effectively, the tester, whether they wrote the code or it was thrown over the fence to them, has to deeply understand what the code/software should be doing. Your role is to set up your teams so that they can empathize with each other. To do this, ensure that the teams share goals/KPIs, that your process has robust and continuous communication between the developer and tester, and monitor that the teams have a healthy, productive relationship.""",
-),
+    AppLesson(
+      title: "Testing/Quality Assurance Teams",
+      body: """Depending on the size of your team, you'll either have no dedicated test team, one test team working on one or many types of tests, or many test teams working on various kinds of software testing. No matter who is doing the test it's important to recognize that software testing is a complicated process, and nuance matters. To test software effectively, the tester, whether they wrote the code or it was thrown over the fence to them, has to deeply understand what the code/software should be doing. Your role is to set up your teams so that they can empathize with each other. To do this, ensure that the teams share goals/KPIs, that your process has robust and continuous communication between the developer and tester, and monitor that the teams have a healthy, productive relationship.""",
+    ),
 
-AppLesson(
-id: "l54",
-title: "Test Quality",
-content: """Before jumping into the nuts and bolts of the different software testing paradigms, it's worth thinking about what the purpose of software testing is, and thus what makes a good test, and conversely what makes a bad test.
+    AppLesson(
+      title: "Test Quality",
+      body: """Before jumping into the nuts and bolts of the different software testing paradigms, it's worth thinking about what the purpose of software testing is, and thus what makes a good test, and conversely what makes a bad test.
 
 Defining bad tests is simple. Bad tests have a higher cost than benefit to your team. Some common characteristics of bad tests:
 
@@ -3274,24 +3054,22 @@ With that picture in mind, it's relatively easy to see by contrast what attribut
 * Easy for any engineer to understand and work on
 
 One of the best ways to evaluate your testing approach is also the most obvious: ask how your team feels about the tests with a simple sentiment analysis. The results tend to be very binary either tests are a source of security that teams rely on, and naturally augment them because they obviously are a net value-add; or teams passively, or even actively, hate their tests because they're a drain on productivity with not enough obvious value.""",
-),
+    ),
 
-AppLesson(
-id: "l55",
-title: "What To Test",
-content: """Your team should be adding testing in ways that boost confidence that the system works correctly while minimizing the additional burden of maintaining those tests long term in the face of organic system growth. A general pattern to minimize this pain is to test the public interface. Public interfaces should be well thought out and comparably stable over time.
+    AppLesson(
+      title: "What To Test",
+      body: """Your team should be adding testing in ways that boost confidence that the system works correctly while minimizing the additional burden of maintaining those tests long term in the face of organic system growth. A general pattern to minimize this pain is to test the public interface. Public interfaces should be well thought out and comparably stable over time.
 
 They are also the happy path that consumers of the software will actually experience.
 
 Tests on public interfaces should therefore change little over time and also provide confidence that the parts of the code that matter are working correctly.
 
 The public interface for your software may vary from project to project. For many projects, it'll be an actual HTTP-based API; for some, it'll be a set of functions/classes in a library or internal service. For other projects it may be a user interface.""",
-),
+    ),
 
-AppLesson(
-id: "l56",
-title: "Testing Type Comparison",
-content: """Software testing can be broken down into the following categories/ paradigms:
+    AppLesson(
+      title: "Testing Type Comparison",
+      body: """Software testing can be broken down into the following categories/ paradigms:
 
 * Unit testing
 * Integration testing
@@ -3316,88 +3094,78 @@ The attributes that differentiate these types of testing are as follows:
 The following chart summarizes how the five paradigms map to these metrics. Note that there is no one perfect test paradigm; each has tradeoffs, and I encourage you to think carefully about which tradeoffs make sense for your company and codebase. The right answer is usually a blend of different test paradigms, using each type of test where it adds the most value in your application.
 
 TODO: Insert the table from the book""",
-),
+    ),
 
-AppLesson(
-id: "l57",
-title: "Unit Tests",
-content: """Unit testing is often the first thing that comes to mind when somebody talks about software testing. It's widely what's taught in school and included in textbooks, and it usually gets the most effort in the real world. Given all this, you'd think unit tests were the best type of test, though I'd argue that's not always the case. Let's begin by clearly defining unit tests so as to differentiate them from other testing paradigms.
+    AppLesson(
+      title: "Unit Tests",
+      body: """Unit testing is often the first thing that comes to mind when somebody talks about software testing. It's widely what's taught in school and included in textbooks, and it usually gets the most effort in the real world. Given all this, you'd think unit tests were the best type of test, though I'd argue that's not always the case. Let's begin by clearly defining unit tests so as to differentiate them from other testing paradigms.
 
 Unit tests run entirely in memory on a machine, in a shared memory space with the code under evaluation, without requiring any network connectivity or dependency on external services. Most unit tests are very fast to run, test very small amounts of code at a time, and are relatively easy to get started with. Unit tests are usually also tightly coupled to your code contracts and often require new code in the form of mocks to enable code- under-test to execute without normally available external dependencies.
 
 The key tradeoff made by unit tests and their primary downside is that they are tightly coupled to the code under test. It's altogether too easy to have unit tests be deeply intertwined with actual function calls and internal data objects. This deep dependency means any refactor of the code even simple and benign changes will require considerable unit test updates as well. The creation of mocks and test data fixtures often also requires a considerable amount of code to create and maintain to allow unit tests to run, adding unexpected cost to the unit testing framework.""",
-),
+    ),
 
-AppLesson(
-id: "l58",
-title: "Integration Tests",
-content: """An integration test relaxes the in-memory and zero-dependency constraints of unit tests. As a result, integration tests tend to run slower and integrate with code-under-test at a higher level. When they run in a different process from code under test, they're usually exercising an externally exposed contract, such as an API. This means that internal refactors that don't change API behavior tend to go unnoticed by an integration test, making these tests overall less brittle but also less likely to detect smaller side effects.
+    AppLesson(
+      title: "Integration Tests",
+      body: """An integration test relaxes the in-memory and zero-dependency constraints of unit tests. As a result, integration tests tend to run slower and integrate with code-under-test at a higher level. When they run in a different process from code under test, they're usually exercising an externally exposed contract, such as an API. This means that internal refactors that don't change API behavior tend to go unnoticed by an integration test, making these tests overall less brittle but also less likely to detect smaller side effects.
 
 In addition, integration tests require the creation of fewer or no mocks and, as a result, can be less code to implement.""",
-),
+    ),
 
-AppLesson(
-id: "l59",
-title: "End-To-End Tests",
-content: """An end-to-end (e2e) test exercises code in the same manner as the end user. For backend code, end-to-end tests and integration tests may function in the same way, running code via an external contract. For user-facing frontend code, an end-to-end test usually involves mechanizing the client interface, often a web browser or mobile phone. I would not encourage any tech leader to write their own client mechanizing code this is a particularly gnarly problem that downloadable tools like Selenium, Cypress, and Puppeteer can take off your hands. For mobile, there are tools like HeadSpin and Detox.
+    AppLesson(
+      title: "End-To-End Tests",
+      body: """An end-to-end (e2e) test exercises code in the same manner as the end user. For backend code, end-to-end tests and integration tests may function in the same way, running code via an external contract. For user-facing frontend code, an end-to-end test usually involves mechanizing the client interface, often a web browser or mobile phone. I would not encourage any tech leader to write their own client mechanizing code this is a particularly gnarly problem that downloadable tools like Selenium, Cypress, and Puppeteer can take off your hands. For mobile, there are tools like HeadSpin and Detox.
 
 The key tradeoff of end-to-end tests, in the real world, is reliability. At least at the time of writing, reliable web end-to-end tests are still somewhat elusive; the nature of how the browser renders means race conditions occur very easily by accident. Building a reliable web end-to-end test suite requires considerable care, attention to detail, and maintenance.
 
 The payoff, though, is not insubstantial, as it's possible to create very high test coverage and very high confidence in functionality of user-facing flows with e2e test suites. There are several companies, including testim.io and rainforestqa.com, that are exploring using AI and ML to solve this problem. These solutions deploy fuzzy visual testing instead of relying on the presence or absence of CSS selectors, for example, to try and improve test reliability. Hopefully by the time you read this, the state of the art will have advanced a bit further, and the value proposition of end-to-end tests will be even stronger than at the time of this writing.""",
-),
+    ),
 
-AppLesson(
-id: "l60",
-title: "Visual Regression Testing",
-content: """Visual regression testing is a relatively new paradigm that aims to detect defects in user-facing applications by performing deltas on rendered visuals. There are frameworks that do that at various levels of granularity, ranging from capturing screenshots of entire pages to rendering individual components, and producing deltas to detect defects. The obvious drawback is that every intentional change to any visual tested component will require a change to a test.
+    AppLesson(
+      title: "Visual Regression Testing",
+      body: """Visual regression testing is a relatively new paradigm that aims to detect defects in user-facing applications by performing deltas on rendered visuals. There are frameworks that do that at various levels of granularity, ranging from capturing screenshots of entire pages to rendering individual components, and producing deltas to detect defects. The obvious drawback is that every intentional change to any visual tested component will require a change to a test.
 
 Fortunately, these test frameworks often make it simple and painless to reproduce the set of correct visuals for comparison, which opens up another pitfall: with easy tooling to overwrite the testing target, it becomes very easy to produce false negatives, accidentally accepting a visual delta that is, in fact, erroneous.""",
-),
+    ),
 
-AppLesson(
-id: "l61",
-title: "Manual Testing",
-content: """Manual testing, as the name implies, is run by humans and not machine code. For humans testing code, we can further subdivide this category into specialized and unspecialized testers.""",
-),
+    AppLesson(
+      title: "Manual Testing",
+      body: """Manual testing, as the name implies, is run by humans and not machine code. For humans testing code, we can further subdivide this category into specialized and unspecialized testers.""",
+    ),
 
-AppLesson(
-id: "l62",
-title: "Specialized Manual Testing",
-content: """Specialized manual testing is an in-house manual testing team. Beyond the traditional benefits of an in-house team, such as aligned incentives and a long-term working relationship, the value of being in-house is that the team can build expertise in your product and deeply understand your users. This allows the team to identify defects that an untrained or unfamiliar tester would miss. A high-quality testing team can not only serve as a resource for catching software defects but also contribute valuable feedback on a product level, identifying inconsistencies in design, and asking provocative questions about how or why something works the way it does.
+    AppLesson(
+      title: "Specialized Manual Testing",
+      body: """Specialized manual testing is an in-house manual testing team. Beyond the traditional benefits of an in-house team, such as aligned incentives and a long-term working relationship, the value of being in-house is that the team can build expertise in your product and deeply understand your users. This allows the team to identify defects that an untrained or unfamiliar tester would miss. A high-quality testing team can not only serve as a resource for catching software defects but also contribute valuable feedback on a product level, identifying inconsistencies in design, and asking provocative questions about how or why something works the way it does.
 
 A great in-house manual testing team can provide a huge improvement in overall software and product quality.
 
 Specialized manual testing teams should be creating detailed test plans for product functionality and storing those plans in an easy-to-retrieve/ repeat fashion, ideally with a tool like TestRail that allows creating full test suites of manual test plans which can be rerun by the team manually on demand. Another benefit of a tool like this is integration with other developer and product tools for example, linking a TestRail run to a Jira epic to show how many manual and regression tests were run for the release of a given feature. Not only is this valuable as a launch checklist item, but it also aids in retrospectives for any released defects, allowing you to revisit what manual tests were run before releasing any given feature, and adding additional manual tests to catch any defects that made it through.""",
-),
+    ),
 
-AppLesson(
-id: "l63",
-title: "Unspecialized Manual Testing",
-content: """Unspecialized manual testing is often referred to as crowdsourced testing. There are several proprietary platforms for sourcing testers, such as Rainforest QA, Pay4Bugs, 99Tests, and Testlio. The pricing model for these platforms usually varies based on the number of validated bugs submitted. Depending on the nature of your product and the types of defects you're looking to optimize for, crowdsourced testing can be a very cost-effective and low-effort way to improve product quality.""",
-),
+    AppLesson(
+      title: "Unspecialized Manual Testing",
+      body: """Unspecialized manual testing is often referred to as crowdsourced testing. There are several proprietary platforms for sourcing testers, such as Rainforest QA, Pay4Bugs, 99Tests, and Testlio. The pricing model for these platforms usually varies based on the number of validated bugs submitted. Depending on the nature of your product and the types of defects you're looking to optimize for, crowdsourced testing can be a very cost-effective and low-effort way to improve product quality.""",
+    ),
 
-AppLesson(
-id: "l64",
-title: "Semi-Automated Testing",
-content: """Semi-automated testing is a relatively new category of software testing. These tests are created by non-technical staff perhaps your specialized manual testing team and then run in either a completely automated or supervised environment.
+    AppLesson(
+      title: "Semi-Automated Testing",
+      body: """Semi-automated testing is a relatively new category of software testing. These tests are created by non-technical staff perhaps your specialized manual testing team and then run in either a completely automated or supervised environment.
 
 The major pitfall of these tests is reliability. Because they're created by non-technical staff, they may not be quite as precise as fully automated tests, making them more prone to false positives and false negatives. That said, this space is rapidly evolving with new companies and tools launching every year, such as Rainforest QA and Testim, with strategies to improve reliability and lower overall cost.""",
-),
+    ),
 
-AppLesson(
-id: "l65",
-title: "Source Control",
-content: """The industry standard used by the vast majority of companies for managing source control is Git. There would need to be a very compelling reason for your organization to use anything else; most of your current and future team members will arrive already knowing the basics of Git. By not using it, you'd likely be inflicting an unnecessary learning curve on them by forcing them to learn your chosen alternative.
+    AppLesson(
+      title: "Source Control",
+      body: """The industry standard used by the vast majority of companies for managing source control is Git. There would need to be a very compelling reason for your organization to use anything else; most of your current and future team members will arrive already knowing the basics of Git. By not using it, you'd likely be inflicting an unnecessary learning curve on them by forcing them to learn your chosen alternative.
 
 There are three main cloud Git hosting platforms: GitLab, GitHub, and Bitbucket. These three have the lion's share of the market and, again, you should think carefully before deviating from these standards.
 
 Git has an interestingly shaped learning curve. Most people reach a plateau where they operate with a rudimentary understanding that gets them by for most happy path testing scenarios. However, sometimes things go wrong, and a developer loses a commit or makes a mess with a merge. When this happens, their failure to climb the rest of the Git learning curve will cause frustration and slowdown. I encourage you, as the team lead, to invest the effort to climb the back half of the curve. Use Git exclusively on the command line to become familiar with what is actually happening. Learn about the reflog, interactive rebases, bisect, and the various built-in merge strategies. Armed with this knowledge, you can bypass an entire class of productivity-draining problems and train your team to become Git experts as well.""",
-),
+    ),
 
-AppLesson(
-id: "l66",
-title: "Peer Review",
-content: """In general, experts recommend implementing a robust peer review process for all code changes. (As I write this in early 2023, there is a growing movement challenging this recommendation, or at the least adding nuance to it, which I'll discuss in the next section.) Most peer review is done with what is called depending on your code hosting solution a pull request, code review, or merge request. Here are some suggestions for keeping code review productive and efficient:
+    AppLesson(
+      title: "Peer Review",
+      body: """In general, experts recommend implementing a robust peer review process for all code changes. (As I write this in early 2023, there is a growing movement challenging this recommendation, or at the least adding nuance to it, which I'll discuss in the next section.) Most peer review is done with what is called depending on your code hosting solution a pull request, code review, or merge request. Here are some suggestions for keeping code review productive and efficient:
 
 * Keep reviews small! Set a maximum size for code reviews, something like ten files and 200 lines. Anything else should be broken out into multiple stacked/incremental reviews. (A stacked review is a code review that is based on or dependent on a prior review. When completed, the reviews are merged sequentially to add up to a complete change.)
 
@@ -3408,12 +3176,11 @@ content: """In general, experts recommend implementing a robust peer review proc
 * Encourage the author of any given code review to do a self-review before asking others to review. A few well-placed comments from the author to guide readers can save a lot of time.
 
 * Set aside dedicated review times/windows to minimize disruptions.""",
-),
+    ),
 
-AppLesson(
-id: "l67",
-title: "Ship, Show, Ask",
-content: """The common wisdom is that every code change should be reviewed by two people before being shipped to customers. As with everything, there are tradeoffs. Manual code review is not free, nor is it a guarantee of software quality. Given that manual code review comes at a cost, it's worth thinking about when that cost provides the highest return and using code review as a tool for the highest-ROI scenarios. This general idea was popularized by a 2021 blog post by Rouan Wilsenach titled Ship/Show/Ask (ctohb.com/ssa).
+    AppLesson(
+      title: "Ship, Show, Ask",
+      body: """The common wisdom is that every code change should be reviewed by two people before being shipped to customers. As with everything, there are tradeoffs. Manual code review is not free, nor is it a guarantee of software quality. Given that manual code review comes at a cost, it's worth thinking about when that cost provides the highest return and using code review as a tool for the highest-ROI scenarios. This general idea was popularized by a 2021 blog post by Rouan Wilsenach titled Ship/Show/Ask (ctohb.com/ssa).
 
 Let's examine the cost of code review. A code review requires two people call them the Author and the Reviewer to experience a number of context switches. A common asynchronous code pattern might be as follows:
 
@@ -3452,12 +3219,11 @@ My suggested alternative is to classify types of work by their level of risk, an
 - Anything involving sensitive data or PII or with potential impact on security posture
 
 Although I believe this system improves overall team efficiency, I concede that it's not an option for everyone. Many compliance regimes (such as PCI or SOC 2) require a policy of 100 percent human code review. The best you can do in that scenario is comply and perhaps carve out products or feature areas that are not governed by the compliance framework to experiment with a more nuanced and efficient process.""",
-),
+    ),
 
-AppLesson(
-id: "l68",
-title: "Branching Models",
-content: """There are many ways to deal with source control branching, though the industry as a whole is building momentum around the concept of trunk- based development. As this seems to be the most effective and commonly used pattern at this time, it's what we'll discuss here. If you're seriously considering a different pattern, you'll find plentiful resources online discussing methodologies and best practices for alternative approaches.
+    AppLesson(
+      title: "Branching Models",
+      body: """There are many ways to deal with source control branching, though the industry as a whole is building momentum around the concept of trunk- based development. As this seems to be the most effective and commonly used pattern at this time, it's what we'll discuss here. If you're seriously considering a different pattern, you'll find plentiful resources online discussing methodologies and best practices for alternative approaches.
 
 There are many blog posts with helpful graphics covering git branching models, such as this one from Reviewpad: ctohb.com/branching. If the following description doesn't make sense to you, I urge you to consult any of these posts and their associated visuals.
 
@@ -3476,12 +3242,11 @@ For this model to work well, you need a handful of prerequisites:
 * The ability to rapidly deploy, with zero downtime, code changes to the production environment. Similarly, an ability to rapidly revert individual changes in response to an incident.
 
 * A culture that is disciplined about small and short-lived feature branches. The GitHub Flow model loses its efficiency and simplicity if feature branches become large, long-lived and unwieldy. As discussed in the 3.3.5 Feature Branch Environments, small commits, small branches. and small pull requests are a key driver of productivity.""",
-),
+    ),
 
-AppLesson(
-id: "l69",
-title: "Long-Lived Vs. Short-Lived Branches",
-content: """The key to maintaining a smooth system of branches and merges with your team is to keep branches short-lived. Nearly all of the problems associated with code merging come from code branches being open too long or the branch containing too large a diff (ctohb.com/diffs). In general, a short-lived branch should be open just a few days, or two weeks at the absolute most.
+    AppLesson(
+      title: "Long-Lived Vs. Short-Lived Branches",
+      body: """The key to maintaining a smooth system of branches and merges with your team is to keep branches short-lived. Nearly all of the problems associated with code merging come from code branches being open too long or the branch containing too large a diff (ctohb.com/diffs). In general, a short-lived branch should be open just a few days, or two weeks at the absolute most.
 
 Keep in mind that a feature doesn't necessarily have to be implemented in a single branch. For example, you can have an initial branch with just tests that is reviewed and merged, and then followed up by a branch with the implementation. Alternatively, you can build an implementation that isn't connected to the main application, have it reviewed and merged, then build the connection and tests in a subsequent branch.
 
@@ -3496,18 +3261,16 @@ Benefits of keeping branches short-lived:
 * Encourages faster feedback in reviews, and allows for course corrections sooner in the process of implementing features.
 
 * Encourages your team to have a reliable Continuous Integration system. Frequent merges will highlight deficiencies in your build/test environment, making it painful if the systems are unreliable and motivating improvements to those systems.""",
-),
+    ),
 
-AppLesson(
-id: "l70",
-title: "Production Escalations",
-content: """An escalator is a tool that takes in incidents and manages an on-call rotation, paging the on-call engineer and then escalating to others if pages go unacknowledged. PagerDuty is likely the most popular of these tools.""",
-),
+    AppLesson(
+      title: "Production Escalations",
+      body: """An escalator is a tool that takes in incidents and manages an on-call rotation, paging the on-call engineer and then escalating to others if pages go unacknowledged. PagerDuty is likely the most popular of these tools.""",
+    ),
 
-AppLesson(
-id: "l71",
-title: "Implementing Escalators",
-content: """Before you implement an escalator and set up a rotation, make sure the engineers on your team have opted in to being on rotation, and that everyone knows and understands expectations for creating exceptions (e.g., trading an on-call window with somebody else during a vacation).
+    AppLesson(
+      title: "Implementing Escalators",
+      body: """Before you implement an escalator and set up a rotation, make sure the engineers on your team have opted in to being on rotation, and that everyone knows and understands expectations for creating exceptions (e.g., trading an on-call window with somebody else during a vacation).
 
 You'll also want to ensure that you have adequate documentation in place, and that everyone understands the standard procedures for what to do when receiving a page. Some considerations for establishing these procedures:
 
@@ -3516,52 +3279,47 @@ You'll also want to ensure that you have adequate documentation in place, and th
 * Determine whether to, and where to, set up any kind of site down notice (e.g., a company status page needs updating).
 * Decide where and how often to post updates on the status of the investigation, impact estimate, and restoration estimate.
 * Determine what to do once an incident is closed, scheduling a root cause analysis exercise and ensuring the particular incident does not recur.""",
-),
+    ),
 
-AppLesson(
-id: "l72",
-title: "Root Cause Analysis (RCA) Exercises",
-content: """Any time there is a system issue that has measurable user impact, your team should perform some level of root cause analysis (RCA). The goal of
+    AppLesson(
+      title: "Root Cause Analysis (RCA) Exercises",
+      body: """Any time there is a system issue that has measurable user impact, your team should perform some level of root cause analysis (RCA). The goal of
 
 an RCA is to understand where your systems had a failure that allowed an impactful defect to make it to production and to end users.
 
 To be crystal clear, the root cause analysis *must not* be about identifying fault or assigning blame. That needs to be true in every part of the RCA process and embedded into the culture of your team. The RCA attacks systemic problems (not human errors) in your system that allow a failure to occur.
 
 Without that safety and willingness for team members to be forthright with their feedback and documentation, you'll miss out on key opportunities to improve the system.""",
-),
+    ),
 
-AppLesson(
-id: "l73",
-title: "RCA Documents",
-content: """Your team should produce documentation in some form for every RCA. Depending on how often issues occur with your system, and the nature of those issues, you may wish to create a classification system for RCAs, with low-impact incidents getting a lighter-weight RCA process than high-impact incidents. It should be acknowledged that a thorough RCA on a high-impact incident is an expensive effort, taking considerable time and thoughtfulness, and that it may prove too heavy-handed for trivial defects.
+    AppLesson(
+      title: "RCA Documents",
+      body: """Your team should produce documentation in some form for every RCA. Depending on how often issues occur with your system, and the nature of those issues, you may wish to create a classification system for RCAs, with low-impact incidents getting a lighter-weight RCA process than high-impact incidents. It should be acknowledged that a thorough RCA on a high-impact incident is an expensive effort, taking considerable time and thoughtfulness, and that it may prove too heavy-handed for trivial defects.
 
 That said, for most companies it's better to err on the side of overspending in this area and ensuring greater reliability. You should start with a thorough RCA on everything, and transition to a stratified RCA system once you've got a good understanding of the landscape and impact of the kinds of issues your team will face.
 
 For issues that merit a full, thoughtful analysis, here is a template that will get you started and asking your team the right questions: ctohb.com/ rca. It is a good practice and in fact a requirement for most compliance frameworks to create a new document like this for every incident and to organize them in an internal company document store for later reference.""",
-),
+    ),
 
-AppLesson(
-id: "l74",
-title: "RCA Meetings And Timeline",
-content: """As soon as it is practical after you've resolved an incident, designate an appropriate person to serve as the lead on an RCA. The lead should clone the template and begin filling in relevant data about the incident and beginning to explore the Five Whys (ctohb.com/5whys) for the incident.
+    AppLesson(
+      title: "RCA Meetings And Timeline",
+      body: """As soon as it is practical after you've resolved an incident, designate an appropriate person to serve as the lead on an RCA. The lead should clone the template and begin filling in relevant data about the incident and beginning to explore the Five Whys (ctohb.com/5whys) for the incident.
 
 They should complete an initial draft of the RCA and circulate it to relevant peers before scheduling a time as a group to explore and try and improve the analysis and future prevention steps.
 
 The meeting attendees should read the RCA draft in advance and come prepared to explore the nuts and bolts of the incident and ideate on future prevention steps.""",
-),
+    ),
 
-AppLesson(
-id: "l75",
-title: "Choosing the RCA Lead Author",
-content: """The RCA lead need not necessarily be the person who responded to the incident. The ideal RCA lead should be someone who is very familiar with the systems involved and can ask insightful questions about where tools and processes failed and generate ideas for improvement.
+    AppLesson(
+      title: "Choosing the RCA Lead Author",
+      body: """The RCA lead need not necessarily be the person who responded to the incident. The ideal RCA lead should be someone who is very familiar with the systems involved and can ask insightful questions about where tools and processes failed and generate ideas for improvement.
 
 Note that we re not throwing anyone who made a human error under the bus. That person may be the RCA lead if they fit the prior criteria, but their error does not on its own make them the right person to lead the RCA. They should certainly contribute and take the opportunity to learn through the process. But again, they are not punished for their mistake as part of the process. Authoring an RCA is not a punishment; it's an important responsibility and element of system maintenance.""",
-),
+    ),
 
-AppLesson(
-id: "l76",
-title: "Scheduling RCA Remediation Work",
-content: """A good RCA process will often identify many work items for the team to improve the system and make future incidents less likely. The natural next question is: do we do them now? For the engineers involved, the answer is likely yes; for a manager concerned about hitting deadlines and a roadmap, the answer will be less clear.
+    AppLesson(
+      title: "Scheduling RCA Remediation Work",
+      body: """A good RCA process will often identify many work items for the team to improve the system and make future incidents less likely. The natural next question is: do we do them now? For the engineers involved, the answer is likely yes; for a manager concerned about hitting deadlines and a roadmap, the answer will be less clear.
 
 There is no one right answer to the question, but here is some general guidance:
 
@@ -3570,12 +3328,11 @@ Never let a good crisis go to waste. Motivation to remediate issues will be at i
 The level of effort for many remedial issues is likely to vary widely. Some typical tickets might be add more logging or change a setting in our CI provider to ensure PRs with failing builds cannot be merged. These types of trivial tickets cost more to maintain and groom in a backlog than they'd take just to do in the moment, so just do them. The chances they are the wrong thing to do are pretty low, and if negative consequences result, they can be easily reversed.
 
 For high-effort remediation steps, I encourage you to triage those and put them through your regular planning process. Often, high-effort remediation steps can be simplified with the benefit of time and planning. Said another way, the identified right way to solve the problem on day one may not be the ideal solution, and only by putting the issue through the regular paces of technical scrutiny can a better, perhaps less costly, solution emerge.""",
-),
+    ),
 
-AppLesson(
-id: "l77",
-title: "IT",
-content: """Here I refer to IT, information technology, as internal company tooling and technology used to conduct business on a daily basis. This is in contrast to the technology your company is building for its customer product.
+    AppLesson(
+      title: "IT",
+      body: """Here I refer to IT, information technology, as internal company tooling and technology used to conduct business on a daily basis. This is in contrast to the technology your company is building for its customer product.
 
 IT usually comprises tools like company hardware (desktops, laptops, and phones), VPNs, email, antivirus and monitoring software, etc. As a startup in the modern world, whether you're an in-person or remote team, if you make a few wise decisions, you should not need to spend very much time or capital on IT.
 
@@ -3588,30 +3345,27 @@ Early on, unless required to by a compliance system, don't requireemployees to u
 It's perhaps painful to acknowledge, but properly securing your product and IT system is a considerable task, and unrealistic for a young startup to do exhaustively early on. I encourage you to be pragmatic and focus on securing your system from the most likely sources of breach or data theft: human error by your employees. It's far more likely your engineering team forgot to put authentication in front of an API, or somebody leaves their laptop unlocked at a coffee shop, than an attacker manages to man in the middle your data or hack into your cloud infrastructure using an exploit.
 
 Even following best practices to minimize IT effort, you'll still have some IT tasks you cannot avoid, primarily around activating and deactivating user accounts and password recovery for employees. I encourage you to document for and train other coworkers, perhaps in HR, in how to do these tasks so they do not interrupt you or the engineering team on a regular basis.""",
-),
+    ),
 
-AppLesson(
-id: "l78",
-title: "Security and Compliance",
-content: """In this section, I will provide a brief overview of the subject of security and compliance for startups. You can and should put in the effort to find in-depth resources beyond this book on these topics.""",
-),
+    AppLesson(
+      title: "Security and Compliance",
+      body: """In this section, I will provide a brief overview of the subject of security and compliance for startups. You can and should put in the effort to find in-depth resources beyond this book on these topics.""",
+    ),
 
-AppLesson(
-id: "l79",
-title: "Auth Security Terminology",
-content: """Especially with security, it's important to be precise and exact with language. Some definitions of commonly misused terms:
+    AppLesson(
+      title: "Auth Security Terminology",
+      body: """Especially with security, it's important to be precise and exact with language. Some definitions of commonly misused terms:
 
 **Authentication, or AuthN**: Validating that a user or client is who they say they are. Your login system performs user authentication.
 
 **Authorization, or AuthZ**: Validating that a user or client has permission to do what they're trying to do. Your role-based access control (RBAC) or permission system does authorization.
 
 **2FA or MFA**: Two-factor authentication and multi-factor authentication is the process of authenticating with a service using more than one type of credential. This is typically done with a password (first factor) and some kind of proof-of-ownership, e.g., an emailed one-time password (proving you own the email), SMS (proving you own a phone number), or timed one-time-password (TOPT) (proving you own a device/ passkey). Note that due to the prevalence of SIM Porting attacks, where an attacker has the ability to intercept or reroute SMS, using SMS as a second factor is generally discouraged.""",
-),
+    ),
 
-AppLesson(
-id: "l80",
-title: "Security At Startups",
-content: """Startups are often defined by the extent to which they are resource-constrained. As a result, security posture and compliance are often the first things deprioritized on the to-do list, as they are less likely to represent an existential threat to the business than other pressing concerns. If you have no users or revenue, what is there for a hacker to steal?
+    AppLesson(
+      title: "Security At Startups",
+      body: """Startups are often defined by the extent to which they are resource-constrained. As a result, security posture and compliance are often the first things deprioritized on the to-do list, as they are less likely to represent an existential threat to the business than other pressing concerns. If you have no users or revenue, what is there for a hacker to steal?
 
 Taking security into account can also become a drag on productivity or an expensive task, especially if your mission is to secure a system that already exists. But if you're starting from day one, you have the opportunity to make good decisions at the start that create a strong security posture with minimal additional cost.
 
@@ -3630,12 +3384,11 @@ Some ways to incorporate security at your startup that won't cost you much:
 * Use an enterprise password management solution, such as 1Password, and ensure all employees are using robust passwords for important tools. Similarly, use Single Sign-On (SSO) as often as possible and ensure your SSO provider is configured with high security (at least requiring Multi-Factor Authentication).
 
 * Don't commit secrets in your codebase. Leverage a secure secret manager such as Google Cloud Secret Manager or AWS Secret Manager, and commit the name/location of a secret in code and resolve that name to a value in production, either at bootup time using a tool like Berglas or Whisper, or at runtime directly with the secret manager APIs.""",
-),
+    ),
 
-AppLesson(
-id: "l81",
-title: "Compliance",
-content: """Whether it's due to the industry you are in, the size of your business, or the nature of your customers, most startups need to comply with at least one formal compliance framework. If your users are in Europe, then you need to comply with GDPR. If you're taking in user data, it's wise to understand the CCPA. If you're working with enterprise clients, you'll be asked for your SOC 2 or ISO 27001 certification. In healthcare, you've got HIPAA, and if you're in payments, you've likely heard of PCI DSS.
+    AppLesson(
+      title: "Compliance",
+      body: """Whether it's due to the industry you are in, the size of your business, or the nature of your customers, most startups need to comply with at least one formal compliance framework. If your users are in Europe, then you need to comply with GDPR. If you're taking in user data, it's wise to understand the CCPA. If you're working with enterprise clients, you'll be asked for your SOC 2 or ISO 27001 certification. In healthcare, you've got HIPAA, and if you're in payments, you've likely heard of PCI DSS.
 
 For a startup, staying in compliance with any or all of these frameworks can be unacceptably expensive. Here are some tips for staying compliant and anticipating the cost:
 
@@ -3644,31 +3397,35 @@ For a startup, staying in compliance with any or all of these frameworks can be 
 * Use as much automation to enforce or provide evidence of compliance as possible. There is a thriving sector of SaaS companies who specialize in automating these compliance frameworks; companies like Vanta, Tugboat Logic, Secureframe, Laika, and Drata all have offerings that will reduce your time-to-certification and total cost significantly.
 
 * If you're lucky enough to have a formal compliance person or department, lean into that relationship. The more proactive you can be in sharing plans with a compliance department, and the earlier you incorporate their feedback, the less costly and frustrating staying compliant will be.""",
-),
-],
+    ),
+
+  ],
 ),
 
 AppCourse(
-id: "entrepreneurship_4",
-title: "Book References",
-description: "Book References",
-category: AppCategory.business,
-lessons: [
-
-AppLesson(
-id: "l1",
-title: "Digital References",
-content: """**VSCode's Setting Files** (ctohb.com/vscode): https://code.visualstudio.com/docs/getstarted/settings
+  id: "entrepreneurship_6",
+  title: "Book References",
+  description: "Book References",
+  instructor: "Hustle Academy",
+  category: "Entrepreneurship",
+  difficulty: "Intermediate",
+  icon: Icons.business_center,
+  color: Colors.orange,
+  duration: "1 Lessons",
+  lessons: [
+    AppLesson(
+      title: "Digital References",
+      body: """**VSCode's Setting Files** (ctohb.com/vscode): https://code.visualstudio.com/docs/getstarted/settings
 
 **Key to Gmail** (ctohb.com/keytogmail): https://techcrunch.com/2010/03/14/key-to-gmail
 
 **Shit Umbrella** (ctohb.com/umbrella): https://medium.com/@ rajsarkar/word-of-the-month-shit-umbrella-33e3182a0f1b
 
-**Liar's Paradox** (ctohb.com/liarsparadox): https://en.wikipedia.org/wiki/Liar\_paradox
+**Liar's Paradox** (ctohb.com/liarsparadox): https://en.wikipedia.org/wiki/Liar\\_paradox
 
 **Gitlab Compensation Calculator** (ctohb.com/gitlabcompcalc): https://about.gitlab.com/handbook/total-rewards/compensation/
 
-**Five Whys** (ctohb.com/5whys): https://en.wikipedia.org/wiki/Five\_whys
+**Five Whys** (ctohb.com/5whys): https://en.wikipedia.org/wiki/Five\\_whys
 
 **Take the DORA DevOps Quick Check** (ctohb.com/dora): https://www.devops-research.com/quickcheck.html#questions
 
@@ -3684,7 +3441,7 @@ content: """**VSCode's Setting Files** (ctohb.com/vscode): https://code.visualst
 
 **Dare to Lead: e BRAVING Inventory** (ctohb.com/braving): https://brenebrown.com/resources/the-braving-inventory/
 
-**Root Cause Analysis Template** (ctohb.com/rca): https://docs.google.com/document/d/1GuRZgDpMVg\_Qf3sR7r8tZqRx6Re0oBrwIcnj-ekgJ60/ edit#
+**Root Cause Analysis Template** (ctohb.com/rca): https://docs.google.com/document/d/1GuRZgDpMVg\\_Qf3sR7r8tZqRx6Re0oBrwIcnj-ekgJ60/ edit#
 
 **Ship Small Diffs** (ctohb.com/diffs): https://blog.skyliner.io/ship-small-diffs-741308bec0d1
 
@@ -3702,11 +3459,11 @@ content: """**VSCode's Setting Files** (ctohb.com/vscode): https://code.visualst
 
 **Technology Radar** (ctohb.com/radar): https://www.thoughtworks.com/en-us/radar
 
-**e Waterfall Model** (ctohb.com/waterfall): https://en.wikipedia.org/wiki/Waterfall\_model#History
+**e Waterfall Model** (ctohb.com/waterfall): https://en.wikipedia.org/wiki/Waterfall\\_model#History
 
-**e Pragmatic Programmer** (ctohb.com/tpp): https://en.wikipedia.org/wiki/ e\_Pragmatic\_Programmer
+**e Pragmatic Programmer** (ctohb.com/tpp): https://en.wikipedia.org/wiki/ e\\_Pragmatic\\_Programmer
 
-**Rubber Duck Debugging** (ctohb.com/rdd): https://en.wikipedia.org/wiki/Rubber\_duck\_debugging
+**Rubber Duck Debugging** (ctohb.com/rdd): https://en.wikipedia.org/wiki/Rubber\\_duck\\_debugging
 
 **FrequencyReducesDifficulty** (ctohb.com/fowler): https://martinfowler.com/bliki/FrequencyReducesDifficulty.html
 
@@ -3733,7 +3490,9 @@ content: """**VSCode's Setting Files** (ctohb.com/vscode): https://code.visualst
 **From Founder to CTO** (ctohb.com/founder2cto): https://calv.info/founder-cto
 
 **How to Prioritize the Developer Experience and Improve Output** (ctohb.com/dx): https://www.harness.io/blog/developer-experience""",
+    ),
+
+  ],
 ),
-],
-),
+
 ];
