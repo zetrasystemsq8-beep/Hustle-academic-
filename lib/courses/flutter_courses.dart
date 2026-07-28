@@ -6,7 +6,7 @@
 //
 // Source: assets/flutter_docs/ (category index)
 // To regenerate, run: python3 tools/generate_flutter_courses.py
-
+import '../models/course_models.dart';
 export 'flutter_add_to_app_courses.dart';
 export 'flutter_ai_courses.dart';
 export 'flutter_app_architecture_courses.dart';
