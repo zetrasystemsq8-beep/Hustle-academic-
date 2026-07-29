@@ -1,0 +1,124 @@
+{
+  "id": "reporting",
+  "slug": "reporting",
+  "title": "Reporting",
+  "description": "Master Reporting through 2 focused lessons, covering Reporting Structure, Naming Schemes. Includes practical examples and remediation guidance.",
+  "category": "Cyber Security",
+  "instructor": "Hustle Academy",
+  "icon": "Icons.security",
+  "color": "Colors.red",
+  "difficulty": "Advanced",
+  "duration_label": "13 min",
+  "total_minutes": 13,
+  "tags": [
+    "Reporting",
+    "Structure",
+    "About",
+    "Section",
+    "Introduction",
+    "Version",
+    "Naming",
+    "Schemes"
+  ],
+  "prerequisites": [],
+  "lessons": [
+    {
+      "id": "reporting-structure",
+      "slug": "reporting-structure",
+      "title": "Reporting Structure",
+      "body": "{% include breadcrumb.html %}\n# Reporting\n\nPerforming the technical side of the assessment is only half of the overall assessment process. The final product is the production of a well written and informative report. A report should be easy to understand and should highlight all the risks found during the assessment phase. The report should appeal to both executive management and technical staff.\n\n## About This Section\n\nThis guide provides only suggestions about one possible approach to reporting, and should not be treated as strict rules that must be followed. When considering any of the recommendations below, always ask yourself whether the recommendation would improve your report.\n\nThis guide to reporting is a best fit for consultancy-based reports. It may be overkill for internal or bug bounty reports.\n\nRegardless of the audience, it's advisable to secure the report and encrypt it to ensure that only the receiving party is able to use it.\n\nA good report helps your client understand your findings and highlights the quality of your technical testing. The quality of the technical testing is completely irrelevant if the client can't understand your findings.\n\n## 1. Introduction\n\n### 1.1 Version Control\n\nSets report changes, mostly presented in a table format such as the below.\n\n| Version | Description | Date | Author |\n|:-------:|-------------|------|--------|\n| 1.0 | Initial report | DD/MM/YYYY | J. Doe |\n\n### 1.2 Table of Contents\n\nA table of contents page for the document.\n\n### 1.3 The Team\n\nA list of the team members detailing their expertise and qualifications.\n\n### 1.4 Scope\n\nThe boundaries and the needs of the engagement agreed upon with the organization.\n\n### 1.5 Limitations\n\nLimitations can be:\n\n- Out-of-bounds areas in relation to testing.\n- Broken functionality.\n- Lack of cooperation.\n- Lack of time.\n- Lack of access or credentials.\n\n### 1.6 Timeline\n\nThe duration of the engagement.\n\n### 1.7 Disclaimer\n\nYou may wish to provide a disclaimer for your service. Always consult a legal professional in order to create a legally-binding document.\n\nThe following example is for illustrative purposes only. It should not be used as-is and does not constitute legal advice.\n\n*This test is a \"point in time\" assessment and as such the environment could have changed since the test was run. There is no guarantee that all possible security issues have been identified, and that new vulnerabilities may have been discovered since the tests were run. As such, this report serves as a guiding document and not a warranty that the report provides a full representation of the risks threatening the systems at hand.*\n\n## 2. Executive Summary\n\nThis is like the elevator pitch of the report, it aims at providing executives with:\n\n- The objective of the test.\n    - Describe the business need behind the security test.\n    - Describe how the tests helped the organization understand their systems.\n- Key findings in a business context, such as possible compliance issues, reputation damage, etc. Focus on the business impact and leave out technical details for now.\n- The strategic recommendations on how the business can stop the issues from happening again. Describe these in a non-technical context and leave specific technical recommendations out for now.\n\nThe summary should be constructive and meaningful. Avoid jargon and negative speculation. If figures, graphs, or illustrations are used, ensure they help deliver a message in a clearer way than text would.\n\n## 3. Findings\n\nThis section is aimed at the technical team. It should include all the necessary information to understand the vulnerability, replicate it, and resolve it. Logical separation can help improve the readability of the report. For example, you might have separate sections titled \"External Access\" and \"Internal Access\".\n\nIf this is a re-test, you might create a subsection that summarizes findings of the previous test, the updated status of previously identified vulnerabilities, and any cross-references with the current test.\n\n### 3.1 Findings Summary\n\nA list of the findings with their risk level. A table can be used for ease of use by both teams.\n\n| Ref. ID |  Title | Risk Level |\n|:------------:|--------|------------|\n| 1 | User Authentication Bypass | High |\n\n### 3.2 Findings Details\n\nEach finding should be detailed with the following information:\n\n- Reference ID, which can be used for communication between parties and for cross-references across the report.\n- The vulnerability title, such as \"User Authentication Bypass\".\n- The likelihood or exploitability of the issue, based on various factors such as:\n    - How easy it is to exploit.\n    - Whether there is working exploit code for it.\n    - The level of access required.\n    - Attacker motivation to exploit it.\n- The impact of the vulnerability on the system.\n- Risk of the vulnerability on the application.\n    - Some suggested values are: Informational, Low, Medium, High, and Critical. Ensure that you detail the values you decide to use in an appendix. This allows the reader to understand how each score is determined.\n    - On certain engagements it is required to have a [CVSS](https://www.first.org/cvss/) score. If not required, sometimes it is good to have, and other times it just adds complexity to the report.\n- Detailed description of what the vulnerability is, how to exploit it, and the damage that may result from its exploitation. Any possibly-sensitive data should be masked, for example, passwords, personal information, or credit card details.\n- Detailed steps on how to remediate the vulnerability, possible improvements that could help strengthen the security posture, and missing security practices.\n- Additional resources that could help the reader to understand the vulnerability, such as an image, a video, a CVE, an external guide, etc.\n\nFormat this section in a way that best delivers your message.\n\nAlways ensure that your descriptions provide enough information for the engineer reading this report to take action based on it. Explain the finding thoroughly\nand provide as much technical detail as might be necessary to remedy it.\n\n## Human Factors\n\nHuman factors strongly influence the effectiveness of technical security controls. Attackers commonly exploit people (phishing, social engineering, credential reuse, and social recovery flows) rather than technical weaknesses alone. Testers should surface user-facing and process issues in their reports alongside technical findings and recommend remediations that combine technical controls, UX improvements, and targeted process or training changes.\n\nChecklist (what to look for and report):\n\n- Phishing and information leakage: note UI text, error messages, or pages that leak information useful to attackers (account enumeration, overly-detailed errors, recovery workflow details).\n- Authentication and recovery UX: check for recovery flows (password reset, account recovery, backup codes, SMS fallback) that can be abused or that encourage insecure workarounds.\n- 2FA and fallback flows: verify whether second-factor options are implemented securely (no weak fallback paths) and whether the UX leads users to disable protections.\n- Social engineering exposure: identify features or processes (support/helpdesk, unvalidated profile links, shared accounts) that could be abused by an attacker posing as a legitimate user.\n- Session and credential handling: look for long-lived sessions, “remember me” implementations, or token exposure that increase risk when combined with social engineering/malware.\n- Practical mitigations: recommend technical controls first (rate limiting, account lockout, secure 2FA, hardened recovery flows, minimal information in error messages) and augment them with targeted process fixes (support verification procedures) and short, actionable user guidance where appropriate.\n\nReporting notes:\n\nProvide non-sensitive examples or redacted screenshots to show the issue and its user-facing context.\nSuggest concrete, prioritized remediation steps that engineers and product teams can act on.\nWhere appropriate, identify who in the organization should own the fix (e.g., product, support, or security) and any short-term mitigations (feature flags, temporary rate limits).\n\n### Reproducible Test Artifacts\n\nAs part of reporting, testers may include reproducible test artifacts to help developers verify fixes.\n\nExamples include:\n\n- curl commands demonstrating the request\n- Proof-of-Concept (PoC) such as CSRF forms\n- HAR files capturing request/response flows\n- Simple automation scripts (e.g., Selenium, Puppeteer)\n\nThese artifacts can help developers quickly validate and retest vulnerabilities.\n\n## Appendices\n\nMultiple appendices can be added, such as:\n\n- Test methodology used.\n- Severity and risk rating explanations.\n- Relevant output from tools used.\n    - Make sure to clean the output and not just dump it.\n- A checklist of all the tests conducted, such as the [WSTG checklists](https://github.com/OWASP/wstg/tree/master/checklists). These can be provided as attachments to the report.\n\n## References\n\nThis section is not part of the suggested report format. The below links provide more guidance to writing your reports.\n\n- [NIST SP 800-63: Digital Identity Guidelines](https://pages.nist.gov/800-63-3/) - identity proofing & authentication.\n- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org) — consider linking relevant cheat sheets on phishing, authentication, and social engineering prevention.\n- [SANS: Tips for Creating a Strong Cybersecurity Assessment Report](https://www.sans.org/blog/tips-for-creating-a-strong-cybersecurity-assessment-report/)\n- [SANS: Writing a Penetration Testing Report](https://www.sans.org/reading-room/whitepapers/bestprac/paper/33343)\n- [Infosec Institute: The Art of Writing Penetration Test Reports](https://www.infosecinstitute.com/resources/penetration-testing/writing-penetration-testing-reports/)\n- [Dummies: How to Structure a Pen Test Report](https://www.dummies.com/article/technology/cybersecurity/how-to-structure-a-pen-test-report-270933/)\n- [Rhino Security Labs: Four Things Every Penetration Test Report Should Have](https://rhinosecuritylabs.com/penetration-testing/four-things-every-penetration-test-report/)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 7,
+      "difficulty": "Advanced",
+      "tags": [
+        "Reporting",
+        "Structure",
+        "About",
+        "Section",
+        "Introduction",
+        "Version"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Reporting",
+      "table_of_contents": [
+        "Reporting",
+        "About This Section",
+        "1. Introduction",
+        "1.1 Version Control",
+        "1.2 Table of Contents",
+        "1.3 The Team",
+        "1.4 Scope",
+        "1.5 Limitations",
+        "1.6 Timeline",
+        "1.7 Disclaimer",
+        "2. Executive Summary",
+        "3. Findings",
+        "3.1 Findings Summary",
+        "3.2 Findings Details",
+        "Human Factors",
+        "Reproducible Test Artifacts",
+        "Appendices",
+        "References"
+      ],
+      "learning_objectives": [
+        "Understand about this section",
+        "Understand 1. introduction",
+        "Understand 1.1 version control"
+      ],
+      "order_index": 132,
+      "source_path": "cybersecurity/latest/5-Reporting/01-Reporting_Structure.md",
+      "content_hash": "24eba053e9ad36354886bd40d1de9712cfcf98c32067f6b16e845a681847c13e",
+      "next_lesson_slug": "naming-schemes",
+      "previous_lesson_slug": null,
+      "related_lesson_slugs": []
+    },
+    {
+      "id": "naming-schemes",
+      "slug": "naming-schemes",
+      "title": "Naming Schemes",
+      "body": "{% include breadcrumb.html %}\n# Vulnerability Naming Schemes\n\nWith a constantly growing number of IT assets to administer, security practitioners require new and more powerful tools to perform automated and large scale analysis. Thanks to software attention can be focused on the more creative and intellectually challenging problems. Unfortunately, having vulnerability assessment tools, antivirus software, and intrusion detection systems communicate its not an easy job. It has resulted in several technical complications, requiring a standardized way to identify each software flaw, vulnerability, or configuration issues identified. The lack of this interoperability capabilities can cause inconsistencies during the security assessment, confusing reporting, and extra correlation efforts among other problems that will produce an important waste of resources and time.\n\nA naming scheme is a systematic methodology used to identify each one of those vulnerabilities in order to facilitate clear identification and information sharing. This goal is achieved by the definition of a unique, structured, and software-efficient name for each vulnerability. There are multiple schemes used to facilitate this effort, the most common are:\n\n- Common Platform Enumeration (`CPE`)\n- Software Identification Tag (`SWID`)\n- Package URL (`PURL`)\n\n## Software Identification Tag\n\nSoftware Identification Tag (`SWID`) is an International Organization for Standardization's standard defined by the ISO/IEC 19770-2:2015. The `SWID` tags are used to identify each software clearly as part of comprehensive software asset management lifecycles. This information schema is recommended to be used by the National Institute of Standards and Technology (NIST) as the primary identification for any developed or installed software. From `SWID` it's possible to generate other schemas such as the `CPE` used by the National Vulnerability Database (NVD) whereas the reverse process is not possible.\n\nEach `SWID` tag is represented as a standardized XML format. A `SWID` tag is composed for three groups of elements. The first block composed by 7 predefined elements required to be considered a valid tag. Followed by an optional block which provides a set of 30 possible predefined elements that the tag creator can use to provide reliable and detailed information. Finally, the `Extended` group of elements provides the opportunity for the tag creator to define any non predefined elements required to accurately define the described software. The high level of granularity provided by `SWID`, not only provides the capability to describe a given product of software, but also it's specific status on the software lifecycle.\n\n### Examples\n\n- _ACME Roadrunner Service Pack 1_ patch created by the ACME Corporation for the already installed product identified with the `@tagId`: _com.acme.rms-ce-v4-1-5-0_:\n\n- Red Hat Enterprise Linux version 8 for x86-64 architecture:\n\n## Common Platform Enumeration\n\nThe Common Platform Enumeration scheme (`CPE`) is a structured naming scheme for information technology systems, software, and packages maintained by `NVD`. Commonly used in conjunction with the Common Vulnerabilities and Exposures identification codes (e.g. `CVE-2017-0147`). Despite being considered a deprecated scheme superseded by `SWID`, `CPE` is still widely used by several security solutions.\n\nDefined as a Dictionary of registered values provided by `NVD`. Each `CPE` code can be defined as a well-formatted name or as a URL. Each value MUST follow this structure:\n\n- _cpe-name_ = \"cpe:\" component-list\n- _component-list_ = part \":\" vendor \":\" product \":\" version \":\" update \":\" edition \":\" lang\n- _component-list_ = part \":\" vendor \":\" product \":\" version \":\" update \":\" edition\n- _component-list_ = part \":\" vendor \":\" product \":\" version \":\" update\n- _component-list_ = part \":\" vendor \":\" product \":\" version\n- _component-list_ = part \":\" vendor \":\" product\n- _component-list_ = part \":\" vendor\n- _component-list_ = part\n- _component-list_ = empty\n- _part_ = \"h\" / \"o\" / \"a\" = string\n- _vendor_ = string\n- _product_ = string\n- _version_ = string\n- _update_ = string\n- _edition_ = string\n- _lang_ LANGTAG / empty\n- _string_ = *( unreserved / pct-encoded )\n- _empty_ = \"\"\n- _unreserved_ = ALPHA / DIGIT / \"-\" / \".\" / \"_\" / \" ̃\"\n- _pct-encoded_ = \"%\" HEXDIG HEXDIG\n- _ALPHA_ = %x41-5a / %x61-7a ; A-Z or a-z\n- _DIGIT_ = %x30-39 ; 0-9\n- _HEXDIG_ = DIGIT / \"a\" / \"b\" / \"c\" / \"d\" / \"e\" / \"f\"\n- _LANGTAG_ = cf. [RFC5646]\n\n### Examples\n\n- Microsoft Internet Explorer 8.0.6001 Beta (any edition): `wfn:[part=\"a\",vendor=\"microsoft\",product=\"internet_explorer\", version=\"8\\.0\\.6001\",update=\"beta\",edition=ANY]` which binds to the following URL: `cpe:/a:microsoft:internet_explorer:8.0.6001:beta`.\n- Foo\\Bar Big$Money Manager 2010 Special Edition for iPod Touch 80GB: `wfn:[part=\"a\",vendor=\"foo\\\\bar\",product=\"big\\$money_manager_2010\", sw_edition=\"special\",target_sw=\"ipod_touch\",target_hw=\"80gb\"]`, which binds to the following URL:`cpe:/a:foo%5cbar:big%24money_manager_2010:::~~special~ipod_touch~80gb~`.\n\n## Package URL\n\nPackage URL standardizes how software package metadata is represented so that packages can be universally located regardless of what vendor, project, or ecosystem the packages belongs.\n\nA PURL is a valid `RFC3986` ASCII string defined URL composed of seven elements. Each of them is separated by a defined character in order to make it easily manipulated by software.\n\n`scheme:type/namespace/name@version?qualifiers#subpath`\n\nThe definition for each component is:\n\n- _scheme_: URL scheme compliant constant value of \"pkg\". (**Required**).\n- _type_: package type or package protocol such as maven, npm, nuget, gem, pypi, etc. (**Required**).\n- _namespace_: type-specific value to a package prefix such as it's owner name, groupid, etc. (Optional).\n- _name_: name of the package. (**Required**).\n- _version_: package version. (Optional).\n- _qualifiers_: extra qualifying data for a package such as an OS, architecture, a distro, etc. (Optional).\n- _subpath_: extra subpath within a package, relative to the package root. (Optional).\n\n### Examples\n\n- Curl software, packaged as a `.deb` package for Debian Jessie meant for an i386 architecture: `pkg:deb/debian/curl@7.50.3-1?arch=i386&distro=jessie`\n- Docker image of Apache Casandra signed with the SHA256 hash 244fd47e07d1004f0aed9c: `pkg:docker/cassandra@sha256:244fd47e07d1004f0aed9c`\n\n## Recommendation Uses\n\n| USE  | RECOMMENDATION  |\n|---|---|\n| Client or Server Application | CPE or SWID |\n| Container | PURL or SWID |\n| Firmware | CPE or SWID* |\n| Library or Framework (package) | PURL |\n| Library or Framework (non-package) | SWID |\n| Operating System | CPE or SWID |\n| Operating System Package | PURL or SWID |\n\n> Note: Due to the deprecated status of `CPE`, industry recommended seems to be that new projects implement `SWID` when they need to decide between the two methods. Even though `CPE` is known to be a widely used naming schema within current active projects and solutions.\n\n## References\n\n- [NISTIR 8060 - Guidelines for the Creation of Interoperable Software Identification (SWID) Tags (PDF)](https://nvlpubs.nist.gov/nistpubs/ir/2016/NIST.IR.8060.pdf)\n- [NISTIR 8085 - Forming Common Platform Enumeration (CPE) Names from Software Identification (SWID) Tags](https://csrc.nist.gov/CSRC/media/Publications/nistir/8085/draft/documents/nistir_8085_draft.pdf)\n- [ISO/IEC 19770-2:2015 - Information technology— Software asset management—Part2:Software identification tag](https://www.iso.org/standard/65666.html)\n- [Official Common Platform Enumeration (CPE) Dictionary](https://nvd.nist.gov/products/cpe)\n- [Common Platform Enumeration: Dictionary Specification Version 2.3](https://csrc.nist.gov/publications/detail/nistir/7697/final)\n- [PURL Specification](https://github.com/package-url/purl-spec)\n\n### Known Implementations\n\n- [packageurl-go](https://github.com/package-url/packageurl-go)\n- [packageurl-dotnet](https://github.com/package-url/packageurl-dotnet)\n- [packageurl-java](https://github.com/package-url/packageurl-java), [package-url-java](https://github.com/sonatype/package-url-java)\n- [packageurl-python](https://github.com/package-url/packageurl-python)\n- [packageurl-rust](https://github.com/package-url/packageurl.rs)\n- [packageurl-js](https://github.com/package-url/packageurl-js)",
+      "code_snippet": "// language: xml\n<SoftwareIdentity\n                  xmlns=\"https://standards.iso.org/iso/19770/-2/2015/schema.xsd\"\n                  name=\"ACME Roadrunner Service Pack 1\"\n                  tagId=\"com.acme.rms-ce-sp1-v1-0-0\"\n                  patch=\"true\"\n                  version=\"1.0.0\">\n  <Entity\n          name=\"The ACME Corporation\"\n          regid=\"acme.com\"\n          role=\"tagCreator softwareCreator\"/>\n  <Link\n        rel=\"patches\"\n        href=\"swid:com.acme.rms-ce-v4-1-5-0\">\n    ...\n</SoftwareIdentity>\n\n// language: xml\n<SoftwareIdentity\n                  xmlns=\"https://standards.iso.org/iso/19770/-2/2015/schema.xsd\"\n                  xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\"\n                  xsi:schemaLocation=\"https://standards.iso.org/iso/19770/-2/2015/schema.xsd\"\n                  xml:lang=\"en-US\"\n                  name=\"Red Hat Enterprise Linux\"\n                  tagId=\"com.redhat.RHEL-8-x86_64\"\n                  tagVersion=\"1\"\n                  version=\"8\"\n                  versionScheme=\"multipartnumeric\"\n                  media=\"(OS:linux)\">",
+      "code_languages": [
+        "xml"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 6,
+      "difficulty": "Advanced",
+      "tags": [
+        "Naming",
+        "Schemes",
+        "Vulnerability",
+        "Software",
+        "Identification",
+        "Tag"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Vulnerability Naming Schemes",
+      "table_of_contents": [
+        "Vulnerability Naming Schemes",
+        "Software Identification Tag",
+        "Examples",
+        "Common Platform Enumeration",
+        "Examples",
+        "Package URL",
+        "Examples",
+        "Recommendation Uses",
+        "References",
+        "Known Implementations"
+      ],
+      "learning_objectives": [
+        "Understand software identification tag",
+        "Understand examples",
+        "Understand common platform enumeration"
+      ],
+      "order_index": 133,
+      "source_path": "cybersecurity/latest/5-Reporting/02-Naming_Schemes.md",
+      "content_hash": "cd92caf3891c85c7d13cd53c9ef5f096e4e69b3ec40193cea16097e6af28439c",
+      "next_lesson_slug": null,
+      "previous_lesson_slug": "reporting-structure",
+      "related_lesson_slugs": []
+    }
+  ]
+}

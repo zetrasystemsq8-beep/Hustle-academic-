@@ -1,0 +1,19 @@
+{
+  "total_markdown_files": 139,
+  "processed_lessons": 139,
+  "skipped_unreadable": 0,
+  "skipped_empty": 0,
+  "skipped_duplicate_lessons": 0,
+  "skipped_duplicate_courses": 0,
+  "total_courses": 15,
+  "total_reading_minutes": 814,
+  "warnings": [
+    "cybersecurity/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting.md: unresolved footnote reference(s) ['>']",
+    "cybersecurity/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection.md: 2 broken reference-style link(s)",
+    "cybersecurity/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/13-Testing_for_Format_String_Injection.md: 1 broken reference-style link(s)",
+    "cybersecurity/latest/4-Web_Application_Security_Testing/07-Input_Validation_Testing/22-Testing_for_Prototype_Pollution.md: 1 broken reference-style link(s)",
+    "cybersecurity/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/05-Testing_for_CSS_Injection.md: 1 broken reference-style link(s)"
+  ],
+  "errors": [],
+  "elapsed_seconds": 1.02
+}

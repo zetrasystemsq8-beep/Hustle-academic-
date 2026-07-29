@@ -1,0 +1,96 @@
+{
+  "id": "testing-for-error-handling",
+  "slug": "testing-for-error-handling",
+  "title": "Testing for Error Handling",
+  "description": "Master Testing for Error Handling through 2 focused lessons, covering Testing for Improper Error Handling, Testing for Stack Traces. Includes practical examples and remediation guidance.",
+  "category": "Cyber Security",
+  "instructor": "Hustle Academy",
+  "icon": "Icons.security",
+  "color": "Colors.red",
+  "difficulty": "Intermediate",
+  "duration_label": "6 min",
+  "total_minutes": 6,
+  "tags": [
+    "Improper",
+    "Error",
+    "Handling",
+    "Summary",
+    "Objectives",
+    "Web",
+    "Stack",
+    "Traces"
+  ],
+  "prerequisites": [],
+  "lessons": [
+    {
+      "id": "testing-for-improper-error-handling",
+      "slug": "testing-for-improper-error-handling",
+      "title": "Testing for Improper Error Handling",
+      "body": "{% include breadcrumb.html %}\n# Testing for Improper Error Handling\n\n|ID          |\n|------------|\n|WSTG-ERRH-01|\n\n## Summary\n\nAll types of applications (web apps, web servers, databases, etc.) will generate errors for various reasons. Developers often ignore handling these errors, or push away the idea that a user will ever try to trigger an error purposefully (*e.g.* sending a string where an integer is expected). When the developer only consider the happy path, they forget all other possible user-input the code can receive but can't handle.\n\nErrors sometimes rise as:\n\n- Stack traces\n- Network timeouts\n- Input mismatch\n- Memory dumps\n\nImproper error handling can allow attackers to:\n\n- Understand the APIs being used internally.\n- Map the various services integrating with each other by gaining insight on internal systems and frameworks used, which opens up doors to attack chaining.\n- Gather the versions and types of applications being used.\n- Identify filesystem paths.\n- Cause a denial off service by forcing the system into a deadlock or an unhandled exception that sends a panic signal to the engine running it.\n- Controls bypass where a certain exception is not restricted by the logic set around the happy path.\n\n## Test Objectives\n\n- Identify existing error output.\n- Analyze the different output returned.\n\n## How to Test\n\nErrors are usually seen as benign as they provide diagnostics data and messages that could help the user understand the problem at hand, or for the developer to debug that error.\n\nBy trying to send unexpected data, or forcing the system into certain edge cases and scenarios, the system or application will, most of the time, give out a bit on what's happening internally, unless the developers turned off all possible errors and return a certain custom message.\n\n### Web Servers\n\nAll web apps run on a web server, whether it was an integrated one or a fully fledged one. Web apps must handle and parse HTTP requests, and for that a web server is always part of the stack. Some of the most common web servers are Nginx, Apache, and IIS.\n\nWeb servers have known error messages and formats. If one is not familiar with how they look, searching online for them would provide examples. Another way would be to look into their documentation, or simply setup a server locally and discover the errors by going through the pages that the web server uses.\n\nIn order to trigger error messages, a tester must:\n\n- Search for random files and folders that will not be found (404s).\n- Try to request folders that exist and see the server behavior (403s, blank page, or directory listing).\n- Try sending a request that breaks the [HTTP RFC](https://tools.ietf.org/html/rfc7231). One example would be to send a very large path, break the headers format, or change the HTTP version.\n    - Even if errors are handled on the application level, breaking the HTTP RFC may make the integrated web server show itself since it has to handle the request, and developers forget to override these errors.\n\n### Applications\n\nApplications are the most susceptible to let out a wide variety of error messages, which include: stack traces, memory dumps, mishandled exceptions, and generic errors. This happens due to the fact that applications are custom built most of the time and the developers need to observe and handle all possible error cases (or have a global error catching mechanism), and these errors can appear from integrations with other services.\n\nIn order to make an application throw these errors, a tester must:\n\n1. Identify possible input points where the application is expecting data.\n2. Analyse the expected input type (strings, integers, JSON, XML, etc.).\n3. Fuzz every input point based on the previous steps to have a more focused test scenario.\n   - Fuzzing every input with all possible injections is not the best solution unless you have unlimited testing time and the application can handle that much input.\n   - If fuzzing isn't an option, handpick viable inputs that have the highest chance to break a certain parser (*e.g.* a closing bracket for a JSON body, a large text where only a couple of characters are expected, CLRF injection with parameters that might be parsed by servers and input validation controls, special characters that aren't applicable for filenames, etc.).\n   - Fuzzing with jargon data should be ran for every type as sometimes the interpreters will break outside of the developer's exception handling.\n4. Understand the service responding with the error message and try to make a more refined fuzz list to bring out more information or error details from that service (it could be a database, a standalone service, etc.).\n\nError messages are sometimes the main weakness in mapping out systems, especially under a microservice architecture. If services are not properly set to handle errors in a generic and uniform manner, error messages would let a tester identify which service handles which requests, and allows for a more focused attack per service.\n\n> The tester needs to keep a vigilant eye for the response type. Sometimes errors are returned as success with an error body, hide the error in a 302, or simply by having a custom way of representing that error.\n\n## Remediation\n\nFor remediation, check out the [Proactive Controls C10](https://owasp.org/www-project-proactive-controls/v3/en/c10-errors-exceptions) and the [Error Handling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html).\n\n## Playgrounds\n\n- [Juice Shop - Error Handling](https://pwning.owasp-juice.shop/companion-guide/latest/part2/security-misconfiguration.html#provoke-an-error-that-is-neither-very-gracefully-nor-consistently-handled)\n\n## References\n\n- [WSTG: Appendix C - Fuzzing](../../6-Appendix/C-Fuzzing.md)\n- [Proactive Controls C10: Handle All Errors and Exceptions](https://owasp.org/www-project-proactive-controls/v3/en/c10-errors-exceptions)\n- [ASVS v4.1 v7.4: Error handling](https://github.com/OWASP/ASVS/blob/master/4.0/en/0x15-V7-Error-Logging.md#v74-error-handling)\n- [CWE 728 - Improper Error Handling](https://cwe.mitre.org/data/definitions/728.html)\n- [Cheat Sheet Series: Error Handling](https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "Improper",
+        "Error",
+        "Handling",
+        "Summary",
+        "Objectives",
+        "Web"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing for Improper Error Handling",
+      "table_of_contents": [
+        "Testing for Improper Error Handling",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Web Servers",
+        "Applications",
+        "Remediation",
+        "Playgrounds",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 93,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/08-Testing_for_Error_Handling/01-Testing_For_Improper_Error_Handling.md",
+      "content_hash": "2728bbf4330b48d732780d7b1a012b807a0a79cba87cc229cb03c376abcace98",
+      "next_lesson_slug": "testing-for-stack-traces",
+      "previous_lesson_slug": null,
+      "related_lesson_slugs": []
+    },
+    {
+      "id": "testing-for-stack-traces",
+      "slug": "testing-for-stack-traces",
+      "title": "Testing for Stack Traces",
+      "body": "{% include breadcrumb.html %}\n# Testing for Stack Traces\n\n|ID          |\n|------------|\n|WSTG-ERRH-02|\n\nThis content has been merged into: [Testing for Improper Error Handling](01-Testing_For_Improper_Error_Handling.md).",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 1,
+      "difficulty": "Intermediate",
+      "tags": [
+        "Stack",
+        "Traces"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing for Stack Traces",
+      "table_of_contents": [
+        "Testing for Stack Traces"
+      ],
+      "learning_objectives": [
+        "Understand the fundamentals of testing for stack traces"
+      ],
+      "order_index": 94,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/08-Testing_for_Error_Handling/02-Testing_for_Stack_Traces.md",
+      "content_hash": "da230564300de9c1a2ad8a45f6c3a163c66f6bf04660db1de5afae7f69245c49",
+      "next_lesson_slug": null,
+      "previous_lesson_slug": "testing-for-improper-error-handling",
+      "related_lesson_slugs": []
+    }
+  ]
+}

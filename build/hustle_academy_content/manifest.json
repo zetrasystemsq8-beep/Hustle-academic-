@@ -1,0 +1,152 @@
+[
+  {
+    "id": "the-owasp-testing-framework",
+    "slug": "the-owasp-testing-framework",
+    "title": "The OWASP Testing Framework",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "12 min",
+    "lessonCount": 2,
+    "file": "courses/the-owasp-testing-framework.json"
+  },
+  {
+    "id": "information-gathering",
+    "slug": "information-gathering",
+    "title": "Information Gathering",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "1h 11m",
+    "lessonCount": 10,
+    "file": "courses/information-gathering.json"
+  },
+  {
+    "id": "configuration-and-deployment-management-testing",
+    "slug": "configuration-and-deployment-management-testing",
+    "title": "Configuration and Deployment Management Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "1h 11m",
+    "lessonCount": 14,
+    "file": "courses/configuration-and-deployment-management-testing.json"
+  },
+  {
+    "id": "identity-management-testing",
+    "slug": "identity-management-testing",
+    "title": "Identity Management Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "16 min",
+    "lessonCount": 5,
+    "file": "courses/identity-management-testing.json"
+  },
+  {
+    "id": "authentication-testing",
+    "slug": "authentication-testing",
+    "title": "Authentication Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "1 hr",
+    "lessonCount": 11,
+    "file": "courses/authentication-testing.json"
+  },
+  {
+    "id": "authorization-testing",
+    "slug": "authorization-testing",
+    "title": "Authorization Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "46 min",
+    "lessonCount": 7,
+    "file": "courses/authorization-testing.json"
+  },
+  {
+    "id": "session-management-testing",
+    "slug": "session-management-testing",
+    "title": "Session Management Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "1h 15m",
+    "lessonCount": 11,
+    "file": "courses/session-management-testing.json"
+  },
+  {
+    "id": "input-validation-testing",
+    "slug": "input-validation-testing",
+    "title": "Input Validation Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "3h 32m",
+    "lessonCount": 32,
+    "file": "courses/input-validation-testing.json"
+  },
+  {
+    "id": "testing-for-error-handling",
+    "slug": "testing-for-error-handling",
+    "title": "Testing for Error Handling",
+    "category": "Cyber Security",
+    "difficulty": "Intermediate",
+    "duration": "6 min",
+    "lessonCount": 2,
+    "file": "courses/testing-for-error-handling.json"
+  },
+  {
+    "id": "testing-for-weak-cryptography",
+    "slug": "testing-for-weak-cryptography",
+    "title": "Testing for Weak Cryptography",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "21 min",
+    "lessonCount": 4,
+    "file": "courses/testing-for-weak-cryptography.json"
+  },
+  {
+    "id": "business-logic-testing",
+    "slug": "business-logic-testing",
+    "title": "Business Logic Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "1h 7m",
+    "lessonCount": 11,
+    "file": "courses/business-logic-testing.json"
+  },
+  {
+    "id": "client-side-testing",
+    "slug": "client-side-testing",
+    "title": "Client Side Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "1h 7m",
+    "lessonCount": 16,
+    "file": "courses/client-side-testing.json"
+  },
+  {
+    "id": "api-testing",
+    "slug": "api-testing",
+    "title": "API Testing",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "48 min",
+    "lessonCount": 6,
+    "file": "courses/api-testing.json"
+  },
+  {
+    "id": "reporting",
+    "slug": "reporting",
+    "title": "Reporting",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "13 min",
+    "lessonCount": 2,
+    "file": "courses/reporting.json"
+  },
+  {
+    "id": "appendix",
+    "slug": "appendix",
+    "title": "Appendix",
+    "category": "Cyber Security",
+    "difficulty": "Advanced",
+    "duration": "29 min",
+    "lessonCount": 6,
+    "file": "courses/appendix.json"
+  }
+]
