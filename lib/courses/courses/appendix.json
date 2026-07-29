@@ -1,0 +1,344 @@
+{
+  "id": "appendix",
+  "slug": "appendix",
+  "title": "Appendix",
+  "description": "Master Appendix through 6 focused lessons, covering A Testing Tools Resource, B Suggested Reading, C Fuzzing, and 3 more. Includes practical examples and remediation guidance.",
+  "category": "Cyber Security",
+  "instructor": "Hustle Academy",
+  "icon": "Icons.security",
+  "color": "Colors.red",
+  "difficulty": "Advanced",
+  "duration_label": "29 min",
+  "total_minutes": 29,
+  "tags": [
+    "Tools",
+    "Resource",
+    "Introduction",
+    "General",
+    "Web",
+    "Proxies",
+    "Suggested",
+    "Reading"
+  ],
+  "prerequisites": [],
+  "lessons": [
+    {
+      "id": "a-testing-tools-resource",
+      "slug": "a-testing-tools-resource",
+      "title": "A Testing Tools Resource",
+      "body": "{% include breadcrumb.html %}\n# Testing Tools Resource\n\n## Introduction\n\nThis appendix is intended to provide a list of common tools that are used for web application testing. It does not aim to be a complete tool reference, and the inclusion of a tool here should not be seen as a specific endorsement of that tool by OWASP.\n\nThe list contains only tools that are freely available to download and use (although they may have licenses restricting their use for commercial activity).\n\n## General Web Testing\n\n### Web Proxies\n\n- [ZAP](https://www.zaproxy.org)\n    - The Zed Attack Proxy (ZAP) is an easy to use integrated penetration testing tool for finding vulnerabilities in web applications. It is designed to be used by people with a wide range of security experience and as such is ideal for developers and functional testers who are new to penetration testing.\n        - ZAP provides automated scanners as well as a set of tools that allow you to find security vulnerabilities manually.\n- [Burp Suite Community Edition](https://portswigger.net/burp/communitydownload)\n    - Burp Suite is an intercepting proxy for security testing. It allows intercepting and modifying all HTTP(S) traffic passing in both directions, it can work with custom TLS certificates and non-proxy-aware clients.\n- [Telerik Fiddler](https://www.telerik.com/fiddler)\n    - Fiddler is an intercepting web proxy that is primarily aimed at developers rather than penetration testers, but still provides useful functionality. It also hooks directly into the Windows HTTP APIs, allowing it to intercept traffic from some software that doesn't allow custom proxies to be set.\n\n### Firefox Extensions\n\n- [Firefox HTTP Header Live](https://addons.mozilla.org/en-US/firefox/addon/http-header-live)\n    - View HTTP headers of a page and while browsing.\n- [Firefox Multi-Account Containers](https://addons.mozilla.org/en-GB/firefox/addon/multi-account-containers/)\n    - Create multiple containers, each of which have their own isolated cookies and sessions. Useful for testing access control between different users.\n- [Firefox Tamper Data](https://addons.mozilla.org/en-US/firefox/addon/tamper-data-for-ff-quantum/)\n    - Use Tamper Data to view and modify HTTP/HTTPS headers and post parameters\n- [Firefox Web Developer](https://addons.mozilla.org/en-US/firefox/addon/web-developer/)\n    - The Web Developer extension adds various web developer tools to the browser.\n\n### Chrome Extensions\n\n- [Chrome Web Developer](https://chrome.google.com/webstore/detail/bfbameneiokkgbdmiekhjnmfkcnldhhm)\n    - The Web Developer extension adds a toolbar button to the browser with various web developer tools. This is the official port of the Web Developer extension for Chrome.\n- [Cookie Editor](https://chromewebstore.google.com/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm)\n    - A powerful and easy to use browser extension that allows you to quickly create, edit and delete cookies for the current tab. Useful for developing, testing, or manually managing cookies.\n\n### Testing for Specific Vulnerabilities\n\n#### Testing for SQL Injection\n\n- [sqlmap](https://sqlmap.org)\n\n#### Testing TLS\n\n- [OWASP O-Saft](https://owasp.org/www-project-o-saft/)\n- [sslyze](https://github.com/nabla-c0d3/sslyze)\n- [testssl.sh](https://github.com/drwetter/testssl.sh)\n- [SSLScan](https://github.com/rbsec/sslscan)\n- [SSLLabs](https://www.ssllabs.com/ssltest/)\n\n#### Testing for Brute Force Attacks\n\n##### Hash Crackers\n\n- [John the Ripper](https://github.com/openwall/john)\n- [hashcat](https://hashcat.net/hashcat/)\n\n##### Remote Brute Force\n\n- [ZAP](https://www.zaproxy.org)\n- [Patator](https://github.com/lanjelot/patator)\n- [THC Hydra](https://github.com/vanhauser-thc/thc-hydra)\n- [Burp Suite Community Edition (Intruder)](https://portswigger.net/burp/communitydownload)\n\n#### Fuzzers\n\n- [Ffuf](https://github.com/ffuf/ffuf)\n- [Wfuzz](https://github.com/xmendez/wfuzz)\n- [Jdam](https://gitlab.com/michenriksen/jdam)\n\n#### Google Hacking\n\n- [Google Hacking database](https://www.exploit-db.com/google-hacking-database/)\n\n#### Slow HTTP\n\n- [Slowloris](https://github.com/gkbrk/slowloris)\n- [slowhttptest](https://github.com/shekyan/slowhttptest)\n\n### Site Mirroring\n\n- [wget](https://www.gnu.org/software/wget/)\n- [wget for windows](https://gnuwin32.sourceforge.net/packages/wget.htm)\n- [curl](https://curl.haxx.se)\n\n### Content Discovery\n\n- [Gobuster](https://github.com/OJ/gobuster)\n- [Waybackurls](https://github.com/tomnomnom/waybackurls)\n    - Waybackurls fetches all URLs known to the Wayback Machine for a given domain, useful for reconnaissance.\n    - **Usage:**\n\n- [GAU (Get All URLs)](https://github.com/lc/gau)\n    - GAU collects URLs from multiple public archives, including the Wayback Machine and Common Crawl.\n    - **Usage:**\n\n- [Unfurl](https://github.com/tomnomnom/unfurl)\n    - Unfurl extracts subdomains, paths, and parameters from URLs for deeper analysis.\n    - **Usage:**\n\n### Port and Service Discovery\n\n- [Nmap](https://nmap.org/)\n\n## Vulnerability Scanners\n\n- [ZAP](https://www.zaproxy.org)\n- [Nikto](https://cirt.net/Nikto2)\n- [Nuclei](https://nuclei.projectdiscovery.io/)\n- [SecOps Solution](https://secopsolution.com)\n\n## Exploitation Frameworks\n\n- [Metasploit](https://github.com/rapid7/metasploit-framework)\n- [BeEF](https://github.com/beefproject/beef/)\n\n## Linux Distributions\n\n- [Kali](https://www.kali.org)\n- [Parrot](https://www.parrotsec.org)\n- [Samurai](https://github.com/SamuraiWTF/samuraiwtf)\n- [Santoku](https://sourceforge.net/projects/santoku/)\n- [BlackArch](https://blackarch.org/downloads.html)\n\n## Source Code Analyzers\n\n- [Spotbugs](https://spotbugs.github.io)\n- [Find Security Bugs](https://find-sec-bugs.github.io)\n- [phpcs-security-audit](https://github.com/squizlabs/PHP_CodeSniffer)\n- [PMD](https://pmd.github.io)\n- [Microsoft's .NET Analyzers](https://docs.microsoft.com/en-us/visualstudio/code-quality/install-net-analyzers)\n- [SonarQube Community Edition](https://www.sonarqube.org)\n\n## Browser Automation Tools\n\nBrowser Automation tools are used to validate the functionality of web applications. Some follow a scripted approach and typically make use of a Unit Testing framework to construct test suites and test cases. Most, if not all, can be adapted to perform security specific tests in addition to functional tests.\n\n### Open Source Tools\n\n- [HtmlUnit](https://htmlunit.sourceforge.io) - HtmlUnit is a GUI-less browser for Java programs. It models HTML documents and provides an API to invoke pages, fill out forms, click links, and interact with JavaScript and complex AJAX libraries. It can simulate Chrome, Firefox, or Edge depending on configuration, and is typically used for automated testing or web scraping. HtmlUnit can also be used as a Selenium-compatible browser via the [htmlunit-driver](https://github.com/SeleniumHQ/htmlunit-driver). The latest stable release is 4.21.0 (`org.htmlunit:htmlunit:4.21.0`).\n    - GitHub Repository: [HtmlUnit/htmlunit](https://github.com/HtmlUnit/htmlunit)\n- [Selenium](https://www.selenium.dev)\n    - JavaScript based testing framework, cross-platform and provides a GUI for creating tests.\n\n## Online Resources for Security Testing Tool Comparison\n\nIn addition to individual tools listed in this appendix, practitioners often need resources that help compare and evaluate security testing tools across categories such as SAST, DAST, SCA, and API security.\n\nThe following freely available resources provide curated comparisons and evaluation guidance.\n\n### AppSec Santa Tool Comparison\n\n- [AppSec Santa](https://appsecsanta.com)\n    - A curated comparison of more than 160 application security tools across categories such as SAST, DAST, SCA, API Security, container security, and more.\n\n### Security Headers Analyzer\n\n- [SecurityHeaders](https://securityheaders.com)\n    - A free online tool that analyzes HTTP response headers and highlights missing or misconfigured security protections such as Content Security Policy, HSTS, and X-Frame-Options.\n\n### ZAP (Zed Attack Proxy) Documentation\n\nOfficial documentation and learning resources for the ZAP (Zed Attack Proxy) dynamic application security testing tool.\n\n- [ZAP Documentation](https://www.zaproxy.org/docs/)\n\n### Nuclei Templates Project\n\nA large open-source repository of vulnerability detection templates used for automated security scanning.\n\n- [Nuclei Templates](https://github.com/projectdiscovery/nuclei-templates)",
+      "code_snippet": "// language: bash\nwaybackurls example.com\n\n// language: bash\ngau example.com\n\n// language: bash\nunfurl \"https://example.com/page?query=123\"",
+      "code_languages": [
+        "bash"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "Tools",
+        "Resource",
+        "Introduction",
+        "General",
+        "Web",
+        "Proxies"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing Tools Resource",
+      "table_of_contents": [
+        "Testing Tools Resource",
+        "Introduction",
+        "General Web Testing",
+        "Web Proxies",
+        "Firefox Extensions",
+        "Chrome Extensions",
+        "Testing for Specific Vulnerabilities",
+        "Site Mirroring",
+        "Content Discovery",
+        "Port and Service Discovery",
+        "Vulnerability Scanners",
+        "Exploitation Frameworks",
+        "Linux Distributions",
+        "Source Code Analyzers",
+        "Browser Automation Tools",
+        "Open Source Tools",
+        "Online Resources for Security Testing Tool Comparison",
+        "AppSec Santa Tool Comparison",
+        "Security Headers Analyzer",
+        "ZAP (Zed Attack Proxy) Documentation",
+        "Nuclei Templates Project"
+      ],
+      "learning_objectives": [
+        "Understand introduction",
+        "Understand general web testing",
+        "Understand web proxies"
+      ],
+      "order_index": 134,
+      "source_path": "cybersecurity/latest/6-Appendix/A-Testing_Tools_Resource.md",
+      "content_hash": "6ea53184a8b05b07fdd07906040223e106fe1e5e698318946e06ace647f07cd0",
+      "next_lesson_slug": "b-suggested-reading",
+      "previous_lesson_slug": null,
+      "related_lesson_slugs": [
+        "c-fuzzing",
+        "f-leveraging-dev-tools"
+      ]
+    },
+    {
+      "id": "b-suggested-reading",
+      "slug": "b-suggested-reading",
+      "title": "B Suggested Reading",
+      "body": "{% include breadcrumb.html %}\n# Suggested Reading\n\n## Whitepapers\n\n- [The Economic Impacts of Inadequate Infrastructure for Software Testing](https://www.nist.gov/system/files/documents/director/planning/report02-3.pdf)\n- [Improving Web Application Security: Threats and Countermeasures](https://www.microsoft.com/en-ca/download/details.aspx?id=1330)\n- [NIST Publications](https://csrc.nist.gov/publications/sp)\n- [Fundamental Practices for Secure Software Development](https://safecode.org/wp-content/uploads/2018/03/SAFECode_Fundamental_Practices_for_Secure_Software_Development_March_2018.pdf)\n- [The OWASP Guide Project](https://wiki.owasp.org/index.php/OWASP_Guide_Project)\n- [Use Cases: Just the FAQs and Answers](https://www.ibm.com/developerworks/rational/library/content/RationalEdge/jan03/UseCaseFAQS_TheRationalEdge_Jan2003.pdf)\n\n## Books\n\n- The Art of Software Security Testing: Identifying Software Security Flaws, by Chris Wysopal, Lucas Nelson, Dino Dai Zovi, Elfriede Dustin, published by Addison-Wesley, ISBN 0321304861 (2006)\n- Building Secure Software: How to Avoid Security Problems the Right Way, by Gary McGraw and John Viega, published by Addison-Wesley Pub Co, ISBN 020172152X (2002)\n- [The Ethical Hack: A Framework for Business Value Penetration Testing, By James S. Tiller, Auerbach Publications, ISBN 084931609X (2005)](https://books.google.com/books?id=fwASXKXOolEC&printsec=frontcover&source=gbs_ge_summary_r&redir_esc=y#v=onepage&q&f=false)\n- [The Hacker's Handbook: The Strategy behind Breaking into and Defending Networks, By Susan Young, Dave Aitel, Auerbach Publications, ISBN: 0849308887 (2005)](https://books.google.com/books?id=AO2fsAPVC34C&printsec=frontcover&source=gbs_ge_summary_r&redir_esc=y#v=onepage&q&f=false)\n- [Hacking Exposed: Web Applications 3, by Joel Scambray, Vinvent Liu, Caleb Sima, published by McGraw-Hill Osborne Media, ISBN 007222438X (2010)](https://www.webhackingexposed.com/)\n- The Web Application Hacker's Handbook: Finding and Exploiting Security Flaws, 2nd Edition - [published by Dafydd Stuttard, Marcus Pinto, ISBN 9781118026472 (2011)]\n- How to Break Software Security, by James Whittaker, Herbert H. Thompson, published by Addison Wesley, ISBN 0321194330 (2003)\n- How to Break Software: Functional and Security Testing of Web Applications and Web Services, by Make Andrews, James A. Whittaker, published by Pearson Education Inc., ISBN 0321369440 (2006)\n- Secure Coding: Principles and Practices, by Mark Graff and Kenneth R. Van Wyk, published by O’Reilly, ISBN 0596002424 (2003)\n- Secure Programming HOWTO, David Wheeler (2015)\n    - [Online version available here](https://dwheeler.com/secure-programs/Secure-Programs-HOWTO/index.html)\n- Software Security: Building Security In, by Gary McGraw, published by Addison-Wesley Professional, ISBN 0321356705 (2006)\n- Software Testing In The Real World (Acm Press Books) by Edward Kit, published by Addison-Wesley Professional, ISBN 0201877562 (1995)\n- Software Testing Techniques, 2nd Edition, By Boris Beizer, International Thomson Computer Press, ISBN 0442206720 (1990)\n- The Tangled Web: A Guide to Securing Modern Web Applications, by Michael Zalewski, published by No Starch Press Inc., ISBN 047131952X (2011)\n- The Unified Modeling Language – A User Guide – by Grady Booch, James Rumbaugh, Ivar Jacobson, published by Addison-Wesley Professional, ISBN 0321267974 (2005)\n- The Unified Modeling Language User Guide, by Grady Booch, James Rumbaugh, Ivar Jacobson, Ivar published by Addison-Wesley Professional, ISBN 0-201-57168-4 (1998)\n- Web Security Testing Cookbook: Systematic Techniques to Find Problems Fast, by Paco Hope, Ben Walther, published by O’Reilly, ISBN 0596514832 (2008)\n- Writing Secure Code, by Mike Howard and David LeBlanc, published by Microsoft Press, ISBN 0735617228 (2004)\n\n## Useful Sites\n\n- [Build Security In](https://www.us-cert.gov/bsi)\n- [CERT Secure Coding Standards](https://wiki.sei.cmu.edu/confluence/display/seccode/SEI+CERT+Coding+Standards)\n- [McAfee Foundstone Publications](https://www.mcafee.com/enterprise/en-us/search.html?q=Foundstone)\n- [McAfee Free Tools](https://www.mcafee.com/enterprise/en-us/downloads/free-tools.html)\n- [OASIS Web Application Security (WAS) TC](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=was)\n- [SANS Internet Storm Center (ISC)](https://isc.sans.edu/)\n- [The Open Worldwide Application Application Security Project (OWASP)](https://owasp.org)\n- [Pentestmonkey - Pen Testing Cheat Sheets](https://pentestmonkey.net/cheat-sheet)\n- [Secure Coding Guidelines for the .NET Framework 4.5](https://docs.microsoft.com/en-us/dotnet/standard/security/secure-coding-guidelines)\n- [Security in the Java platform](https://docs.oracle.com/javase/6/docs/technotes/guides/security/overview/jsoverview.html)\n- [System Administration, Networking, and Security Institute (SANS)](https://www.sans.org)\n- [Web Security – Articles](https://www.acunetix.com/blog/category/web-security-zone/)\n- [Testing Client-Side Security issues](http://www.domxss.com/domxss/)\n\n## Videos\n\n- [PentesterAcademy](https://www.pentesteracademy.com/)\n\n## Deliberately Insecure Web Applications\n\n- [OWASP Vulnerable Web Applications Directory Project](https://owasp.org/www-project-vulnerable-web-applications-directory/)\n- [OWASP Juice Shop](https://owasp-juice.shop)\n- [OWASP WebGoat](https://owasp.org/www-project-webgoat/)\n- [Damn Vulnerable Web App](https://github.com/digininja/DVWA)\n- [Xtreme Vulnerable Web Application](https://github.com/s4n7h0/xvwa)\n- [Mutillidae](https://www.irongeek.com/i.php?page=mutillidae/mutillidae-deliberately-vulnerable-php-owasp-top-10)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 3,
+      "difficulty": "Advanced",
+      "tags": [
+        "Suggested",
+        "Reading",
+        "Whitepapers",
+        "Books",
+        "Useful",
+        "Sites"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Suggested Reading",
+      "table_of_contents": [
+        "Suggested Reading",
+        "Whitepapers",
+        "Books",
+        "Useful Sites",
+        "Videos",
+        "Deliberately Insecure Web Applications"
+      ],
+      "learning_objectives": [
+        "Understand whitepapers",
+        "Understand books",
+        "Understand useful sites"
+      ],
+      "order_index": 135,
+      "source_path": "cybersecurity/latest/6-Appendix/B-Suggested_Reading.md",
+      "content_hash": "41cd8e7e4d7399e94c73d2423d67599a0098bf0f57c9576c665251923780694a",
+      "next_lesson_slug": "c-fuzzing",
+      "previous_lesson_slug": "a-testing-tools-resource",
+      "related_lesson_slugs": []
+    },
+    {
+      "id": "c-fuzzing",
+      "slug": "c-fuzzing",
+      "title": "C Fuzzing",
+      "body": "{% include breadcrumb.html %}\n# Fuzzing\n\n## Introduction\n\nFuzzing is the process or technique of sending a number of request to as target site in a certain interval of time. In other words, it is also similar to bruteforcing. Fuzzing is a process which can be achieved using tools like Wfuzz, ffuf, and so on. As a tester you would need to provide the tool with the target URL, parameter, endpoint, etc, and some sort of inputs. Then the fuzzing tool crafts requests and sends them to the target. After the fuzzing has finished, the responses, timing, status codes, and other characteristics need to be analyzed for potential vulnerabilities.\n\n## Why fuzzing?\n\nTesting for vulnerabilities by feeding input one by one manually can be chaotic. In the present era where people have less time and low patience levels, the idea of manually feeding input for finding bugs/vulnerabilities can be overwhelming. To reduce this perception and to save time; fuzzing can be a big plus point. Fuzzing is an automated process where much of the hard work is handled by a fuzzing tool. All an analyst has to do is analyze the various characteristics after the process is done. Consider a site where there are a many input fields to test for XSS. In a manual approach, all we do is feed the input field with XSS payloads one by one, which would be much too hectic. In contrast, for an automated approach, all you need is to provide the XSS payload list to the fuzzer and all the requests are handled by fuzzer.\n\n## Tools to Use for Fuzzing\n\nThere are hundreds of tools available in the industry for doing fuzzing. But some of the top rated, popular fuzzing tools are listed below.\n\n### Wfuzz\n\n[Wfuzz](https://github.com/xmendez/wfuzz) works by replacing the wordlist value to the place where there is placeholder `FUZZ`. To understand this more clearly let's consider an example:\n\nIn the above command, `userIds.txt` is a wordlist file containing numeric ID values. Here, we are telling wfuzz to fuzz the request to the example URL. That `FUZZ` word in the URL, it will act as a placeholder for wfuzz to replace with values from the wordlist. All the numeric ID values from the `userIDs.txt` file will be inserted replacing the `FUZZ` keyword.\n\n### Ffuf\n\n[Ffuf](https://github.com/ffuf/ffuf) is a web fuzzing tool written in the Go language which is very fast and recursive in nature. It works similar to Wfuzz but in contrast it is recursive. Ffuf also works by replacing the placeholder `FUZZ` with wordlist values. For example:\n\nHere the `-w` is the flag for wordlist and `-u` is the flag for the target URL. The rest of the working mechanism is the same as the Wfuzz. It replaces the `FUZZ` placeholder with `userIDs.txt` values.\n\n### GoBuster\n\n[GoBuster](https://github.com/OJ/gobuster) is another fuzzer written in the Go language which is most used for fuzzing URIs, directories/paths, DNS subdomains, AWS S3 buckets, vhost names, and supports concurrency. For example:\n\nIn the above command `dir` specifies we are fuzzing a directory, `-u` is the flag for URL, and `-w` is the flag for wordlist where `endpoints.txt` is the wordlist file payloads will be taken from. The command runs concurrent requests to the endpoint to find available directories.\n\n### ZAP\n\n[ZAP](https://www.zaproxy.org) is a web application security scanner that can be used to find vulnerabilities and weaknesses in web applications. It also includes a [Fuzzer](https://www.zaproxy.org/docs/desktop/addons/fuzzer/).\n\nOne of the key features of ZAP is its ability to perform both passive and active scans. Passive scans involve observing the traffic between the user and the web application, while active scans involve sending test payloads to the web application to identify vulnerabilities.\n\n### Wordlists and References\n\nIn the examples above we have seen why we need a wordlist. Just wordlists are not enough, the wordlist must great for your fuzzing scenario. If you don't find any wordlists that match the necessary scenario then consider generating your own wordlist. Some popular wordlists and references are provided below.\n\n- [Cross-site scripting (XSS) cheat sheet](https://portswigger.net/web-security/cross-site-scripting/cheat-sheet)\n- [AwesomeXSS](https://github.com/s0md3v/AwesomeXSS)\n- [Payloads All The Things](https://github.com/swisskyrepo/PayloadsAllTheThings)\n- [Big List of Naughty Strings](https://github.com/minimaxir/big-list-of-naughty-strings)\n- [Bo0oM Fuzz List](https://github.com/Bo0oM/fuzz.txt)\n- [FuzzDB](https://github.com/fuzzdb-project/fuzzdb)\n- [bl4de Dictionaries](https://github.com/bl4de/dictionaries)\n- [Open Redirect Payloads](https://github.com/cujanovic/Open-Redirect-Payloads)\n- [EdOverflow Bug Bounty Cheat Sheet](https://github.com/EdOverflow/bugbounty-cheatsheet)\n- [Daniel Miessler - SecLists](https://github.com/danielmiessler/SecLists)\n- [XssPayloads Twitter Feed](https://twitter.com/XssPayloads)\n- [XssPayloads List](https://github.com/payloadbox/xss-payload-list)",
+      "code_snippet": "// language: bash\nwfuzz -w userIDs.txt https://example.com/view_photo?userId=FUZZ\n\n// language: bash\nffuf -w userIDs.txt -u https://example.com/view_photo?userId=FUZZ\n\n// language: bash\ngobuster dir -w endpoints.txt -u https://example.com",
+      "code_languages": [
+        "bash"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 4,
+      "difficulty": "Advanced",
+      "tags": [
+        "Fuzzing",
+        "Introduction",
+        "Why",
+        "Tools",
+        "Use",
+        "Wfuzz"
+      ],
+      "summary": "Fuzzing is the process or technique of sending a number of request to as target site in a certain interval of time. In other words, it is also similar to bruteforcing. Fuzzing is a process which can be achieved using tools like Wfuzz, ffuf…",
+      "table_of_contents": [
+        "Fuzzing",
+        "Introduction",
+        "Why fuzzing?",
+        "Tools to Use for Fuzzing",
+        "Wfuzz",
+        "Ffuf",
+        "GoBuster",
+        "ZAP",
+        "Wordlists and References"
+      ],
+      "learning_objectives": [
+        "Understand introduction",
+        "Understand why fuzzing?",
+        "Understand tools to use for fuzzing"
+      ],
+      "order_index": 136,
+      "source_path": "cybersecurity/latest/6-Appendix/C-Fuzzing.md",
+      "content_hash": "020ec0a15100f6751ed496ead6e6d7cd3ea495ca99f63543c0109182a5540633",
+      "next_lesson_slug": "d-encoded-injection",
+      "previous_lesson_slug": "b-suggested-reading",
+      "related_lesson_slugs": [
+        "a-testing-tools-resource",
+        "f-leveraging-dev-tools"
+      ]
+    },
+    {
+      "id": "d-encoded-injection",
+      "slug": "d-encoded-injection",
+      "title": "D Encoded Injection",
+      "body": "{% include breadcrumb.html %}\n# Encoded Injection\n\n## Background\n\nCharacter encoding is the process of mapping characters, numbers and other symbols to a standard format. Typically, this is done to create a message ready for transmission between sender and receiver. It is, in simple terms, the conversion of characters (belonging to different languages like English, Chinese, Greek or any other known language) into bytes. An example of a widely used character encoding scheme is the American Standard Code for Information Interchange (ASCII) that initially used 7-bit codes. More recent examples of encoding schemes would be the Unicode `UTF-8` and `UTF-16` computing industry standards.\n\nIn the space of application security and due to the plethora of encoding schemes available, character encoding has a popular misuse. It is being used for encoding malicious injection strings in a way that obfuscates them. This can lead to the bypass of input validation filters, or take advantage of particular ways in which browsers render encoded text.\n\n## Input Encoding – Filter Evasion\n\nWeb applications usually employ different types of input filtering mechanisms to limit the input that can be submitted by the user. If these input filters are not implemented sufficiently well, it is possible to slip a character or two through these filters. For instance, a `/` can be represented as `2F` (hex) in ASCII, while the same character (`/`) is encoded as `C0` `AF` in Unicode (2 byte sequence). Therefore, it is important for the input filtering control to be aware of the encoding scheme used. If the filter is found to be detecting only `UTF-8` encoded injections, a different encoding scheme may be employed to bypass this filter.\n\n## Output Encoding – Server & Browser Consensus\n\nWeb browsers need to be aware of the encoding scheme used to coherently display a web page. Ideally, this information should be provided to the browser in the HTTP header (`Content-Type`) field, as shown below:\n\nor through HTML META tag (`META HTTP-EQUIV`), as shown below:\n\nIt is through these character encoding declarations that the browser understands which set of characters to use when converting bytes to characters. Keep in mind the content type mentioned in the HTTP header has precedence over the META tag declaration.\n\nCERT describes it here as follows:\n\nMany web pages leave the character encoding (`charset` parameter in HTTP) undefined. In earlier versions of HTML and HTTP, the character encoding was supposed to default to `ISO-8859-1` if it wasn't defined. In fact, many browsers had a different default, so it was not possible to rely on the default being `ISO-8859-1`. HTML version 4 legitimizes this - if the character encoding isn't specified, any character encoding can be used.\n\nIf the web server doesn't specify which character encoding is in use, it can't tell which characters are special. Web pages with unspecified character encoding work most of the time because most character sets assign the same characters to byte values below 128. But which of the values above 128 are special? Some 16-bit `character-encoding` schemes have additional multi-byte representations for special characters such as `<`. Some browsers recognize this alternative encoding and act on it. This is \"correct\" behavior, but it makes attacks using malicious scripts much harder to prevent. The server simply doesn't know which byte sequences represent the special characters.\n\nTherefore in the event of not receiving the character encoding information from the server, the browser either attempts to guess the encoding scheme or reverts to a default scheme. In some cases, the user explicitly sets the default encoding in the browser to a different scheme. Any such mismatch in the encoding scheme used by the web page (server) and the browser may cause the browser to interpret the page in a manner that is unintended or unexpected.\n\n### Encoded Injections\n\nAll the scenarios given below form only a subset of the various ways obfuscation can be achieved to bypass input filters. Also, the success of encoded injections depends on the browser in use. For example, `US-ASCII` encoded injections were previously successful only in IE browser but not in Firefox. Therefore, it may be noted that encoded injections, to a large extent, are browser dependent.\n\n### Basic Encoding\n\nConsider a basic input validation filter that protects against injection of single quote character. In this case the following injection would easily bypass this filter:\n\n`String.fromCharCode` JavaScript function takes the given Unicode values and returns the corresponding string. This is one of the most basic forms of encoded injections. Another vector that can be used to bypass this filter is:\n\nOr by using the respective [HTML character codes](https://www.rapidtables.com/code/text/unicode-characters.html):\n\nThe above uses HTML Entities to construct the injection string. HTML Entities encoding is used to display characters that have a special meaning in HTML. For instance, `>` works as a closing bracket for a HTML tag. In order to actually display this character on the web page HTML character entities should be inserted in the page source. The injections mentioned above are one way of encoding. There are numerous other ways in which a string can be encoded (obfuscated) in order to bypass the above filter.\n\n### Hex Encoding\n\nHex, short for Hexadecimal, is a base 16 numbering system i.e it has 16 different values from `0` to `9` and `A` to `F` to represent various characters. Hex encoding is another form of obfuscation that is sometimes used to bypass input validation filters. For instance, hex encoded version of the string `<IMG SRC=javascript:alert('XSS')>` is\n\nA variation of the above string is given below. Can be used in case ‘%’ is being filtered:\n\nThere are other encoding schemes, such as Base64 and Octal, that may be used for obfuscation. Although, every encoding scheme may not work every time, a bit of trial and error coupled with intelligent manipulations would definitely reveal the loophole in a weakly built input validation filter.\n\n### UTF-7 Encoding\n\nUTF-7 encoding of\n\nis as below\n\n`+ADw-SCRIPT+AD4-alert('XSS');+ADw-/SCRIPT+AD4-`\n\nFor the above script to work, the browser has to interpret the web page as encoded in `UTF-7`.\n\n### Multi-byte Encoding\n\nVariable-width encoding is another type of character encoding scheme that uses codes of varying lengths to encode characters. Multi-Byte Encoding is a type of variable-width encoding that uses varying number of bytes to represent a character. Multi-byte encoding is primarily used to encode characters that belong to a large character set e.g. Chinese, Japanese and Korean.\n\nMultibyte encoding has been used in the past to bypass standard input validation functions and carry out cross site scripting and SQL injection attacks.\n\n## References\n\n- [Encoding (Semiotics)](https://en.wikipedia.org/wiki/Encoding_(semiotics))\n- [HTML Entities](https://www.w3schools.com/HTML/html_entities.asp)\n- [How to prevent input validation attacks](https://searchsecurity.techtarget.com/answer/How-to-prevent-input-validation-attacks)\n- [Unicode and Character Sets](https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/)",
+      "code_snippet": "// language: http\nContent-Type: text/html; charset=UTF-8\n\n// language: html\n<META http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n\n// language: html\n<script>alert(String.fromCharCode(88,83,83))</script>\n\n// language: html\n<IMG src=\"\" onerror=javascript:alert(&quot;XSS&quot;)>\n\n// language: html\n<IMG src=\"\" onerror=\"javascript:alert(&#34;XSS&#34;)\">\n\n// language: html\n<IMG SRC=%6A%61%76%61%73%63%72%69%70%74%3A%61%6C%65%72%74%28%27%58%53%53%27%29>\n\n// language: html\n<IMG SRC=&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A&#x61&#x6C&#x65&#x72&#x74&#x28&#x27&#x58&#x53&#x53&#x27&#x29>\n\n// language: html\n<SCRIPT>\n    alert(‘XSS’);\n</SCRIPT>",
+      "code_languages": [
+        "html",
+        "http"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 6,
+      "difficulty": "Advanced",
+      "tags": [
+        "Encoded",
+        "Injection",
+        "Background",
+        "Input",
+        "Encoding",
+        "Filter"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Encoded Injection",
+      "table_of_contents": [
+        "Encoded Injection",
+        "Background",
+        "Input Encoding – Filter Evasion",
+        "Output Encoding – Server & Browser Consensus",
+        "Encoded Injections",
+        "Basic Encoding",
+        "Hex Encoding",
+        "UTF-7 Encoding",
+        "Multi-byte Encoding",
+        "References"
+      ],
+      "learning_objectives": [
+        "Understand background",
+        "Understand input encoding – filter evasion",
+        "Understand output encoding – server & browser consensus"
+      ],
+      "order_index": 137,
+      "source_path": "cybersecurity/latest/6-Appendix/D-Encoded_Injection.md",
+      "content_hash": "15336b54475f383d9463af9c7ded0db7ddfc0f98b28219a30fdbb7eb2d92b6f8",
+      "next_lesson_slug": "e-history",
+      "previous_lesson_slug": "c-fuzzing",
+      "related_lesson_slugs": []
+    },
+    {
+      "id": "e-history",
+      "slug": "e-history",
+      "title": "E History",
+      "body": "{% include breadcrumb.html %}\n# History\n\nThe Testing Guide v4 was released in 2014. The Testing guide originated in 2003 with Dan Cuthbert as one of the original editors. It was handed over to Eoin Keary in 2005 and transformed into a wiki. From 2013 Andrew Muller co-lead the project with Matteo Meucci into 2018/2019. Point releases after v4 and the ramp toward v5 is being lead by Rick Mitchell and Elie Saad.\n\n- April, 2020: OWASP Testing Guide, Version 4.1\n- September, 2014: OWASP Testing Guide, Version 4.0\n- September, 2008: OWASP Testing Guide, Version 3.0\n- December, 2006: OWASP Testing Guide, Version 2.0\n- July, 2004: OWASP Web Application Penetration Checklist, Version 1.1\n- December, 2004: The OWASP Testing Guide, Version 1.0\n\n## Leaders\n\n- Matteo Meucci: OWASP Testing Guide Lead 2007-2020.\n- Andrew Muller: OWASP Testing Guide Lead 2013-2019.\n- Eoin Keary: OWASP Testing Guide Lead 2005-2007.\n- Daniel Cuthbert: OWASP Testing Guide Lead 2003-2005.\n\n## v4 Authors\n\n## v4 Reviewers\n\n## v3 Authors\n\n## v3 Reviewers\n\n## v2 Authors\n\n## v2 Reviewers",
+      "code_snippet": "// language: html\n- Matteo Meucci          - Thomas Ryan       - Mike Hryekewicz  - Eduardo Castellano - Babu Arokiadas\n- Pavol Luptak           - Tim Bertels       - Simon Bennetts   - Simone Onofri      - Rob Barnes\n- Marco Morana           - Cecil Su          - Ray Schippers    - Harword Sheen      - Ben Walther\n- Giorgio Fedon          - Aung KhAnt        - Raul Siles       - Amro AlOlaqi       - Anant Shrivastava\n- Stefano Di Paola       - Norbert Szetei    - Jayanta Karmakar - Suhas Desai        - Colin Watson\n- Gianrico Ingrosso      - Michael Boman     - Brad Causey      - Ryan Dewhurst      - Luca Carettoni\n- Giuseppe Bonfà         - Wagner Elias      - Vicente Aguilera - Zaki Akhmad        - Eoin Keary\n- Andrew Muller          - Kevin Horvat      - Ismael Gonçalves - Davide Danelon     - Jeff Williams\n- Robert Winkel          - Tom Brennan       - David Fern       - Alexander Antukh   - Juan Manuel Bahamonde\n- Roberto Suggi Liverani - Tomas Zatko       - Tom Eston        - Thomas Kalamaris   - Thomas Skora\n- Tripurari Rai          - Juan Galiana Lara - Kevin Horvath    - Alexander Vavousis - Irene Abezgauz\n- Robert Smith           - Sumit Siddharth   - Rick Mitchell    - Christian Heinrich - Hugo Costa\n\n// language: html\n- Davide Danelon          - Andrea Rosignoli     - Irene Abezgauz\n- Lode Vanstechelman      - Sebastien Gioria     - Yiannis Pavlosoglou\n- Aditya Balapure\n\n// language: html\n- Anurag Agarwwal        - Giorgio Fedon        - Gianrico Ingrosso         - Mark Roxberry\n- Ferruh Mavituna        - Antonio Parata       - Andrew Van der Stock      - Marco Mella\n- Daniele Bellucci       - Adam Goodman         - Roberto Suggi Liverani    - Cecil Su\n- Kevin Horvath          - Marco Morana         - Harish Skanda Sureddy     - Pavol Luptak\n- Matteo Meucci          - Stefano Di Paola     - Christian Heinrich        - Marco Morana\n\n// language: html\n- Marco Cova            - Matteo Meucci         - Rick Mitchell\n- Kevin Fuller          - Nam Nguyen\n\n// language: html\n- Vicente Aguilera      - David Endler               - Matteo Meucci        - Anush Shetty\n- Mauro Bregolin        - Giorgio Fedon              - Marco Morana         - Larry Shields\n- Tom Brennan           - Javier Fernández-Sanguino  - Laura Nunez          - Dafydd Studdard\n- Gary Burns            - Andrew van der Stock       - Glyn Geoghegan       - Gunter Ollmann\n- Luca Carettoni        - Sebastien Deleersnyder     - Antonio Parata       - Ariel Waissbein\n- Dan Cornell           - Madhura Halasgikar         - Yiannis Pavlosoglou  - Jeff Williams\n- Mark Curphey          - Eoin Keary                 - Carlo Pelliccioni    - Tushar Vartak\n- Daniel Cuthbert       - David Litchfield           - Harinath Pudipeddi   - Tom Ryan\n- Stan Guzik            - Andrea Lombardini          - Alberto Revelli      - Claudio Merloni\n- Stephen DeVries       - Ralph M. Los               - Stefano Di Paola     - Mark Roxberry\n\n// language: html\n- Vicente Aguilera      - Mauro Bregolin          - Daniel Cuthbert       - Stefano Di Paola\n- Simona Forti          - Eoin Keary              - Katie McDowell        - Matteo Meucci\n- Antonio Parata        - Mark Roxberry           - Marco Belotti         - Marco Cova\n- Paul Davies           - Matteo G.P. Flora       - Darrell Groundy       - James Kist\n- Marco Mella           - Syed Mohamed A.         - Alberto Revelli       - Dave Wichers",
+      "code_languages": [
+        "html"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 3,
+      "difficulty": "Beginner",
+      "tags": [
+        "History",
+        "Leaders",
+        "Authors",
+        "Reviewers"
+      ],
+      "summary": "The Testing Guide v4 was released in 2014. The Testing guide originated in 2003 with Dan Cuthbert as one of the original editors. It was handed over to Eoin Keary in 2005 and transformed into a wiki. From 2013 Andrew Muller co-lead the pro…",
+      "table_of_contents": [
+        "History",
+        "Leaders",
+        "v4 Authors",
+        "v4 Reviewers",
+        "v3 Authors",
+        "v3 Reviewers",
+        "v2 Authors",
+        "v2 Reviewers"
+      ],
+      "learning_objectives": [
+        "Understand leaders",
+        "Understand v4 authors",
+        "Understand v4 reviewers"
+      ],
+      "order_index": 138,
+      "source_path": "cybersecurity/latest/6-Appendix/E-History.md",
+      "content_hash": "51900db48b2b41390abd62c12809766f9bc6a536258f53cd1e5862385e2f524e",
+      "next_lesson_slug": "f-leveraging-dev-tools",
+      "previous_lesson_slug": "d-encoded-injection",
+      "related_lesson_slugs": []
+    },
+    {
+      "id": "f-leveraging-dev-tools",
+      "slug": "f-leveraging-dev-tools",
+      "title": "F Leveraging Dev Tools",
+      "body": "{% include breadcrumb.html %}\n# Leveraging Dev Tools\n\nThis appendix outlines various details for use of in browser Developer Tool functionality to aid in security testing activities.\n\nObviously in browser functionality is not a substitute for: DAST (Dynamic Application Security Testing) tools, SAST (Static Application Security Testing) tools, or a tester's experience, however, it can be leveraged for some testing activities and report production related tasks.\n\n## Accessing Dev Tools\n\nOpening Dev Tools can be accomplished in a number of ways.\n\n1. Via the keyboard shortcut `F12`.\n2. Via the keyboard shortcut `ctrl` + `shift` + `i` on Windows.\n3. Via the keyboard short cut `cmd` + `option` + `i` on Mac.\n4. Via the web page right-click context menu and then selecting `Inspect` in Google Chrome.\n5. Via the web page right-click context menu and then selecting `Inspect Element` in Mozilla Firefox.\n6. Via the triple dot 'kabob' menu in Google Chrome then selecting `More Tools` and then `Developer Tools`.\n7. Via the triple line 'hamburger' (or 'pancake') menu in Mozilla Firefox then selecting `Web Developer` and then `Toggle Tools`.\n\n> NOTE: The majority of the instructions below assume that Dev Tools is already open or active.\n\n## Capabilities\n\n| Functionality         | Chrome* | Firefox | Safari |\n|-----------------------|:-------:|:-------:|:------:|\n| User-Agent Switching  | Y       | Y       | Y      |\n| Edit/Resend Requests  | Y       | Y       | N      |\n| Cookie Editing        | Y       | Y       | N      |\n| Local Storage Editing | Y       | Y       | N      |\n| Disable CSS           | Y       | Y       | Y      |\n| Disable JavaScript    | Y       | Y       | Y      |\n| View HTTP Headers     | Y       | Y       | Y      |\n| Screenshots           | Y       | Y       | N      |\n| Offline Mode          | Y       | Y       | N      |\n| Encoding and Decoding | Y       | Y       | Y      |\n| Responsive Design Mode| Y       | Y       | Y      |\n\n`*` Anything that applies to Google Chrome should be applicable to all Chromium based applications. (Which includes Microsoft rebadging Edge around 2019/2020.)\n\n## User-Agent Switching\n\n### Related Testing\n\n- [Testing for Browser Cache Weaknesses](../4-Web_Application_Security_Testing/04-Authentication_Testing/06-Testing_for_Browser_Cache_Weaknesses.md)\n\n### Google Chrome\n\n1. Click on triple dot 'kabob' menu on the right side of the Developer Tools pane, select `More tools` then select `Network conditions`.\n2. Un-check the \"Select automatically\" checkbox.\n3. Select the user agent from dropdown menu or enter a custom user agent\n\n![User-Agent selection dropdown menu in Google Chrome](images/f_chrome_devtools_ua_switch.png)\\\n*Figure 6.F-1: Google Chrome Dev Tools User-Agent Switching Functionality*\n\n### Mozilla Firefox\n\n1. Navigate to Firefox’s `about:config` page and click `I accept the risk!`.\n2. Enter `general.useragent.override` into the search field.\n3. Look for `general.useragent.override`, if you can't see this preference, look for one that show a set of radio buttons `Boolean, Number, String` select `String` then click the plus sign `Add` button on the `about:config` page.\n4. Set the value of `general.useragent.override` to whatever [User-Agent](https://developers.whatismybrowser.com/useragents/explore/) you might need.\n\n![User-Agent configuration preference in Mozilla Firefox](images/f_firefox_ua_switch.png)\\\n*Figure 6.F-2: Mozilla Firefox User-Agent Switching Functionality*\n\nLater click on the garbage can `Delete` button to the right of the `general.useragent.override` preference to remove the override and switch back to the default user agent.\n\n## Edit/Resend Requests\n\n### Related Testing\n\n- [Authentication Testing](../4-Web_Application_Security_Testing/04-Authentication_Testing/README.md)\n- [Authorization Testing](../4-Web_Application_Security_Testing/05-Authorization_Testing/README.md)\n- [Session Management Testing](../4-Web_Application_Security_Testing/06-Session_Management_Testing/README.md)\n- [Input Validation Testing](../4-Web_Application_Security_Testing/07-Input_Validation_Testing/README.md)\n- [Business Logic Testing](../4-Web_Application_Security_Testing/10-Business_Logic_Testing/README.md)\n\n### Mozilla Firefox\n\n1. Select the `Network` tab.\n2. Perform any action in the web application.\n3. Right-click on the HTTP request from the list and select `Edit and Resend`.\n4. Make desired modifications and click on the `Send` button.\n5. Right-click on the modified request and select `Open in New Tab`.\n\n### Google Chrome\n\n1. Select the `Network` tab.\n2. Perform any action in the web application.\n3. Right-click on the HTTP request from the list and select `Copy > Copy as fetch`.\n4. Paste the provided JavaScript code into the `Console` tab.\n5. Make any required modifications, and then hit enter to send the request.\n\n## Cookie Editing\n\n### Related Testing\n\n- [Authentication Testing](../4-Web_Application_Security_Testing/04-Authentication_Testing/README.md)\n- [Authorization Testing](../4-Web_Application_Security_Testing/05-Authorization_Testing/README.md)\n- [Session Management Testing](../4-Web_Application_Security_Testing/06-Session_Management_Testing/README.md)\n- [Testing for Cookie Attributes](../4-Web_Application_Security_Testing/06-Session_Management_Testing/02-Testing_for_Cookies_Attributes.md)\n\n### Google Chrome\n\n1. Click the `Application` tab.\n2. Expand `Cookies` under the `Storage` heading.\n3. Select the relevant domain name.\n4. Double click in the `Value` column to edit any cookie value.\n\n> Note: Cookies can be deleted once selected by pressing the `delete` key, or from the right-click context menu.\n\n### Mozilla Firefox\n\n1. Click the `Storage` tab.\n2. Expand the `Cookies` section.\n3. Select the relevant domain name.\n4. Double click in the `Value` column to edit any cookie value.\n\n> Note: Cookies can be deleted once selected by pressing the `delete` key, or with various options from the right-click context menu.\n\n![Cookie Editing functionality in Mozilla Firefox](images/f_firefox_cookie_edit.png)\\\n*Figure 6.F-3: Mozilla Firefox Cookie Editing Functionality*\n\n## Local Storage Editing\n\n### Related Testing\n\n- [Testing Browser Storage](../4-Web_Application_Security_Testing/11-Client-side_Testing/12-Testing_Browser_Storage.md)\n\n### Google Chrome\n\n1. Click the `Application` tab.\n2. Expand `Local Storage` under the `Storage` heading.\n3. Select the relevant domain name.\n4. Double click in the `Value` column to edit any cookie value.\n5. Double click in the applicable Cell to edit the `Key` or `Value`.\n\n> Note: Editing `Session Storage` or `Index DB` follows essentially the same steps.\n>\n> Note: Items can be added or deleted via the right-click context menu.\n\n### Mozilla Firefox\n\n1. Click the `Storage` tab.\n2. Expand the `Local Storage` section.\n3. Select the relevant domain name.\n4. Double click in the applicable Cell to edit the `Key` or `Value`.\n\n> Note: Editing `Session Storage` or `Index DB` follows essentially the same steps.\n>\n> Note: Items can be added or deleted via the right-click context menu.\n\n## Disable CSS\n\n### Related Testing\n\n- [Testing for Client-side Resource Manipulation](../4-Web_Application_Security_Testing/11-Client-side_Testing/06-Testing_for_Client-side_Resource_Manipulation.md)\n\n### General\n\nAll major browsers support manipulating CSS leveraging the Dev Tools Console and JavaScript functionality:\n\n- To remove all external style-sheets: `$('style,link[rel=\"stylesheet\"]').remove();`\n- To remove all internal style-sheets: `$('style').remove();`\n- To remove all in-line styles: `Array.prototype.forEach.call(document.querySelectorAll('*'),function(el){el.removeAttribute('style');});`\n- To remove everything from head tag: `$('head').remove();`\n\n## Disable JavaScript\n\n### Google Chrome\n\n1. Click on triple dot 'kabob' menu on the right side of the web developer toolbar and click on `Settings`.\n2. On the `Preferences` tab, under the `Debugger` section, check the `Disable JavaScript` checkbox.\n\n### Mozilla Firefox\n\n1. On the dev tools `Debugger` tab, click on the settings gear button in the upper right corner of the developer toolbar.\n2. Select `Disable JavaScript` from the dropdown (this is an enable/disable menu item; when JavaScript is disabled, the menu item has a check mark).\n\n## View HTTP Headers\n\n### Related Testing\n\n- [Information Gathering](../4-Web_Application_Security_Testing/01-Information_Gathering/README.md)\n\n### Google Chrome\n\n1. On the `Networking` tab in Dev Tools select any URL or request.\n2. In the lower right hand pane select the `Headers` tab.\n\n![Headers View in Google Chrome](images/f_chrome_devtools_headers.png)\\\n*Figure 6.F-4: Google Chrome Headers View*\n\n### Mozilla Firefox\n\n1. On the `Networking` tab in Dev Tools select any URL or request.\n2. In the lower right hand pane select the `Headers` tab.\n\n![Headers View in Mozilla Firefox](images/f_firefox_devtools_headers.png)\\\n*Figure 6.F-5: Mozilla Firefox Headers View*\n\n## Screenshots\n\n### Related Testing\n\n- [Reporting](../5-Reporting/README.md)\n\n### Google Chrome\n\n1. Press on the `Toggle Device Toolbar` button or press `ctrl` + `shift` + `m`.\n2. Click the triple dot 'kabob' menu in the Device Toolbar.\n3. Select `Capture screenshot` or `Capture full size screenshot`.\n\n### Mozilla Firefox\n\n1. Press the triple dot `ellipsis` button in the address bar.\n2. Select `Take a Screenshot`.\n3. Select either the `Save full page` or `Save visible` option.\n\n## Offline Mode\n\n### Google Chrome\n\n1. Navigate to `Network` tab.\n2. In the `Throttle` dropdown select `Offline`.\n\n![Offline Option in Google Chrome](images/f_chrome_devtools_offline.png)\\\n*Figure 6.F-6: Google Chrome Offline Option*\n\n### Mozilla Firefox\n\n1. From the triple line 'hamburger' (or 'pancake') menu select `Web Developer` and then `Work Offline`.\n\n![Offline Option in Mozilla Firefox](images/f_firefox_devtools_offline.png)\\\n*Figure 6.F-7: Mozilla Firefox Offline Option*\n\n## Encoding and Decoding\n\n### Related Testing\n\n- Many (perhaps even most) types of [Web Application Security Testing](../4-Web_Application_Security_Testing/README.md) can benefit from various types of encoding.\n\n### General\n\nAll major browsers support encoding and decoding strings in various ways leveraging the Dev Tools Console and JavaScript functionality:\n\n- base64 encode: `btoa(\"string-to-encode\")` & base64 decode: `atob(\"string-to-decode\")` - built-in JavaScript functions that are used to encode a string to base64 and decode a string from base64.\n- URL encode: `encodeURIComponent(\"string-to-encode\")` & URL decode: `decodeURIComponent(\"string-to-decode\")` - It encodes and decodes user-supplied input that will be used as a part of a URL, and it encodes all characters that have special meanings in a URL, including reserved characters.\n- URI encode: `encodeURI()` and URI decode: `decodeURI()` are functions used to encode and decode a complete URI, such as query parameters, path segments, or fragments, including special characters but excluding the reserved characters such as `:/?#[]@!$'()*+,;=` which have special meanings in a URL.\n\n## Responsive Design Mode\n\n### Related Testing\n\n- [Testing for Browser Cache Weaknesses](../4-Web_Application_Security_Testing/04-Authentication_Testing/06-Testing_for_Browser_Cache_Weaknesses.md)\n- [Testing for Weaker Authentication in Alternative Channel](../4-Web_Application_Security_Testing/04-Authentication_Testing/10-Testing_for_Weaker_Authentication_in_Alternative_Channel.md)\n- [Testing for Clickjacking](../4-Web_Application_Security_Testing/11-Client-side_Testing/09-Testing_for_Clickjacking.md)\n\n### Google Chrome\n\n1. Click the `Toggle device toolbar` button or press `ctrl` + `shift` + `m`.\n\n![Responsive Design Mode in Google Chrome](images/f_chrome_responsive_design_mode.png)\\\n*Figure 6.F-8: Google Chrome Responsive Design Mode*\n\n### Mozilla Firefox\n\n1. Click the `Responsive Design Mode` button or press `ctrl` + `shift` + `m`.\n\n![Responsive Design Mode in Mozilla Firefox](images/f_firefox_responsive_design_mode.png)\\\n*Figure 6.F-9: Mozilla Firefox Responsive Design Mode*\n\n## References\n\n- [Web App Security Testing with Browsers](https://getmantra.com/web-app-security-testing-with-browsers/)\n- [Black Hills Information Security - Webcast: Free Tools! How to Use Developer Tools and JavaScript in Webapp Pentests](https://www.blackhillsinfosec.com/webcast-free-tools-how-to-use-developer-tools-and-javascript-in-webapp-pentests/)\n- [Greg Malcolm - Chrome Developer Tools: Raiding the Armory](https://github.com/gregmalcolm/wacky-wandas-wicked-weapons-frontend/blob/fix-it/README.md)\n- [List of UserAgent Strings](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": true,
+      "image_url": "images/f_chrome_devtools_ua_switch.png",
+      "reading_minutes": 8,
+      "difficulty": "Advanced",
+      "tags": [
+        "Leveraging",
+        "Dev",
+        "Tools",
+        "Accessing",
+        "Capabilities",
+        "User-agent"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Leveraging Dev Tools",
+      "table_of_contents": [
+        "Leveraging Dev Tools",
+        "Accessing Dev Tools",
+        "Capabilities",
+        "User-Agent Switching",
+        "Related Testing",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Edit/Resend Requests",
+        "Related Testing",
+        "Mozilla Firefox",
+        "Google Chrome",
+        "Cookie Editing",
+        "Related Testing",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Local Storage Editing",
+        "Related Testing",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Disable CSS",
+        "Related Testing",
+        "General",
+        "Disable JavaScript",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "View HTTP Headers",
+        "Related Testing",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Screenshots",
+        "Related Testing",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Offline Mode",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "Encoding and Decoding",
+        "Related Testing",
+        "General",
+        "Responsive Design Mode",
+        "Related Testing",
+        "Google Chrome",
+        "Mozilla Firefox",
+        "References"
+      ],
+      "learning_objectives": [
+        "Understand accessing dev tools",
+        "Understand capabilities",
+        "Understand user-agent switching"
+      ],
+      "order_index": 139,
+      "source_path": "cybersecurity/latest/6-Appendix/F-Leveraging_Dev_Tools.md",
+      "content_hash": "a81be81fba8d0ad8116d20c7a4b9b7e1a040ac777ee9b0ed720f2fbf283aa986",
+      "next_lesson_slug": null,
+      "previous_lesson_slug": "e-history",
+      "related_lesson_slugs": [
+        "a-testing-tools-resource",
+        "c-fuzzing"
+      ]
+    }
+  ]
+}

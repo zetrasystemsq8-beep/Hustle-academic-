@@ -1,0 +1,703 @@
+{
+  "id": "configuration-and-deployment-management-testing",
+  "slug": "configuration-and-deployment-management-testing",
+  "title": "Configuration and Deployment Management Testing",
+  "description": "Master Configuration and Deployment Management Testing through 14 focused lessons, covering Test Network Infrastructure Configuration, Test Application Platform Configuration, Test File Extensions Handling for Sensitive Information, and 11 more. Includes practical examples and remediation guidance.",
+  "category": "Cyber Security",
+  "instructor": "Hustle Academy",
+  "icon": "Icons.security",
+  "color": "Colors.red",
+  "difficulty": "Advanced",
+  "duration_label": "1h 11m",
+  "total_minutes": 71,
+  "tags": [
+    "Network",
+    "Infrastructure",
+    "Configuration",
+    "Summary",
+    "Objectives",
+    "Known",
+    "Application",
+    "Platform"
+  ],
+  "prerequisites": [],
+  "lessons": [
+    {
+      "id": "test-network-infrastructure-configuration",
+      "slug": "test-network-infrastructure-configuration",
+      "title": "Test Network Infrastructure Configuration",
+      "body": "{% include breadcrumb.html %}\n# Test Network Infrastructure Configuration\n\n|ID          |\n|------------|\n|WSTG-CONF-01|\n\n## Summary\n\nThe intrinsic complexity of interconnected and heterogeneous web server infrastructure, which can include hundreds of web applications, makes configuration management and review a fundamental step in testing and deploying every single application. It takes only a single vulnerability to undermine the security of the entire infrastructure, and even small and seemingly unimportant problems may evolve into severe risks for another application on the same server. In order to address these problems, it is of utmost importance to perform an in-depth review of configuration and known security issues, after having mapped the entire architecture.\n\nProper configuration management of the web server infrastructure is very important in order to preserve the security of the application itself. If elements such as the web server software, the backend database servers, or the authentication servers are not properly reviewed and secured, they might introduce undesired risks or introduce new vulnerabilities that might compromise the application itself.\n\nFor example, a web server vulnerability that would allow a remote attacker to disclose the source code of the application itself (a vulnerability that has arisen a number of times in both web servers and application servers) could compromise the application, as anonymous users could use the information disclosed in the source code to leverage attacks against the application or its users.\n\nThe following steps need to be taken to test the configuration management infrastructure:\n\n- The different elements that make up the infrastructure need to be determined in order to understand how they interact with a web application and how they affect its security.\n- All the elements of the infrastructure need to be reviewed in order to make sure that they don't contain any known vulnerabilities.\n- A review needs to be made of the administrative tools used to maintain all the different elements.\n- The authentication systems need to be reviewed in order to assure that they serve the needs of the application and that they cannot be manipulated by external users to leverage access.\n- A list of defined ports which are required for the application should be maintained and kept under change control.\n\nAfter having mapped the different elements that make up the infrastructure (see [Map Network and Application Architecture](../01-Information_Gathering/10-Map_Application_Architecture.md)), it is possible to review the configuration of each element founded and test for any known vulnerabilities.\n\n## Test Objectives\n\n- Review the applications' configurations set across the network and validate that they are not vulnerable.\n- Validate that used frameworks and systems are secure and not susceptible to known vulnerabilities due to unmaintained software or default settings and credentials.\n\n## How to Test\n\n### Known Server Vulnerabilities\n\nVulnerabilities in various areas of the application architecture, whether in the web server or the backend database, can severely compromise the application. For example, consider a server vulnerability that allows a remote, unauthenticated user to upload files to the web server or even replace existing files. This vulnerability could compromise the application, since a rogue user may be able to replace the application itself or introduce code that would affect the backend servers, as its application code would be run just like any other application.\n\nReviewing server vulnerabilities can be hard to do if the test needs to be done through a blind penetration test. In these cases, vulnerabilities need to be tested from a remote site, typically using an automated tool. However, testing for some vulnerabilities can have unpredictable results on the web server, and testing for others (like those directly involved in denial of service attacks) might not be possible due to the service downtime involved if the test was successful.\n\nSome automated tools will flag vulnerabilities depending on the version of the web server they retrieve. This leads to both false positives and false negatives. On one hand, if the web server version has been removed or obscured by the local site administrator the scan tool will not flag the server as vulnerable even if it is. On the other hand, if the vendor providing the software does not update the web server version when vulnerabilities are fixed, the scan tool will flag vulnerabilities that do not exist. The latter case is actually very common as some operating system vendors back port patches of security vulnerabilities to the software they provide in the operating system, but do not do a full upload to the latest software version. This happens in most GNU/Linux distributions such as Debian, Red Hat, and SuSE. In most cases, vulnerability scanning of an application architecture will only find vulnerabilities associated with the \"exposed\" elements of the architecture (such as the web server) and will usually be unable to find vulnerabilities associated to elements which are not directly exposed, such as the authentication backend, the backend database, or reverse proxies [1] in use.\n\nFinally, not all software vendors publicly disclose vulnerabilities, which means these weaknesses may not be registered within known vulnerability databases [2]. This information is only disclosed to customers or published through fixes that do not have accompanying advisories. This reduces the effectiveness of vulnerability scanning tools. Typically, vulnerability coverage of these tools will be very good for common products (such as the Apache web server, Microsoft IIS, or IBM's Lotus Domino) but will be lacking for lesser known products.\n\nThis is why reviewing vulnerabilities is best done when the tester is provided with internal information about the software, including versions, releases, and patches applied. With this information, the tester can retrieve data from the vendor and analyze potential vulnerabilities in the architecture, as well as their potential impact on the application. When possible, these vulnerabilities can be tested to determine their real effects and to detect if there might be any external elements (such as intrusion detection or prevention systems) that might reduce or negate the possibility of successful exploitation. Testers might even determine through a configuration review that the vulnerability is not actually present since it affects a software component that is not in use.\n\nIt is also worthwhile to note that vendors will sometimes silently fix vulnerabilities and make the fixes available with new software releases. Different vendors have varying release cycles that determine the support they may provide for older releases. A tester with detailed information about the software versions used by the architecture can analyse the risk associated with the use of old software releases that might be unsupported in the short term or are already unsupported. This is critical because if a vulnerability emerges in an unsupported older software version, the systems personnel may not be directly aware of it. No patches will be ever made available for it and advisories might not list that version as vulnerable as it is no longer supported. Even if they are aware of the vulnerability and the associated system risks, a full upgrade to a new software release will be necessary, potentially introducing significant downtime in the application architecture or necessitating application re-coding due to incompatibilities with the latest software version.\n\n### Administrative Tools\n\nAny web server infrastructure requires the existence of administrative tools to maintain and update the information used by the application. This information includes static content (web pages, graphic files), application source code, user authentication databases, etc. The type of administrative tools used can vary depending on the specific site, technology, or software in use. For example, some web servers will be managed using administrative interfaces which are themselves web servers (such as the iPlanet web server) or will be administrated by plain text configuration files (such as in the Apache case [3]) or use operating-system GUI tools (such as when using Microsoft's IIS server or ASP.Net).\n\nIn most cases, the server configuration is managed with various file maintenance tools, administered through FTP servers, WebDAV, network file systems (NFS, CIFS), or other mechanisms. Obviously, the operating system of the elements that make up the application architecture will also be managed using other tools. Applications may also contain embedded administrative interfaces for managing application data (users, content, etc.).\n\nAfter mapping the administrative interfaces used to manage different parts of the architecture, it is important to review them. If an attacker gains access to any of these interfaces, they could potentially compromise or damage the application architecture. To accomplish this, it's important to:\n\n- Determine the mechanisms that control access to these interfaces and their associated susceptibilities. This information may be available online.\n- Ensure that the default username and password are changed.\n\nSome companies choose not to manage all aspects of their web server applications and may delegate content management to other parties. This external company might provide only certain parts of the content (such as news updates or promotions), or it might completely manage the web server (including content and code). It is common to find administrative interfaces available from the internet in these situations, since using the internet is cheaper than providing a dedicated line that will connect the external company to the application infrastructure through a management-only interface. In such situations, it's crucial to test whether the administrative interfaces are vulnerable to attacks.\n\n## References\n\n- [1] WebSEAL, also known as Tivoli Authentication Manager, is a reverse proxy from IBM which is part of the Tivoli framework.\n- [2] Such as Symantec's Bugtraq, ISS' X-Force, or NIST's National Vulnerability Database (NVD).\n- [3] There are some GUI-based administration tools for Apache (like NetLoony) but they are not in widespread use yet.",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 8,
+      "difficulty": "Advanced",
+      "tags": [
+        "Network",
+        "Infrastructure",
+        "Configuration",
+        "Summary",
+        "Objectives",
+        "Known"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Network Infrastructure Configuration",
+      "table_of_contents": [
+        "Test Network Infrastructure Configuration",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Known Server Vulnerabilities",
+        "Administrative Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 13,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/01-Test_Network_Infrastructure_Configuration.md",
+      "content_hash": "887c5dfc84726342b14802c3ae651c38f64dfc54a9cf697830f5b1e8b3586971",
+      "next_lesson_slug": "test-application-platform-configuration",
+      "previous_lesson_slug": null,
+      "related_lesson_slugs": [
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods",
+        "test-http-strict-transport-security"
+      ]
+    },
+    {
+      "id": "test-application-platform-configuration",
+      "slug": "test-application-platform-configuration",
+      "title": "Test Application Platform Configuration",
+      "body": "{% include breadcrumb.html %}\n# Test Application Platform Configuration\n\n|ID          |\n|------------|\n|WSTG-CONF-02|\n\n## Summary\n\nProper configuration of the single elements that make up an application architecture is important in order to prevent mistakes that might compromise the security of the whole architecture.\n\nReviewing and testing configurations are critical tasks in creating and maintaining an architecture. This is because various systems often come with generic configurations, which may not align well with the tasks they're supposed to perform on the specific sites where they're installed.\n\nWhile the typical web and application server installation will contain a lot of functionality (like application examples, documentation, test pages), what is not essential should be removed before deployment to avoid post-install exploitation.\n\n## Test Objectives\n\n- Ensure that default and known files have been removed.\n- Validate that no debugging code or extensions are left in the production environments.\n- Review the logging mechanisms set in place for the application.\n\n## How to Test\n\n### Black-Box Testing\n\n#### Sample and Known Files and Directories\n\nIn a default installation, many web servers and application servers provide sample applications and files for the benefit of the developer, in order to test if the server is working properly right after installation. However, many default web server applications have later been known to be vulnerable. This was the case, for example, for CVE-1999-0449 (Denial of Service in IIS when the Exair sample site had been installed), CAN-2002-1744 (Directory traversal vulnerability in CodeBrws.asp in Microsoft IIS 5.0), CAN-2002-1630 (Use of sendmail.jsp in Oracle 9iAS), or CAN-2003-1172 (Directory traversal in the view-source sample in Apache’s Cocoon).\n\nCGI scanners, which include a detailed list of known files and directory samples provided by different web or application servers, might be a fast way to determine if these files are present. However, the only way to be really sure is to do a full review of the contents of the web server or application server, and determine whether they are related to the application itself or not.\n\n#### Comment Review\n\nIt is very common for programmers to add comments when developing large web-based applications. However, comments included inline in HTML code might reveal internal information that should not be available to an attacker. Sometimes, a part of the source code is commented out when a functionality is no longer required, but this comment is unintentionally leaked out to the HTML pages returned to the users.\n\nComment review should be done in order to determine if any information is being leaked through comments. This review can only be thoroughly done through an analysis of the web server's static and dynamic content, and through file searches. It can be useful to browse the site in an automatic or guided fashion, and store all the retrieved content. This retrieved content can then be searched in order to analyse any HTML comments available in the code.\n\n#### System Configuration\n\nVarious tools, documents, or checklists can be used to give IT and security professionals a detailed assessment of the target systems' conformance to various configuration baselines or benchmarks. Such tools include, but are not limited to, the following:\n\n- [CIS-CAT Lite](https://www.cisecurity.org/blog/introducing-cis-cat-lite/)\n- [Microsoft's Attack Surface Analyzer](https://github.com/microsoft/AttackSurfaceAnalyzer)\n- [NIST's National Checklist Program](https://nvd.nist.gov/ncp/repository)\n\n### Gray-Box Testing\n\n#### Configuration Review\n\nThe web server or application server configuration takes an important role in protecting the contents of the site and it must be carefully reviewed in order to spot common configuration mistakes. Obviously, the recommended configuration varies depending on the site policy, and the functionality that should be provided by the server software. In most cases, however, configuration guidelines (either provided by the software vendor or external parties) should be followed to determine if the server has been properly secured.\n\nIt is impossible to generically say how a server should be configured, however, some common guidelines should be taken into account:\n\n- Only enable server modules (ISAPI extensions in the case of IIS) that are needed for the application. This reduces the attack surface since the server is reduced in size and complexity as software modules are disabled. It also prevents vulnerabilities that might appear in the vendor software from affecting the site if they are only present in modules that have been already disabled.\n- Handle server errors (40x or 50x) with custom-made pages instead of with the default web server pages. Specifically make sure that any application errors will not be returned to the end user and that no code is leaked through these errors since it will help an attacker. It is actually very common to forget this point since developers do need this information in pre-production environments.\n- Make sure that the server software runs with minimized privileges in the operating system. This prevents an error in the server software from directly compromising the whole system, although an attacker could elevate privileges once running code as the web server.\n- Make sure the server software properly logs both legitimate access and errors.\n- Make sure that the server is configured to properly handle overloads and prevent Denial of Service attacks. Ensure that the server has been performance-tuned properly.\n- Never grant non-administrative identities (with the exception of `NT SERVICE\\WMSvc`) access to applicationHost.config, redirection.config, and administration.config (either Read or Write access).\n- Never share out applicationHost.config, redirection.config, and administration.config on the network.\n- Do not store sensitive information in readable configuration files.\n- Encrypt sensitive configuration data where required.\n- Restrict access to shared configuration and protect it appropriately.\n\n#### Logging\n\nLogging is an important part of application security. It supports monitoring, incident response, and investigations. Review both platform and application logging to determine whether security-relevant events are recorded, whether the records are useful, and whether the logging process introduces additional risk.\n\nDuring the review, verify the following:\n\n- Security-relevant events are logged.\n- Log entries contain enough context to support investigation.\n- Logs do not store secrets or unnecessary sensitive data.\n- Logged data is handled safely before storage and display.\n- Access to logs is restricted to authorized personnel.\n- Logs are protected against tampering and retained appropriately.\n- Logging failures do not expose sensitive debugging information.\n- Logs can be centralized or correlated in distributed environments.\n\nTesting should confirm that logs are usable, consistent, and effectively support detection and response activities.\n\n## References\n\n- Apache\n    - Apache Security, by Ivan Ristic, O’reilly, March 2005.\n    - [Apache Security Secrets: Revealed (Again), Mark Cox, November 2003](https://awe.com/mark/talks/apachecon2003us.html)\n    - [Apache Security Secrets: Revealed, ApacheCon 2002, Las Vegas, Mark J Cox, October 2002](https://awe.com/mark/talks/apachecon2002us.html)\n    - [Performance Tuning](https://httpd.apache.org/docs/current/misc/perf-tuning.html)\n- Lotus Domino\n    - Lotus Security Handbook, William Tworek et al., April 2004, available in the IBM Redbooks collection\n    - Lotus Domino Security, an X-force white-paper, Internet Security Systems, December 2002\n    - Hackproofing Lotus Domino Web Server, David Litchfield, October 2001\n- Microsoft IIS\n    - [Security Best Practices for IIS 8](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/jj635855(v=ws.11))\n    - [CIS Microsoft IIS Benchmarks](https://www.cisecurity.org/benchmark/microsoft_iis/)\n    - Securing Your Web Server (Patterns and Practices), Microsoft Corporation, January 2004\n    - IIS Security and Programming Countermeasures, by Jason Coombs\n    - From Blueprint to Fortress: A Guide to Securing IIS 5.0, by John Davis, Microsoft Corporation, June 2001\n    - Secure IIS 5 Checklist, by Michael Howard, Microsoft Corporation, June 2000\n- Red Hat’s (formerly Netscape’s) iPlanet\n    - Guide to the Secure Configuration and Administration of iPlanet Web Server, Enterprise Edition 4.1, by James M Hayes, The Network Applications Team of the Systems and Network Attack Center (SNAC), NSA, January 2001\n- WebSphere\n    - IBM WebSphere V5.0 Security, WebSphere Handbook Series, by Peter Kovari et al., IBM, December 2002.\n    - IBM WebSphere V4.0 Advanced Edition Security, by Peter Kovari et al., IBM, March 2002.\n- General\n    - [Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html), OWASP\n    - [SP 800-92](https://csrc.nist.gov/publications/detail/sp/800-92/final) Guide to Computer Security Log Management, NIST\n    - [PCI DSS v3.2.1](https://www.pcisecuritystandards.org/document_library) Requirement 10 and PA-DSS v3.2 Requirement 4, PCI Security Standards Council\n\n- Generic:\n    - [CERT Security Improvement Modules: Securing Public Web Servers](https://resources.sei.cmu.edu/asset_files/SecurityImprovementModule/2000_006_001_13637.pdf)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 7,
+      "difficulty": "Advanced",
+      "tags": [
+        "Application",
+        "Platform",
+        "Configuration",
+        "Summary",
+        "Objectives",
+        "Black-box"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Application Platform Configuration",
+      "table_of_contents": [
+        "Test Application Platform Configuration",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Black-Box Testing",
+        "Gray-Box Testing",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 14,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/02-Test_Application_Platform_Configuration.md",
+      "content_hash": "087920d8006aa04b44636ebfd4fb5fb0444e8b12411c014b44b2fe92bbcf8933",
+      "next_lesson_slug": "test-file-extensions-handling-for-sensitive-information",
+      "previous_lesson_slug": "test-network-infrastructure-configuration",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods",
+        "test-http-strict-transport-security"
+      ]
+    },
+    {
+      "id": "test-file-extensions-handling-for-sensitive-information",
+      "slug": "test-file-extensions-handling-for-sensitive-information",
+      "title": "Test File Extensions Handling for Sensitive Information",
+      "body": "{% include breadcrumb.html %}\n# Test File Extensions Handling for Sensitive Information\n\n|ID          |\n|------------|\n|WSTG-CONF-03|\n\n## Summary\n\nWeb servers commonly use file extensions to determine which technologies, languages, and plugins must be used to fulfill web requests. While this behavior is consistent with RFCs and Web Standards, using standard file extensions provides the penetration tester useful information about the underlying technologies used in a web appliance and greatly simplifies the task of determining the attack scenario to be used on particular technologies. In addition, misconfiguration of web servers could easily reveal confidential information about access credentials.\n\nFile extension checks are often done to validate files before uploading them to the server. Unrestricted file uploads can lead to unforeseen results because the content may not be what is expected, or due to unexpected OS filename handling.\n\nUnderstanding how web servers handle requests for files with different extensions can clarify server behavior based on the types of files accessed. For example, it can help to understand which file extensions are returned as text or plain versus those that cause server-side execution. The latter are indicative of technologies, languages, or plugins used by web servers or application servers. This information may provide additional insight into how the web application is engineered. For example, while a \".pl\" extension is typically associated with server-side Perl support, the file extension alone can be misleading and not entirely indicative of the underlying technology. Take, for instance, server-side resources written in Perl, which might be renamed to disguise the usage of Perl. See the next section on \"web server components\" for more on identifying server-side technologies and components.\n\n## Test Objectives\n\n- Enumerate sensitive file extensions that might contain raw data such as scripts or credentials\n- Validate that no system framework bypasses exist for the rules that have been set\n\n## How to Test\n\n### Forced Browsing\n\nSubmit requests with different file extensions and verify how they are handled. The verification should be on a per web directory basis. Verify directories that allow script execution. Web server directories can be identified by scanning tools which look for the presence of well-known directories. Additionally, mirroring the site structure helps testers reconstruct the directory tree served by the application.\n\nIf the web application architecture is load-balanced, it is important to assess all of the web servers. The ease of this task depends on the configuration of the balancing infrastructure. In an infrastructure with redundant components, there may be slight variations in the configuration of individual web or application servers. This may happen if the web architecture employs heterogeneous technologies (think of a set of IIS and Apache web servers in a load-balancing configuration, which may introduce slight asymmetric behavior between them, and possibly different vulnerabilities).\n\n#### Example\n\nThe tester has identified the existence of a file named `connection.inc`. Trying to access it directly gives back its contents, which are:\n\nThe tester determines the existence of a MySQL DBMS backend and the weak credentials used by the web application to access it.\n\nThe following file extensions should never be returned by a web server, as they pertain to files that could contain sensitive information or files that have no valid reason to be served.\n\n- `.asa`\n- `.inc`\n- `.config`\n\nThe following file extensions are related to files which, when accessed, are either displayed or downloaded by the browser. Therefore, files with these extensions must be checked to verify that they are indeed supposed to be served (and are not leftovers), and that they do not contain sensitive information.\n\n- `.zip`, `.tar`, `.gz`, `.tgz`, `.rar`, etc.: (Compressed) archive files\n- `.java`: No reason to provide access to Java source files\n- `.txt`: Text files\n- `.pdf`: PDF documents\n- `.docx`, `.rtf`, `.xlsx`, `.pptx`, etc.: Office documents\n- `.bak`, `.old` and other extensions indicative of backup files (for example: `~` for Emacs backup files)\n\nThe list given above details only a few examples, since file extensions are too many to be comprehensively treated here. Refer to [FILExt](https://filext.com/) for a more thorough database of extensions.\n\nTo identify files with a given extension, a mix of techniques can be employed. These techniques can include using vulnerability scanners, spidering and mirroring tools, and querying search engines (see [Testing: Spidering and googling](../01-Information_Gathering/01-Conduct_Search_Engine_Discovery_Reconnaissance_for_Information_Leakage.md)). Manual inspection of the application can also be beneficial, as it overcomes limitations in automatic spidering. See also [Testing for Old, Backup and Unreferenced Files](04-Review_Old_Backup_and_Unreferenced_Files_for_Sensitive_Information.md) which deals with the security issues related to \"forgotten\" files.\n\n### File Upload\n\nWindows 8.3 legacy filename handling on Windows-based systems can affect how files are resolved and accessed by the web server. While this behavior is often discussed in the context of file upload restrictions, it is also relevant when assessing how existing files with non-standard or legacy names may be exposed.\n\nIn environments where 8.3 filename generation is enabled, sensitive files that are otherwise not directly accessible using their long filenames may still be reachable through their shortened equivalents. This can lead to unintended disclosure of source code or configuration files if access controls are not consistently enforced.\n\nExamples of 8.3 filename resolution behavior that may lead to unintended file exposure:\n\n1. A file such as `file.phtml` may be processed as PHP code.\n2. A corresponding shortened filename (for example, `FILE~1.PHT`) may be accessible depending on server and handler configuration.\n3. Files with misleading or extended filenames may still resolve to executable handlers once expanded by the operating system.\n\nTesting should focus on identifying whether legacy filename handling allows access to sensitive files that were not intended to be served. Testing of file upload mechanisms themselves is covered in dedicated File Upload and Business Logic test cases.\n\n### Gray-Box Testing\n\nWhite-box testing of file extension handling involves checking the server configurations in the web application architecture and verifying the rules for serving different file extensions.\n\nIf the web application relies on a load-balanced, heterogeneous infrastructure, determine whether this may introduce different behavior.\n\n## Tools\n\nVulnerability scanners, such as Nessus and Nikto, check for the existence of well-known web directories. They may allow the tester to download the site structure, which is helpful when trying to determine the configuration of web directories and how individual file extensions are served. Other tools that can be used for this purpose include:\n\n- [wget](https://www.gnu.org/software/wget)\n- [curl](https://curl.haxx.se)\n- Perform a Google search for \"web mirroring tools\"",
+      "code_snippet": "// language: php\n<?\n    mysql_connect(\"127.0.0.1\", \"root\", \"password\")\n        or die(\"Could not connect\");\n?>",
+      "code_languages": [
+        "php"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "File",
+        "Extensions",
+        "Handling",
+        "Sensitive",
+        "Information",
+        "Summary"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test File Extensions Handling for Sensitive Information",
+      "table_of_contents": [
+        "Test File Extensions Handling for Sensitive Information",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Forced Browsing",
+        "File Upload",
+        "Gray-Box Testing",
+        "Tools"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 15,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/03-Test_File_Extensions_Handling_for_Sensitive_Information.md",
+      "content_hash": "cae52d0f510dbba04da3b00719241f2525cdc214a9046920ca25aade642a6135",
+      "next_lesson_slug": "review-old-backup-and-unreferenced-files-for-sensitive-information",
+      "previous_lesson_slug": "test-application-platform-configuration",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "review-old-backup-and-unreferenced-files-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "review-old-backup-and-unreferenced-files-for-sensitive-information",
+      "slug": "review-old-backup-and-unreferenced-files-for-sensitive-information",
+      "title": "Review Old Backup and Unreferenced Files for Sensitive Information",
+      "body": "{% include breadcrumb.html %}\n# Review Old Backup and Unreferenced Files for Sensitive Information\n\n|ID          |\n|------------|\n|WSTG-CONF-04|\n\n## Summary\n\nWhile most of the files within a web server are directly handled by the server itself, it isn't uncommon to find unreferenced or forgotten files that can be used to obtain important information about the infrastructure or the credentials.\n\nMost common scenarios include the presence of renamed old versions of modified files, inclusion files that are loaded into the language of choice and downloaded as source, and even automatic or manual backups in the form of compressed archives. Backup files can also be generated automatically by the underlying file system the application is hosted on, a feature usually referred to as \"snapshots\".\n\nAll these files may grant the tester access to inner workings, back doors, administrative interfaces, or even credentials to connect to the administrative interface or the database server.\n\nAn important source of vulnerability is found in files unrelated to the application. These files may be created when editing application files, creating on-the-fly backup copies, or leaving old or unreferenced files in the web tree. Performing in-place editing or other administrative actions on production web servers may inadvertently leave backup copies, either generated automatically by the editor while editing files, or by the administrator who is zipping a set of files to create a backup.\n\nIt is easy to forget such files and this may pose a serious security threat to the application. It happens because backup copies may be generated with file extensions differing from those of the original files. A `.tar`, `.zip` or `.gz` archive that we generate (and might forget) has obviously a different extension, and the same happens with automatic copies created by many editors (for example, emacs generates a backup copy named `file~` when editing `file`). Making a copy manually can produce a similar effect, such as when `file` is copied as `file.old` or `file.bak`. The underlying file system the application is on could be making snapshots of your application at different points in time without your knowledge, which may also be accessible via the web, posing a similar but different backup file style threat to your application.\n\nAs a result, these activities generate files that are not needed by the application and may be handled differently than the original file by the web server. For example, if we make a copy of `login.asp` and name it `login.asp.old` without proper security measures, it could potentially allow users to download the source code of login.asp. This is because `login.asp.old` will be typically served as text or plain, rather than being executed because of its extension. In other words, accessing `login.asp` causes the execution of the server-side code of `login.asp`, while accessing `login.asp.old` causes the content of `login.asp.old` (which is, again, server-side code) to be plainly returned to the user and displayed in the browser. This may pose security risks, since sensitive information may be revealed.\n\nGenerally, exposing server-side code is a bad idea. Not only are you unnecessarily exposing business logic, but you may be unknowingly revealing application-related information which may help an attacker (path names, data structures, etc.). Not to mention the fact that there are too many scripts with embedded username and password in clear text (which is a careless and extremely dangerous practice).\n\nOther causes of unreferenced files are due to design or configuration choices when they allow diverse kind of application-related files such as data files, configuration files, log files, to be stored in file system directories that can be accessed by the web server. These files have normally no reason to be in a file system space that could be accessed via web, since they should be accessed only at the application level, by the application itself (and not by the casual user browsing around).\n\n### Threats\n\nOld, backup and unreferenced files present various threats to the security of a web application:\n\n- Unreferenced files may disclose sensitive information that can facilitate a focused attack against the application; for example, include files containing database credentials, configuration files containing references to other hidden content, absolute file paths, etc.\n- Unreferenced pages may contain powerful functionality that can be used to attack the application; for example, an administration page that is not linked from published content but can be accessed by any user who knows where to find it.\n- Old and backup files may contain vulnerabilities that have been fixed in more recent versions; for example, `viewdoc.old.jsp` may contain a directory traversal vulnerability that has been fixed in `viewdoc.jsp` but can still be exploited by anyone who finds the old version.\n- Backup files may disclose the source code for pages designed to execute on the server; for example, requesting `viewdoc.bak` may return the source code for `viewdoc.jsp`, which can be reviewed for vulnerabilities that may be difficult to find by making blind requests to the executable page. While this threat applies to scripting languages such as Perl, PHP, ASP, shell scripts, JSP, etc., it is not limited to them, as shown in the example provided in the next point.\n- Backup archives may contain copies of all files within (or even outside) the webroot. This allows an attacker to quickly enumerate the entire application, including unreferenced pages, source code, include files, etc. For example, if you forget a file named `myservlets.jar.old` containing a backup copy of your servlet implementation classes, you are exposing a lot of sensitive information which can be decompiled and reverse engineered.\n- In some cases, copying or editing a file modifies the filename but leaves the file extension intact. This is common in Windows environments, where file copying operations generate filenames prefixed with \"Copy of \" or localized versions of this string. Since the file extension is left unchanged, this is not a case where an executable file is returned as plain text by the web server, and therefore not a case of source code disclosure. However, these files are dangerous too because there is a chance that they include obsolete and incorrect logic that, when invoked, could trigger application errors, which might yield valuable information to an attacker if diagnostic message display is enabled.\n- Log files may contain sensitive information about the activities of application users, for example, sensitive data passed in URL parameters, session IDs, URLs visited (which may disclose additional unreferenced content), etc. Other log files (e.g. ftp logs) may contain sensitive information about the maintenance of the application by system administrators.\n- File system snapshots may contain copies of the code that contain vulnerabilities that have been fixed in more recent versions. For example, `/.snapshot/monthly.1/view.php` may contain a directory traversal vulnerability that has been fixed in `/view.php` but can still be exploited by anyone who finds the old version.\n\n## Test Objectives\n\n- Find and analyse unreferenced files that might contain sensitive information.\n\n## How to Test\n\n### Black-Box Testing\n\nTesting for unreferenced files uses both automated and manual techniques, and typically involves a combination of the following:\n\n#### Inference from the Naming Scheme Used for Published Content\n\nEnumerate all of the application’s pages and functionality. This can be done manually using a browser, or using an application spidering tool. Most applications use a recognizable naming scheme, and organize resources into pages and directories using words that describe their function. It is often possible to infer the name and location of unreferenced pages from the naming scheme used for published content. For example, if a page titled `viewuser.asp` is found, one should also look for `edituser.asp`, `adduser.asp`, and `deleteuser.asp`. Similarly, if a directory `/app/user` is discovered, one should also search for `/app/admin` and `/app/manager`.\n\n#### Other Clues in Published Content\n\nMany web applications leave clues in published content that can lead to the discovery of hidden pages and functionality. These clues can often be found in the source code of HTML and JavaScript files. The source code for all published content should be manually reviewed to identify clues about other pages and functionality. For example:\n\nProgrammers' comments and commented-out sections of source code may refer to hidden content:\n\nJavaScript may contain page links that are only rendered within the user’s GUI under certain circumstances:\n\nHTML pages may contain FORMs that have been hidden by disabling the SUBMIT element:\n\nAnother source of clues about unreferenced directories is the `/robots.txt` file used to provide instructions to web robots:\n\n#### Blind Guessing\n\nIn its simplest form, this involves running a list of common filenames through a request engine in an attempt to guess files and directories that exist on the server. The following netcat wrapper script will read a wordlist from stdin and perform a basic guessing attack:\n\nDepending upon the server, GET may be replaced with HEAD for faster results. The output file specified can be grepped for \"interesting\" response codes. The response code 200 (OK) usually indicates that a valid resource has been found (provided the server does not deliver a custom \"not found\" page using the 200 code). But also look out for 301 (Moved), 302 (Found), 401 (Unauthorized), 403 (Forbidden) and 500 (Internal error), which may also indicate resources or directories that are worthy of further investigation.\n\nThe basic guessing attack should be run against the webroot, and also against all directories that have been identified through other enumeration techniques. More advanced/effective guessing attacks can be performed as follows:\n\n- Identify the file extensions in use within known areas of the application (e.g. JSP, ASPX, HTML), and use a basic wordlist appended with each of these extensions (or use a longer list of common extensions if resources permit).\n- For each file identified through other enumeration techniques, create a custom wordlist derived from that filename. Get a list of common file extensions (including ~, bak, txt, src, dev, old, inc, orig, copy, tmp, swp, etc.) and use each extension before, after, and instead of, the extension of the actual filename.\n\n> Note: Windows file copying operations generate filenames prefixed with \"Copy of \" or localized versions of this phrase, hence they do not change file extensions. While \"Copy of \" files typically do not disclose source code when accessed, they might yield valuable information in case they cause errors when invoked.\n\n#### Information Obtained Through Server Vulnerabilities and Misconfiguration\n\nThe most obvious way in which a misconfigured server may disclose unreferenced pages is through directory listing. Request all enumerated directories to identify any which provide a directory listing.\n\nNumerous vulnerabilities have been found in individual web servers which allow an attacker to enumerate unreferenced content, for example:\n\n- Apache ?M=D directory listing vulnerability.\n- Various IIS script source disclosure vulnerabilities.\n- IIS WebDAV directory listing vulnerabilities.\n\n#### Use of Publicly Available Information\n\nPages and functionality in internet-facing web applications that are not referenced from within the application itself may be referenced from other public domain sources. There are various sources of these references:\n\n- Pages that used to be referenced may still appear in the archives of internet search engines. For example, `1998results.asp` may no longer be linked from a company’s site, but may remain on the server and in search engine databases. This old script may contain vulnerabilities that could be used to compromise the entire site. The `site:` Google search operator may be used to run a query only against the domain of choice, such as in: `site:www.example.com`. Using search engines in this way has led to a broad array of techniques which you may find useful, and are described in the `Google Hacking` section of this Guide. Check it to hone your testing skills via Google. Backup files are not likely to be referenced by any other files and therefore may have not been indexed by Google, but if they lie in browsable directories the search engine might know about them.\n- In addition, Google and Yahoo keep cached versions of pages found by their robots. Even if `1998results.asp` has been removed from the target server, a version of its output may still be stored by these search engines. The cached version may contain references to, or clues about, additional hidden content that still remains on the server.\n- Content that is not referenced from within a target application may be linked to by third-party sites. For example, an application which processes online payments on behalf of third-party traders may contain a variety of bespoke functionality which can (normally) only be found by following links within the sites of its customers.\n\n#### Filename Filter Bypass\n\nBecause deny list filters are based on regular expressions, one can sometimes take advantage of obscure OS filename expansion features which work in ways the developer didn't expect. The tester can sometimes exploit differences in ways that filenames are parsed by the application, web server, and underlying OS and it's filename conventions.\n\nExample: Windows 8.3 filename expansion `c:\\\\program files` becomes `C:\\\\PROGRA\\~1`\n\n- Remove incompatible characters\n- Convert spaces to underscores\n- Take the first six characters of the basename\n- Add `~<digit>` which is used to distinguish files with names using the same six initial characters\n- This convention changes after the first 3 name collisions\n- Truncate file extension to three characters\n- Make all the characters uppercase\n\n### Gray-Box Testing\n\nPerforming gray-box testing against old and backup files necessitates the examination of files within directories that belong to the set of web directories served by the web server(s) comprising the web application infrastructure. Theoretically the examination should be performed by hand to be thorough. However, since in most cases copies of files or backup files tend to be created by using the same naming conventions, the search can be easily scripted. For example, editors leave behind backup copies by naming them with a recognizable extension or ending and humans tend to leave behind files with a `.old` or similar predictable extensions. A useful strategy would be to periodically schedule a background job to check for files with extensions that are likely to be identified as copies or backup files, while also performing manual checks on a longer time basis.\n\n## Remediation\n\nFor an effective protection strategy, testing should be combined with a security policy that clearly forbids dangerous practices, including:\n\n- Editing files in-place on the web server or application server file systems. This is a particularly bad habit, since it is likely to generate backup or temporary files by the editors. It is amazing to see how often this is done, even in large organizations. If you absolutely need to edit files on a production system, do ensure that you don’t leave behind anything that is not explicitly intended, and keep in mind that you are doing it at your own risk.\n- Carefully check any other activity performed on file systems exposed by the web server, such as spot administration activities. For example, if you occasionally need to take a snapshot of a couple of directories (which you should not do on a production system), you may be tempted to zip them first. Be careful not to leave behind such archive files.\n- Appropriate configuration management policies should help prevent obsolete and un-referenced files.\n- Applications should be designed not to create (or rely on) files stored under the web directory trees served by the web server. Data files, log files, configuration files, etc. should be stored in directories not accessible by the web server to counter the possibility of information disclosure, not to mention the potential for data modification if web directory permissions allow writing.\n- File system snapshots should not be accessible via the web if the document root is on a file system using this technology. Configure your web server to deny access to such directories, for example, under Apache, a location directive like this should be used:\n\n## Tools\n\nVulnerability assessment tools tend to include checks to spot web directories having standard names (such as \"admin\", \"test\", \"backup\", etc.), and to report any web directory which allows indexing. If the tester is unable to find directory listing, they should try to check for probable backup extensions. Some tools that can help with this include:\n\n- [Nessus](https://www.tenable.com/products/nessus)\n- [Nikto2](https://cirt.net/Nikto2)\n\n### Web spider tools\n\n- [wget](https://www.gnu.org/software/wget/)\n- Spike Proxy (legacy – no longer maintained; replaced by tools such as Burp Suite)\n- Xenu (legacy – last updated in 2010, no active maintenance)\n- [curl](https://curl.haxx.se)\n\n### Modern Alternatives\n\n- [Burp Suite](https://portswigger.net/burp) – widely used web security testing proxy\n- [ZAP](https://www.zaproxy.org/) – open-source web application security testing tool\n- [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) – website crawler and broken link checker\n\nSome of them are also included in standard Linux distributions. Web development tools usually include facilities to identify broken links and unreferenced files.",
+      "code_snippet": "// language: javascript\nvar adminUser=false;\nif (adminUser) menu.add (new menuItem (\"Maintain users\", \"/admin/useradmin.jsp\"));\n\n// language: html\n<form action=\"forgotPassword.jsp\" method=\"post\">\n    <input type=\"hidden\" name=\"userID\" value=\"123\">\n    \n</form>\n\n// language: html\nUser-agent: *\nDisallow: /Admin\nDisallow: /uploads\nDisallow: /backup\nDisallow: /~jbloggs\nDisallow: /include\n\n// language: bash\n#!/bin/bash\n\nserver=example.org\nport=80\n\nwhile read url\ndo\necho -ne \"$url\\t\"\necho -e \"GET /$url HTTP/1.0\\nHost: $server\\n\" | netcat $server $port | head -1\ndone | tee outputfile\n\n// language: xml\n<Location ~ \".snapshot\">\n    Order deny,allow\n    Deny from all\n</Location>",
+      "code_languages": [
+        "bash",
+        "html",
+        "javascript",
+        "xml"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 14,
+      "difficulty": "Advanced",
+      "tags": [
+        "Review",
+        "Old",
+        "Backup",
+        "Unreferenced",
+        "Files",
+        "Sensitive"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Review Old Backup and Unreferenced Files for Sensitive Information",
+      "table_of_contents": [
+        "Review Old Backup and Unreferenced Files for Sensitive Information",
+        "Summary",
+        "Threats",
+        "Test Objectives",
+        "How to Test",
+        "Black-Box Testing",
+        "Gray-Box Testing",
+        "Remediation",
+        "Tools",
+        "Web spider tools",
+        "Modern Alternatives"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 16,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/04-Review_Old_Backup_and_Unreferenced_Files_for_Sensitive_Information.md",
+      "content_hash": "70ee34727089f8375f69560580c948f6ab0e2ae8932fa340470de31dfc4d642b",
+      "next_lesson_slug": "enumerate-infrastructure-and-application-admin-interfaces",
+      "previous_lesson_slug": "test-file-extensions-handling-for-sensitive-information",
+      "related_lesson_slugs": [
+        "test-file-extensions-handling-for-sensitive-information"
+      ]
+    },
+    {
+      "id": "enumerate-infrastructure-and-application-admin-interfaces",
+      "slug": "enumerate-infrastructure-and-application-admin-interfaces",
+      "title": "Enumerate Infrastructure and Application Admin Interfaces",
+      "body": "{% include breadcrumb.html %}\n# Enumerate Infrastructure and Application Admin Interfaces\n\n|ID          |\n|------------|\n|WSTG-CONF-05|\n\n## Summary\n\nAdministrator interfaces may be present in the application or on the application server to allow certain users to perform privileged activities on the site. Tests should be undertaken to reveal if and how this privileged functionality can be accessed by an unauthorized or standard user.\n\nAn application may require an administrator interface to enable a privileged user to access functionality that may make changes to how the site functions. Such changes may include:\n\n- User account provisioning\n- Site design and layout\n- Data manipulation\n- Configuration changes\n\nIn many instances, such interfaces do not have sufficient controls to protect them from unauthorized access. Testing is aimed at discovering these administrator interfaces and accessing functionality intended for the privileged users.\n\n## Test Objectives\n\n- Identify hidden administrator interfaces and functionality.\n\n## How to Test\n\n### Black Box Testing\n\nThe following section describes vectors that may be used to test for the presence of administrative interfaces. These techniques may also be used to test for related issues including privilege escalation, and are described elsewhere in this guide (for example, [Testing for bypassing authorization schema](../05-Authorization_Testing/02-Testing_for_Bypassing_Authorization_Schema.md) and [Testing for Insecure Direct Object References](../05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References.md)) in greater detail.\n\n- Directory and file enumeration: An administrative interface may be present but not visibly available to the tester. The path of the administrative interface may be guessed by simple requests such as /admin or /administrator. In some scenarios, these paths can be revealed within seconds using advanced Google search techniques - [Google dorks](https://www.exploit-db.com/google-hacking-database). There are many tools available to perform brute forcing of server contents, see the tools section below for more information. A tester may have to also identify the filename of the administration page. Forcibly browsing to the identified page may provide access to the interface.\n- Comments and links in source code: Many sites use common code that is loaded for all site users. By examining all source sent to the client, links to administrator functionality may be discovered and should be investigated.\n- Reviewing server and application documentation: If the application server or application is deployed in its default configuration it may be possible to access the administration interface using information described in configuration or help documentation. Default password lists should be consulted if an administrative interface is found and credentials are required.\n- Publicly available information: Many applications, such as WordPress, have administrative interfaces that are available by default.\n- Alternative server port: Administration interfaces may be seen on a different port on the host than the main application. For example, Apache Tomcat's Administration interface can often be seen on port 8080.\n- Parameter tampering: A GET or POST parameter, or a cookie may be required to enable the administrator functionality. Clues to this include the presence of hidden fields such as:\n\nor in a cookie:\n\n`Cookie: session_cookie; useradmin=0`\n\nOnce an administrative interface has been discovered, a combination of the above techniques may be used to attempt to bypass authentication. If this fails, the tester may wish to attempt a brute force attack. In such an instance, the tester should be aware of the potential for administrative account lockout if such functionality is present.\n\n### Gray Box Testing\n\nA more detailed examination of the server and application components should be undertaken to ensure hardening (i.e. administrator pages are not accessible to everyone through the use of IP filtering or other controls), and where applicable, verification that all components do not use default credentials or configurations.\nSource code should be reviewed to ensure that the authorization and authentication model ensures clear separation of duties between normal users and site administrators. User interface functions shared between normal and administrator users should be reviewed to ensure clear separation between the rendering of such components and the information leakage from such shared functionality.\n\nEach web framework may have its own default admin pages or paths, as in the following examples:\n\nPHP:\n\nWordPress:\n\nJoomla:\n\nTomcat:\n\nApache:\n\nNginx:\n\n## Tools\n\nSeveral tools can assist in identifying hidden administrator interfaces and functionality, including:\n\n- [ZAP - Forced Browse](https://www.zaproxy.org/docs/desktop/addons/forced-browse/) is a currently maintained use of OWASP's previous DirBuster project.\n- [THC-HYDRA](https://github.com/vanhauser-thc/thc-hydra) is a tool that allows brute-forcing of many interfaces, including form-based HTTP authentication.\n- A brute forcer is much more effective when it uses a good dictionary, such as the [Netsparker](https://www.netsparker.com/blog/web-security/svn-digger-better-lists-for-forced-browsing/) dictionary.\n\n## References\n\n- [Cirt: Default Password list](https://cirt.net/passwords)\n- [FuzzDB can be used to do brute force browsing admin login path](https://github.com/fuzzdb-project/fuzzdb/blob/master/discovery/predictable-filepaths/login-file-locations/Logins.txt)\n- [Common admin or debugging parameters](https://github.com/fuzzdb-project/fuzzdb/blob/master/attack/business-logic/CommonDebugParamNames.txt)",
+      "code_snippet": "// language: html\n<input type=\"hidden\" name=\"admin\" value=\"no\">\n\n// language: html\n/phpinfo\n/phpmyadmin/\n/phpMyAdmin/\n/mysqladmin/\n/MySQLadmin\n/MySQLAdmin\n/login.php\n/logon.php\n/xmlrpc.php\n/dbadmin\n\n// language: html\nwp-admin/\nwp-admin/about.php\nwp-admin/admin-ajax.php\nwp-admin/admin-db.php\nwp-admin/admin-footer.php\nwp-admin/admin-functions.php\nwp-admin/admin-header.php\n\n// language: html\n/administrator/index.php\n/administrator/index.php?option=com_login\n/administrator/index.php?option=com_content\n/administrator/index.php?option=com_users\n/administrator/index.php?option=com_menus\n/administrator/index.php?option=com_installer\n/administrator/index.php?option=com_config\n\n// language: html\n/manager/html\n/host-manager/html\n/manager/text\n/tomcat-users.xml\n\n// language: html\n/index.html\n/httpd.conf\n/apache2.conf\n/server-status\n\n// language: html\n/index.html\n/index.htm\n/index.php\n/nginx_status\n/index.php\n/nginx.conf\n/html/error",
+      "code_languages": [
+        "html"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 4,
+      "difficulty": "Advanced",
+      "tags": [
+        "Enumerate",
+        "Infrastructure",
+        "Application",
+        "Admin",
+        "Interfaces",
+        "Summary"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Enumerate Infrastructure and Application Admin Interfaces",
+      "table_of_contents": [
+        "Enumerate Infrastructure and Application Admin Interfaces",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Black Box Testing",
+        "Gray Box Testing",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 17,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/05-Enumerate_Infrastructure_and_Application_Admin_Interfaces.md",
+      "content_hash": "0fc6c2dfd6c634e7d563cf45d4b2fbb3a2e6157c64e83e422a6ddd8eb6378167",
+      "next_lesson_slug": "test-http-methods",
+      "previous_lesson_slug": "review-old-backup-and-unreferenced-files-for-sensitive-information",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "test-http-methods",
+        "test-http-strict-transport-security"
+      ]
+    },
+    {
+      "id": "test-http-methods",
+      "slug": "test-http-methods",
+      "title": "Test HTTP Methods",
+      "body": "{% include breadcrumb.html %}\n# Test HTTP Methods\n\n|ID          |\n|------------|\n|WSTG-CONF-06|\n\n## Summary\n\nHTTP offers a number of methods (or verbs) that can be used to perform actions on the web server. While GET and POST are by far the most common methods that are used to access information provided by a web server, there are a variety of other methods that may also be supported, and can sometimes be exploited by attackers.\n\n[RFC 7231](https://datatracker.ietf.org/doc/html/rfc7231) defines the main valid HTTP request methods (or verbs), although additional methods have been added in other RFCs, such as [RFC 5789](https://datatracker.ietf.org/doc/html/rfc5789). Several of these verbs have been re-used for different purposes in [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) applications, listed in the table below.\n\n| Method | Original Purpose | RESTful Purpose |\n|--------|------------------|-----------------|\n| [`GET`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1) | Request a file. | Request an object.|\n| [`HEAD`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.2) | Request a file, but only return the HTTP headers. | |\n| [`POST`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3) | Submit data. | |\n| [`PUT`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.4) | Upload a file. | Create an object. |\n| [`DELETE`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.5) | Delete a file | Delete an object. |\n| [`CONNECT`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.6) | Establish a connection to another system. | |\n| [`OPTIONS`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.7) | List supported HTTP methods. | Perform a [CORS Preflight](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) request. |\n| [`TRACE`](https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.8) | Echo the HTTP request for debug purposes. | |\n| [`PATCH`](https://datatracker.ietf.org/doc/html/rfc5789#section-2) |  | Modify an object. |\n\n## Test Objectives\n\n- Enumerate supported HTTP methods.\n- Test for access control bypass.\n- Test HTTP method overriding techniques.\n\n## How to Test\n\n### Discover the Supported Methods\n\nTo perform this test, the tester needs a way to identify which HTTP methods are supported by the web server that is being examined. The simplest way to do this is to make an `OPTIONS` request to the server:\n\nThe server should then respond with a list of supported methods:\n\nHowever, not all servers may respond to OPTIONS requests, and some may even return inaccurate information. It's also worth noting that servers may support different methods for different paths. This means that even if a method is not supported for the root / directory, it does not necessarily indicate that the same method won't be supported elsewhere.\n\nA more reliable way to test for supported methods is to simply make a request with that method type, and examine the server response. If the method is not permitted, the server should return a `405 Method Not Allowed` status.\n\nIt's worth noting that some servers treat unknown methods as equivalent to `GET`, so they may respond to arbitrary methods, such as the request shown below. This can occasionally be useful to evade a web application firewall, or any other filtering that blocks specific methods.\n\nRequests with arbitrary methods can also be made using curl with the `-X` option:\n\nThere are also a variety of automated tools that can attempt to determine supported methods, such as the [`http-methods`](https://nmap.org/nsedoc/scripts/http-methods.html) Nmap script. However, these tools may not test for dangerous methods (i.e., methods that may cause changes such as `PUT` or `DELETE`), or may unintentionally cause changes to the web server if these methods are supported. As such, they should be used with care.\n\n### PUT and DELETE\n\nThe `PUT` and `DELETE` methods can have different effects, depending on whether they are being interpreted by the web server or by the application running on it.\n\n#### Legacy Web Servers\n\nSome legacy web servers allowed the use of the `PUT` method to create files on the server. For example, if the server is configured to allow this, the request below would create a file on the server called `test.html` with the contents `<script>alert(1)</script>`.\n\nSimilar requests can also be made with curl:\n\nThis allows an attacker to upload arbitrary files to the webserver, which could potentially result in a full system compromise if they are allowed to upload executable code such as PHP files. However, this configuration is extremely rare, and is unlikely to be seen on modern systems.\n\nSimilarly, the `DELETE` method can be used to delete files from the webserver. Please note that this is a **destructive action**; therefore, extreme care should be exercised when testing this method.\n\nOr with curl:\n\n#### RESTful APIs\n\nBy contrast, the `PUT` and `DELETE` methods are commonly used by modern RESTful applications to create and delete objects. For example, the API request below could be used to create a user called \"foo\" with a role of \"user\":\n\nA similar request with the DELETE method could be used to delete an object.\n\nAlthough it may be reported by automated scanning tools, the presence of these methods on a RESTful API **is not a security issue**. However, this functionality may have other vulnerabilities (such as weak access control), and should be thoroughly tested.\n\n### TRACE\n\nThe `TRACE` method (or Microsoft's equivalent `TRACK` method) causes the server to echo back the contents of the request. This led to a vulnerability called Cross-Site Tracing (XST) to be published in [2003](https://www.cgisecurity.com/whitehat-mirror/WH-WhitePaper_XST_ebook.pdf) (PDF), which could be used to access cookies that had the `HttpOnly` flag set. The `TRACE` method has been blocked in all browsers and plugins for many years; as such, this issue is no longer exploitable. However, it may still be flagged by automated scanning tools, and the `TRACE` method being enabled on a web server suggests that is has not been properly hardened.\n\n### CONNECT\n\nThe `CONNECT` method causes the web server to open a TCP connection to another system, and then pass traffic from the client to that system. This could allow an attacker to proxy traffic through the server, in order to hide their source address, access internal systems or access services that are bound to localhost. An example of a `CONNECT` request is shown below:\n\n### PATCH\n\nThe `PATCH` method is defined in [RFC 5789](https://datatracker.ietf.org/doc/html/rfc5789), and is used to provide instructions on how an object should be modified. The RFC itself does not define what format these instructions should be in, but various methods are defined in other standards, such as the [RFC 6902 - JavaScript Object Notation (JSON) Patch](https://datatracker.ietf.org/doc/html/rfc6902).\n\nFor example, if we have a user called \"foo\" with the following properties:\n\nThe following JSON PATCH request could be used to change the role of this user to \"admin\", without modifying the email address:\n\nAlthough the RFC states that it should include instructions for how the object should be modified, the `PATCH` method is commonly (mis)used to include the changed content instead, as shown below. Much like the previous request, this would change the \"role\" value to \"admin\" without modifying the rest of the object. This is in contrast to the `PUT` method, which would overwrite the entire object, and thus result in an object with no \"email\" attribute.\n\nAs with the `PUT` method, this functionality may have access control weaknesses or other vulnerabilities. Additionally, applications may not perform the same level of input validation when modifying an object as they do when creating one. This could potentially allow malicious values to be injected (such as in a stored cross-site scripting attack), or could allow broken or invalid objects that may result in business logic related issues.\n\n### Testing for Access Control Bypass\n\nIf a page on the application redirects users to a login page with a 302 code when they attempt to access it directly, it may be possible to bypass this by making a request with a different HTTP method, such as `HEAD`, `POST` or even a made up method such as `FOO`. If the web application responds with a `HTTP/1.1 200 OK` rather than the expected `HTTP/1.1 302 Found`, it may then be possible to bypass the authentication or authorization. The example below shows how a `HEAD` request may result in a page setting administrative cookies, rather than redirecting the user to a login page:\n\nAlternatively, it may be possible to make direct requests to pages that cause actions, such as:\n\nOr:\n\n### Testing for HTTP Method Overriding\n\nSome web frameworks provide a way to override the actual HTTP method in the request. They achieve this by emulating the missing HTTP verbs and passing some custom headers in the requests. The main purpose of this is to circumvent a middleware application (such as a proxy or web application firewall) which blocks specific methods. The following alternative HTTP headers could potentially be used:\n\n- `X-HTTP-Method`\n- `X-HTTP-Method-Override`\n- `X-Method-Override`\n\nTo test this, consider scenarios where restricted verbs like `PUT` or `DELETE` return a `405 Method not allowed`. In such cases, replay the same request, but add the alternative headers for HTTP method overriding. Then, observe the system's response. The application should respond with a different status code (*e.g.* `200 OK`) in cases where method overriding is supported.\n\nThe web server in the following example does not allow the `DELETE` method and blocks it:\n\nAfter adding the `X-HTTP-Method` header, the server responds to the request with a 200:\n\n## Remediation\n\n- Ensure that only the required methods are allowed and that these methods are properly configured.\n- Ensure that no workarounds are implemented to bypass security measures implemented by user-agents, frameworks, or web servers.\n\n## Tools\n\n- [Ncat](https://nmap.org/ncat/)\n- [curl](https://curl.haxx.se/)\n- [Nmap http-methods NSE script](https://nmap.org/nsedoc/scripts/http-methods.html)\n\n## References\n\n- [RFC 7231 - Hypertext Transfer Protocol (HTTP/1.1)](https://datatracker.ietf.org/doc/html/rfc7231)\n- [RFC 5789 - PATCH Method for HTTP](https://datatracker.ietf.org/doc/html/rfc5789)\n- [HTACCESS: BILBAO Method Exposed](https://web.archive.org/web/20160616172703/https://www.kernelpanik.org/docs/kernelpanik/bme.eng.pdf)\n- [Fortify - Misused HTTP Method Override](https://vulncat.fortify.com/en/detail?id=desc.dynamic.xtended_preview.often_misused_http_method_override)\n- [Mozilla Developer Network - Safe HTTP Methods](https://developer.mozilla.org/en-US/docs/Glossary/Safe/HTTP)",
+      "code_snippet": "// language: http\nOPTIONS / HTTP/1.1\nHost: example.org\n\n// language: http\nHTTP/1.1 200 OK\nAllow: OPTIONS, GET, HEAD, POST\n\n// language: http\nFOO / HTTP/1.1\nHost: example.org\n\n// language: bash\ncurl -X FOO https://example.org\n\n// language: http\nPUT /test.html HTTP/1.1\nHost: example.org\nContent-Length: 25\n\n<script>alert(1)</script>\n\n// language: bash\ncurl https://example.org --upload-file test.html\n\n// language: http\nDELETE /test.html HTTP/1.1\nHost: example.org\n\n// language: bash\ncurl https://example.org/test.html -X DELETE\n\n// language: http\nPUT /api/users/foo HTTP/1.1\nHost: example.org\nContent-Length: 34\n\n{\n    \"role\": \"user\"\n}\n\n// language: http\nDELETE /api/users/foo HTTP/1.1\nHost: example.org\n\n// language: http\nCONNECT 192.168.0.1:443 HTTP/1.1\nHost: example.org\n\n// language: json\n{\n    \"role\": \"user\",\n    \"email\": \"foo@example.org\"\n}\n\n// language: http\nPATCH /api/users/foo HTTP/1.1\nHost: example.org\n\n{ \"op\": \"replace\", \"path\": \"/role\", \"value\": \"admin\" }\n\n// language: http\nPATCH /api/users/foo HTTP/1.1\nHost: example.org\n\n{\n    \"role\": \"admin\"\n}\n\n// language: http\nHEAD /admin/ HTTP/1.1\nHost: example.org\n\n// language: http\nHTTP/1.1 200 OK\n[...]\nSet-Cookie: adminSessionCookie=[...];\n\n// language: http\nHEAD /admin/createUser.php?username=foo&password=bar&role=admin HTTP/1.1\nHost: example.org\n\n// language: http\nFOO /admin/createUser.php\nHost: example.org\nContent-Length: 36\n\nusername=foo&password=bar&role=admin\n\n// language: http\nDELETE /resource.html HTTP/1.1\nHost: example.org\n\n// language: http\nHTTP/1.1 405 Method Not Allowed\n[...]\n\n// language: http\nGET /resource.html HTTP/1.1\nHost: example.org\nX-HTTP-Method: DELETE\n\n// language: http\nHTTP/1.1 200 OK\n[...]",
+      "code_languages": [
+        "bash",
+        "http",
+        "json"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 8,
+      "difficulty": "Advanced",
+      "tags": [
+        "HTTP",
+        "Methods",
+        "Summary",
+        "Objectives",
+        "Discover",
+        "Supported"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test HTTP Methods",
+      "table_of_contents": [
+        "Test HTTP Methods",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Discover the Supported Methods",
+        "PUT and DELETE",
+        "TRACE",
+        "CONNECT",
+        "PATCH",
+        "Testing for Access Control Bypass",
+        "Testing for HTTP Method Overriding",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 18,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/06-Test_HTTP_Methods.md",
+      "content_hash": "9f276cfc9b8e229ad27a2980d0a26d59872f6729ac9e3863f12a698b49bbf0ae",
+      "next_lesson_slug": "test-http-strict-transport-security",
+      "previous_lesson_slug": "enumerate-infrastructure-and-application-admin-interfaces",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-strict-transport-security"
+      ]
+    },
+    {
+      "id": "test-http-strict-transport-security",
+      "slug": "test-http-strict-transport-security",
+      "title": "Test HTTP Strict Transport Security",
+      "body": "{% include breadcrumb.html %}\n# Test HTTP Strict Transport Security\n\n|ID          |\n|------------|\n|WSTG-CONF-07|\n\n## Summary\n\nThe HTTP Strict Transport Security (HSTS) feature enables a web server to inform the user's browser, via a special response header, that it should never establish an unencrypted HTTP connection to the specified domain servers. Instead, it should automatically establish all connection requests to access the site through HTTPS. This also prevents users from overriding certificate errors.\n\nConsidering the importance of this security measure, it is prudent to verify that the site is using this HTTP header in order to ensure that all the data travels encrypted between the web browser and the server.\n\nThe HTTP strict transport security header uses three specific directives:\n\n- `max-age`: to indicate the number of seconds that the browser should automatically convert all HTTP requests to HTTPS.\n- `includeSubDomains`: to indicate that all related sub-domains must use HTTPS.\n- `preload` Unofficial: to indicate that the domain(s) are on the preload list(s) and that browsers should never connect without HTTPS.\n    - While this is supported by all the major browsers, it is not an official part of the specification. (See [hstspreload.org](https://hstspreload.org/) for more information.)\n\nHere's an example of the HSTS header implementation:\n\n`Strict-Transport-Security: max-age=31536000; includeSubDomains`\n\nThe presence of this header must be checked, as its absence could lead to security issues such as:\n\n- Attackers intercepting and accessing the information transferred over an unencrypted network channel.\n- Attackers carrying out manipulator-in-the-middle (MITM) attacks by taking advantage of users who accept untrusted certificates.\n- Users who mistakenly enter an address in the browser using HTTP instead of HTTPS, or users who click on a link in a web application that incorrectly uses the HTTP protocol.\n\n## Test Objectives\n\n- Review the HSTS header and its validity.\n\n## How to Test\n\n- Confirm the presence of the HSTS header by examining the server's response through an intercepting proxy.\n- Use curl as follows:\n\n## References\n\n- [OWASP HTTP Strict Transport Security](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Strict_Transport_Security_Cheat_Sheet.html)\n- [OWASP Appsec Tutorial Series - Episode 4: Strict Transport Security](https://www.youtube.com/watch?v=zEV3HOuM_Vw)\n- [HSTS Specification](https://tools.ietf.org/html/rfc6797)\n- [Enable HTTP Strict Transport Security In Apache](https://https.cio.gov/hsts/)\n- [Enable HTTP Strict Transport Security In Nginx](https://www.nginx.com/blog/http-strict-transport-security-hsts-and-nginx/)",
+      "code_snippet": "// language: bash\n$ curl -s -D- https://owasp.org | grep -i strict-transport-security:\nStrict-Transport-Security: max-age=31536000",
+      "code_languages": [
+        "bash"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 2,
+      "difficulty": "Advanced",
+      "tags": [
+        "HTTP",
+        "Strict",
+        "Transport",
+        "Security",
+        "Summary",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test HTTP Strict Transport Security",
+      "table_of_contents": [
+        "Test HTTP Strict Transport Security",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 19,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/07-Test_HTTP_Strict_Transport_Security.md",
+      "content_hash": "0e7048d0ded3a4f00ceb38e0d9ab3f72675ea0350bb017ff6866386879592400",
+      "next_lesson_slug": "test-ria-cross-domain-policy",
+      "previous_lesson_slug": "test-http-methods",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "test-ria-cross-domain-policy",
+      "slug": "test-ria-cross-domain-policy",
+      "title": "Test RIA Cross Domain Policy",
+      "body": "{% include breadcrumb.html %}\n# Test RIA Cross Domain Policy\n\n|ID          |\n|------------|\n|WSTG-CONF-08|\n\nThis content has been removed.",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 1,
+      "difficulty": "Intermediate",
+      "tags": [
+        "RIA",
+        "Cross",
+        "Domain",
+        "Policy"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test RIA Cross Domain Policy",
+      "table_of_contents": [
+        "Test RIA Cross Domain Policy"
+      ],
+      "learning_objectives": [
+        "Understand the fundamentals of test ria cross domain policy"
+      ],
+      "order_index": 20,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/08-Test_RIA_Cross_Domain_Policy.md",
+      "content_hash": "d2aa19a9eab75ac1508f61d9c03f81234a13245a7bec14c569aa76b6ee921aa8",
+      "next_lesson_slug": "test-file-permission",
+      "previous_lesson_slug": "test-http-strict-transport-security",
+      "related_lesson_slugs": [
+        "test-for-subdomain-takeover",
+        "test-for-content-security-policy"
+      ]
+    },
+    {
+      "id": "test-file-permission",
+      "slug": "test-file-permission",
+      "title": "Test File Permission",
+      "body": "{% include breadcrumb.html %}\n# Test File Permission\n\n|ID          |\n|------------|\n|WSTG-CONF-09|\n\n## Summary\n\nWhen a resource is given a permissions setting that provides access to a wider range of actors than required, it could lead to the exposure of sensitive information, or the modification of that resource by unintended parties. This is especially dangerous when the resource is related to program configuration, execution, or sensitive user data.\n\nA clear example would be an executable file that can be run by unauthorized users. For another example, consider account information or a token value used to access an API. These are increasingly seen in modern web services and microservices, and may be stored in a configuration file that has world-readable permissions by default upon installation. Such sensitive data could be exposed either by malicious internal actors within the host system or by remote attackers. The latter may have compromised the service through other vulnerabilities, while gaining only normal user privileges.\n\n## Test Objectives\n\n- Review and identify any rogue file permissions.\n\n## How to Test\n\nIn Linux, use `ls` command to check the file permissions. Alternatively, `namei` can also be used to recursively list file permissions.\n\n`$ namei -l /PathToCheck/`\n\nThe files and directories that require file permission testing can include, but are not limited to, the following:\n\n- Web files/directory\n- Configuration files/directory\n- Sensitive files(encrypted data, password, key)/directory\n- Log files(security logs, operation logs, admin logs)/directory\n- Executables(scripts, EXE, JAR, class, PHP, ASP)/directory\n- Database files/directory\n- Temp files/directory\n- Upload files/directory\n\n## Remediation\n\nSet the permissions of the files and directories properly so that unauthorized users cannot access critical resources.\n\n## Tools\n\n- [Windows AccessEnum](https://technet.microsoft.com/en-us/sysinternals/accessenum)\n- [Windows AccessChk](https://technet.microsoft.com/en-us/sysinternals/accesschk)\n- [Linux namei](https://linux.die.net/man/1/namei)\n\n## References\n\n- [CWE-732: Incorrect Permission Assignment for Critical Resource](https://cwe.mitre.org/data/definitions/732.html)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 1,
+      "difficulty": "Advanced",
+      "tags": [
+        "File",
+        "Permission",
+        "Summary",
+        "Objectives",
+        "Remediation",
+        "Tools"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test File Permission",
+      "table_of_contents": [
+        "Test File Permission",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 21,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/09-Test_File_Permission.md",
+      "content_hash": "d4bab45f24892cb6e16ea79586e894612434f899002cf13159f1ceb851f82c10",
+      "next_lesson_slug": "test-for-subdomain-takeover",
+      "previous_lesson_slug": "test-ria-cross-domain-policy",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "test-for-subdomain-takeover",
+      "slug": "test-for-subdomain-takeover",
+      "title": "Test for Subdomain Takeover",
+      "body": "{% include breadcrumb.html %}\n# Test for Subdomain Takeover\n\n|ID          |\n|------------|\n|WSTG-CONF-10|\n\n## Summary\n\nA successful exploitation of this kind of vulnerability allows an adversary to claim and take control of the victim's subdomain. This attack relies on the following:\n\n1. The victim's external DNS server subdomain record is configured to point to a non-existing or non-active resource/external service/endpoint. The proliferation of XaaS (Anything as a Service) products and public cloud services offer a lot of potential targets to consider.\n2. The service provider hosting the resource/external service/endpoint does not handle subdomain ownership verification properly.\n\nIf the subdomain takeover is successful, a wide variety of attacks are possible (serving malicious content, phishing, stealing user session cookies, credentials, etc.). This vulnerability could be exploited for a wide variety of DNS resource records including: `A`, `CNAME`, `MX`, `NS`, `TXT` etc. In terms of the attack severity, an `NS` subdomain takeover (although less likely) has the highest impact, because a successful attack could result in full control over the whole DNS zone and the victim's domain.\n\n### GitHub\n\n1. The victim (victim.com) uses GitHub for development and configured a DNS record (`coderepo.victim.com`) to access it.\n2. The victim decides to migrate their code repository from GitHub to a commercial platform and does not remove `coderepo.victim.com` from their DNS server.\n3. An adversary discovers that `coderepo.victim.com` is hosted on GitHub and claims it using GitHub Pages and their own GitHub account.\n\n### Expired Domain\n\n1. The victim (victim.com) owns another domain (victimotherdomain.com) and uses a CNAME record (www) to reference the other domain (`www.victim.com` --> `victimotherdomain.com`)\n2. At some point, victimotherdomain.com expires, becoming available for registration by anyone. Since the CNAME record is not deleted from the victim.com DNS zone, anyone who registers `victimotherdomain.com` has full control over `www.victim.com` until the DNS record is removed or updated.\n\n## Test Objectives\n\n- Enumerate all possible domains (previous and current).\n- Identify any forgotten or misconfigured domains.\n\n## How to Test\n\n### Black-Box Testing\n\nTesting for subdomain takeover follows three phases: subdomain enumeration, automated fingerprint-based detection, and manual validation.\n\nA dangling DNS record occurs when a DNS entry points to an external resource that no longer exists or has been deprovisioned. For example, a CNAME record pointing to a GitHub Pages site that the owner deleted still resolves, but the underlying resource is unclaimed. An attacker can register that resource and take control of the subdomain.\n\n#### Subdomain Enumeration\n\nUse [subfinder](https://github.com/projectdiscovery/subfinder) to discover subdomains for the target domain: `subfinder -d victim.com -o subdomains.txt`\n\nThis produces a list of subdomains to use in the detection phase.\n\n#### Fingerprint-Based Detection\n\nFingerprint-based detection works by comparing each subdomain's HTTP response against a database of known vulnerable service responses. The [can-i-take-over-xyz](https://github.com/EdOverflow/can-i-take-over-xyz) project maintains this database, cataloging the specific response strings returned by service providers such as GitHub Pages, AWS S3, Heroku, and Fastly when a resource is unclaimed.\n\nUse [subzy](https://github.com/LukaSikic/subzy) for a quick initial scan: `subzy run --targets subdomains.txt`\n\nFollow up with [nuclei](https://github.com/projectdiscovery/nuclei) using the dedicated takeover templates for a more accurate result: `nuclei -l subdomains.txt -t takeovers/`\n\nA positive result from either tool indicates that a subdomain's response matched a known vulnerable fingerprint, suggesting a dangling DNS record pointing to an unclaimed resource on a third-party service.\n\nFor example, a subdomain pointing to an unclaimed GitHub Pages site returns the following response:\n\nThis specific string is listed in can-i-take-over-xyz as the GitHub Pages fingerprint. When subzy or nuclei matches this response, it flags the subdomain as potentially vulnerable.\n\n#### Manual Validation\n\nAutomated tools produce false positives. Validate each finding manually before reporting it.\n\n1. Confirm the DNS record and where it points: `dig CNAME subdomain.victim.com`\n\n1. Confirm the response matches the expected fingerprint for that service provider as listed in [can-i-take-over-xyz](https://github.com/EdOverflow/can-i-take-over-xyz): `curl -i http://subdomain.victim.com`\n\n1. Confirm the resource is unclaimed on the service provider's platform. Do not claim it.\n\n#### Cloud-Specific Takeovers\n\nMajor cloud providers have distinct takeover patterns worth specific attention:\n\n- AWS S3: A CNAME pointing to an S3 bucket URL (for example, `bucket.s3.amazonaws.com`) where the bucket no longer exists returns a `NoSuchBucket` response. Anyone who creates a bucket with the same name in any AWS account can claim the subdomain.\n- Azure: Dangling CNAMEs pointing to deprovisioned Azure resources such as App Services or Traffic Manager endpoints can be claimed by registering the same resource name in a different Azure subscription.\n- GCP: Similar patterns exist for Cloud Storage buckets and Firebase Hosting endpoints.\n\n### Gray-Box Testing\n\nThe tester has the DNS zone file available, which means DNS enumeration is not necessary. The testing methodology is the same.\n\n## Remediation\n\nTo mitigate the risk of subdomain takeover, the vulnerable DNS resource record(s) should be removed from the DNS zone. Continuous monitoring and periodic checks are recommended as best practice.\n\n## Tools\n\n- [subfinder - Subdomain enumeration tool](https://github.com/projectdiscovery/subfinder)\n- [subzy - Subdomain takeover detection tool](https://github.com/LukaSikic/subzy)\n- [nuclei - Vulnerability scanner with takeover templates](https://github.com/projectdiscovery/nuclei)\n- [nuclei-templates - Community takeover templates](https://github.com/projectdiscovery/nuclei-templates)\n- [can-i-take-over-xyz - Vulnerable service fingerprint database](https://github.com/EdOverflow/can-i-take-over-xyz)\n- [dig - DNS lookup utility](https://man.cx/dig)\n- [OWASP Domain Protect](https://owasp.org/www-project-domain-protect)\n\n## References\n\n- [HackerOne - A Guide To Subdomain Takeovers](https://www.hackerone.com/blog/Guide-Subdomain-Takeovers)\n- [Subdomain Takeover: Basics](https://0xpatrik.com/subdomain-takeover-basics/)\n- [Subdomain Takeover: Going beyond CNAME](https://0xpatrik.com/subdomain-takeover-ns/)\n- [can-i-take-over-xyz - A list of vulnerable services](https://github.com/EdOverflow/can-i-take-over-xyz/)\n- [OWASP AppSec Europe 2017 - Frans Rosén: DNS hijacking using cloud providers – no verification needed](https://2017.appsec.eu/presos/Developer/DNS%20hijacking%20using%20cloud%20providers%20%E2%80%93%20no%20verification%20needed%20-%20Frans%20Rosen%20-%20OWASP_AppSec-Eu_2017.pdf)",
+      "code_snippet": "// language: http\nHTTP/1.1 404 Not Found\n...\n<p>There isn't a GitHub Pages site here.</p>",
+      "code_languages": [
+        "http"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 4,
+      "difficulty": "Advanced",
+      "tags": [
+        "Subdomain",
+        "Takeover",
+        "Summary",
+        "Github",
+        "Expired",
+        "Domain"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test for Subdomain Takeover",
+      "table_of_contents": [
+        "Test for Subdomain Takeover",
+        "Summary",
+        "GitHub",
+        "Expired Domain",
+        "Test Objectives",
+        "How to Test",
+        "Black-Box Testing",
+        "Gray-Box Testing",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 22,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/10-Test_for_Subdomain_Takeover.md",
+      "content_hash": "a5d736dba13a3a7dcad96d2c1805a5844c2b4f84ba193f26fca0368ae710d91b",
+      "next_lesson_slug": "test-cloud-storage",
+      "previous_lesson_slug": "test-file-permission",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "test-cloud-storage",
+      "slug": "test-cloud-storage",
+      "title": "Test Cloud Storage",
+      "body": "{% include breadcrumb.html %}\n# Test Cloud Storage\n\n|ID          |\n|------------|\n|WSTG-CONF-11|\n\n## Summary\n\nCloud storage services allow web applications and services to store and access objects in the storage service. Improper access control configuration, however, may lead to the exposure of sensitive information, data tampering, or unauthorized access.\n\nA known example is where an Amazon S3 bucket is misconfigured, although the other cloud storage services may also be exposed to similar risks. By default, all S3 buckets are private and can be accessed only by users who are explicitly granted access. Users can grant public access not only to the bucket itself but also to individual objects stored within that bucket. This may lead to an unauthorized user being able to upload new files, modify or read stored files.\n\n## Test Objectives\n\n- Assess that the access control configuration for the storage services is properly in place.\n\n## How to Test\n\nFirst, identify the URL to access the data in the storage service, and then consider the following tests:\n\n- Read unauthorized data\n- Upload a new arbitrary file\n\nYou may use curl for the tests with the following commands and see if unauthorized actions can be performed successfully.\n\nTo test the ability to read an object:\n\nTo test the ability to upload a file:\n\nIn the above command, it is recommended to replace the single quotes (') with double quotes (\") when running the command on a Windows machine.\n\n### Testing for Amazon S3 Bucket Misconfiguration\n\nThe Amazon S3 bucket URLs follow one of two formats, either virtual host style or path-style.\n\n- Virtual Hosted Style Access\n\nIn the following example, `my-bucket` is the bucket name, `us-west-2` is the region, and `puppy.png` is the key-name:\n\n- Path-Style Access\n\nAs above, in the following example, `my-bucket` is the bucket name, `us-west-2` is the region, and `puppy.png` is the key-name:\n\nFor some regions, the legacy global endpoint that does not specify a region-specific endpoint can be used. Its format is also either virtual hosted style or path-style.\n\n- Virtual Hosted Style Access\n\n- Path-Style Access\n\n#### Identify Bucket URL\n\nFor black-box testing, S3 URLs can be found in the HTTP messages. The following example shows a bucket URL is sent in the `img` tag in an HTTP response.\n\nFor gray-box testing, you can obtain bucket URLs from Amazon's web interface, documents, source code, and any other available sources.\n\n#### Testing with AWS-CLI\n\nIn addition to testing with curl, you can also test with the AWS command-line tool. In this case `s3://` URI scheme is used.\n\n##### List\n\nThe following command lists all the objects of the bucket when it is configured public:\n\n##### Upload\n\nThe following is the command to upload a file:\n\nThis example shows the result when the upload has been successful.\n\nThis example shows the result when the upload has failed.\n\n##### Remove\n\nThe following is the command to remove an object:\n\n## Tools\n\n- [AWS CLI](https://aws.amazon.com/cli/)\n\n## References\n\n- [Working with Amazon S3 Buckets](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html)\n- [flAWS 2 - Learn AWS Security](http://flaws2.cloud)\n- [curl Tutorial](https://curl.se/docs/manual.html)",
+      "code_snippet": "// language: bash\ncurl -X GET https://<cloud-storage-service>/<object>\n\n// language: bash\ncurl -X PUT -d 'test' 'https://<cloud-storage-service>/test.txt'\n\n// language: text\nhttps://bucket-name.s3.Region.amazonaws.com/key-name\n\n// language: text\nhttps://my-bucket.s3.us-west-2.amazonaws.com/puppy.png\n\n// language: text\nhttps://s3.Region.amazonaws.com/bucket-name/key-name\n\n// language: text\nhttps://s3.us-west-2.amazonaws.com/my-bucket/puppy.png\n\n// language: text\nhttps://bucket-name.s3.amazonaws.com\n\n// language: text\nhttps://s3.amazonaws.com/bucket-name\n\n// language: html\n...\n<img src=\"https://my-bucket.s3.us-west-2.amazonaws.com/puppy.png\">\n...\n\n// language: bash\naws s3 ls s3://<bucket-name>\n\n// language: bash\naws s3 cp arbitrary-file s3://bucket-name/path-to-save\n\n// language: bash\n$ aws s3 cp test.txt s3://bucket-name/test.txt\nupload: ./test.txt to s3://bucket-name/test.txt\n\n// language: bash\n$ aws s3 cp test.txt s3://bucket-name/test.txt\nupload failed: ./test2.txt to s3://bucket-name/test2.txt An error occurred (AccessDenied) when calling the PutObject operation: Access Denied\n\n// language: bash\naws s3 rm s3://bucket-name/object-to-remove",
+      "code_languages": [
+        "bash",
+        "html",
+        "text"
+      ],
+      "has_image": true,
+      "image_url": "https://my-bucket.s3.us-west-2.amazonaws.com/puppy.png",
+      "reading_minutes": 3,
+      "difficulty": "Advanced",
+      "tags": [
+        "Cloud",
+        "Storage",
+        "Summary",
+        "Objectives",
+        "Amazon",
+        "Bucket"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Cloud Storage",
+      "table_of_contents": [
+        "Test Cloud Storage",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Testing for Amazon S3 Bucket Misconfiguration",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 23,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/11-Test_Cloud_Storage.md",
+      "content_hash": "12f9ffb7c9a174a1f869278097273fb02d38c91b3ae14c3291992a4a92db779b",
+      "next_lesson_slug": "test-for-content-security-policy",
+      "previous_lesson_slug": "test-for-subdomain-takeover",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "test-for-content-security-policy",
+      "slug": "test-for-content-security-policy",
+      "title": "Test for Content Security Policy",
+      "body": "{% include breadcrumb.html %}\n# Testing for Content Security Policy\n\n|ID          |\n|------------|\n|WSTG-CONF-12|\n\n## Summary\n\nContent Security Policy (CSP) is a declarative allow-list policy enforced through `Content-Security-Policy` response header or equivalent `<meta>` element. It allows developers to restrict the sources from which resources such as JavaScript, CSS, images, files etc. are loaded. CSP is an effective defense in depth technique to mitigate the risk of vulnerabilities such as Cross Site Scripting (XSS) and Clickjacking.\n\nContent Security Policy supports directives which allow granular control to the flow of policies. (See [References](#references) for further details.)\n\n## Test Objectives\n\n- Review the Content-Security-Policy header or meta element to identify misconfigurations.\n\n## How to Test\n\nTesting for Content Security Policy (CSP) weaknesses requires more than verifying the presence of the header. The tester should evaluate whether the policy meaningfully reduces the attack surface and is properly enforced.\n\n### Identify and Confirm CSP Enforcement\n\n- Inspect HTTP responses for the presence of the `Content-Security-Policy` header.\n- Check for `Content-Security-Policy-Report-Only`. If only Report-Only is present, the policy is not enforced.\n- Verify whether CSP is delivered via HTTP header or `<meta>` tag (HTTP headers are preferred).\n- Consider that CSP delivered via `<meta>` tags does not support certain directives such as `frame-ancestors`, `report-uri`, `report-to`, or `sandbox`.\n- Confirm that the policy is consistently applied across sensitive endpoints.\n\n### Review High-Risk Directives\n\nInspect the policy for insecure or overly permissive directives:\n\n- `unsafe-inline` allows inline scripts or styles and significantly weakens XSS protections.\n- `unsafe-eval` permits dynamic code evaluation (`eval()`), increasing bypass risk.\n- `unsafe-hashes` may allow inline execution if hashes are predictable or improperly scoped.\n- Wildcard (`*`) sources may allow loading resources from any origin.\n    - Partial wildcards such as `https://*` or `*.cdn.com` should be carefully evaluated.\n    - Determine whether allowlisted domains host JSONP endpoints or user-controlled content.\n- Absence or misuse of `frame-ancestors` may expose the application to clickjacking.\n- Missing `object-src`, `base-uri`, or restrictive `default-src` directives may weaken policy effectiveness.\n- Review usage of `require-trusted-types-for` and `trusted-types`. In high-risk applications, absence of Trusted Types may leave DOM-based injection sinks exposed. If `trusted-types` policies are defined, ensure they are not overly permissive.\n- Check for duplicate directives or conflicting policy definitions that may result in unintended enforcement behavior.\n\n### Validate Nonce and strict-dynamic Usage\n\nIf the policy uses nonces:\n\n- Confirm that nonces are cryptographically random.\n- Verify that nonces are regenerated per response and not reused.\n- Ensure that legacy inline script patterns are not inadvertently trusted.\n\nIf `strict-dynamic` is used:\n\n- Understand that trust propagates from nonce- or hash-based scripts.\n- Confirm that no unsafe trust chain allows attacker-controlled script loading.\n\n### Evaluate CSP Reporting Mechanisms\n\nIf `report-uri` or `report-to` is configured:\n\n- Verify that reporting endpoints are reachable and functional.\n- Determine whether sensitive information is exposed in reports.\n- Confirm that reporting does not create new injection or denial-of-service vectors.\n\n### Attempt Controlled Bypass Techniques\n\nWhere appropriate and authorized, attempt to validate enforcement by testing controlled payloads:\n\n- Inline script injection attempts.\n- Data URL–based payloads.\n- JSONP callback manipulation from allowlisted domains.\n- DOM-based gadget chaining using trusted script sources.\n\nSuccessful execution of injected JavaScript indicates CSP misconfiguration or ineffective enforcement.\n\n### Assess Policy Strength\n\nBusiness-critical applications should aim to implement a strict policy. A robust CSP typically:\n\n- Avoids `unsafe-inline` and `unsafe-eval`.\n- Uses nonce- or hash-based script controls.\n- Restricts object embedding (`object-src 'none'`).\n- Restricts base tag manipulation (`base-uri 'none'`).\n- Restricts framing using `frame-ancestors`.\n\n### Common CSP Bypass Patterns\n\nEven when CSP is present, misconfigurations or design weaknesses may allow bypass. Testers should consider the following common patterns:\n\n#### JSONP and Trusted Third-Party Endpoints\n\nIf a CSP allowlists third-party domains (e.g., CDNs), determine whether those domains expose JSONP endpoints or user-controlled content. Attackers may leverage callback injection to execute arbitrary JavaScript while still complying with the policy.\n\n#### Wildcard and Broad Source Policies\n\nPolicies that rely on wildcards (`*`, `https://*`, `*.example.com`) significantly expand the trust boundary. Subdomain takeovers or compromised third-party services may enable bypass within the allowed scope.\n\n#### Nonce Reuse or Predictable Nonces\n\nIf nonces are reused across requests or generated predictably, attackers may reuse or guess them to execute injected scripts. Each response should generate a fresh, cryptographically strong nonce.\n\n#### Over-Reliance on strict-dynamic\n\nWhile `strict-dynamic` improves nonce-based policies, trust propagates from trusted scripts. If a trusted script loads attacker-controlled resources, the protection may be weakened.\n\n#### Missing Defense-in-Depth Directives\n\nAbsence of directives such as:\n\n- `object-src 'none'`\n- `base-uri 'none'`\n- `frame-ancestors`\n\nmay leave the application exposed to object injection, base tag manipulation, or clickjacking, even if script execution is partially restricted.\n\n#### CSP in Report-Only Mode\n\nApplications sometimes deploy CSP in `Report-Only` mode indefinitely. In such cases, violations are logged but not blocked, providing no real protection.\n\n## Remediation\n\nOrganizations should implement a strong, well-scoped Content Security Policy that meaningfully reduces the attack surface rather than simply satisfying compliance requirements.\n\n### General Recommendations\n\n- Avoid use of `unsafe-inline` and `unsafe-eval`.\n- Prefer nonce- or hash-based script controls.\n- Use a restrictive `default-src` directive.\n- Explicitly define:\n    - `object-src 'none'`\n    - `base-uri 'none'`\n    - `frame-ancestors`\n- Minimize the number of allowlisted third-party domains.\n- Regularly review CSP policies when introducing new frontend dependencies.\n\n### Deployment Best Practices\n\n- Deploy `Content-Security-Policy-Report-Only` temporarily for testing, then enforce `Content-Security-Policy` once validated.\n- Monitor violation reports for legitimate breakage and potential attack attempts.\n- Prefer `report-to` (CSP Level 3) while maintaining `report-uri` for backward compatibility where required.\n- Ensure nonces are cryptographically random and regenerated per response.\n- Review policies during major frontend refactoring or framework changes.\n\n### Strict Policy Guidance\n\nA strict policy provides protection against stored, reflected, and certain DOM-based XSS attacks and should be the goal for high-risk or business-critical applications.\n\nBased on nonce-based approaches, example policies include:\n\nModerate Strict Policy:\n\nLocked Down Strict Policy:\n\n> Note: `'nonce-r4nd0m'` is shown as an example placeholder. In practice, nonces must be cryptographically strong, base64-encoded values that are uniquely generated for every HTTP response.\n\nTeams should adapt strict policies carefully, ensuring compatibility with application architecture while maintaining security objectives.\n\n## Tools\n\n- [Google CSP Evaluator](https://csp-evaluator.withgoogle.com/)\n- [CSP Auditor - Burp Suite Extension](https://portswigger.net/bappstore/35237408a06043e9945a11016fcbac18)\n- [CSP Generator Chrome](https://chrome.google.com/webstore/detail/content-security-policy-c/ahlnecfloencbkpfnpljbojmjkfgnmdc) / [Firefox](https://addons.mozilla.org/en-US/firefox/addon/csp-generator/)\n- [CSP Validator](https://cspvalidator.netlify.app/)\n- [OWASP ZAP](https://www.zaproxy.org/) – Includes automated and passive analysis for CSP misconfigurations.\n- [CSPBypass](https://cspbypass.com/) – Tool designed to help security testers analyze and attempt bypass techniques against restrictive CSP implementations.\n\n## References\n\n- [OWASP Content Security Policy Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html)\n- [Mozilla Developer Network: Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)\n- [CSP Level 3 W3C](https://www.w3.org/TR/CSP3/)\n- [CSP with Google](https://csp.withgoogle.com/docs/index.html)\n- [Content-Security-Policy](https://content-security-policy.com/)\n- [CSP A Successful Mess Between Hardening And Mitigation](https://speakerdeck.com/lweichselbaum/csp-a-successful-mess-between-hardening-and-mitigation)\n- [The unsafe-hashes Source List Keyword](https://content-security-policy.com/unsafe-hashes/)",
+      "code_snippet": "// language: http\nscript-src 'nonce-r4nd0m' 'strict-dynamic';\nobject-src 'none';\nbase-uri 'none';\n\n// language: http\nscript-src 'nonce-r4nd0m';\nobject-src 'none';\nbase-uri 'none';",
+      "code_languages": [
+        "http"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 6,
+      "difficulty": "Advanced",
+      "tags": [
+        "Content",
+        "Security",
+        "Policy",
+        "Summary",
+        "Objectives",
+        "Identify"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing for Content Security Policy",
+      "table_of_contents": [
+        "Testing for Content Security Policy",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Identify and Confirm CSP Enforcement",
+        "Review High-Risk Directives",
+        "Validate Nonce and strict-dynamic Usage",
+        "Evaluate CSP Reporting Mechanisms",
+        "Attempt Controlled Bypass Techniques",
+        "Assess Policy Strength",
+        "Common CSP Bypass Patterns",
+        "Remediation",
+        "General Recommendations",
+        "Deployment Best Practices",
+        "Strict Policy Guidance",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 24,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/12-Test_for_Content_Security_Policy.md",
+      "content_hash": "fd63732b31ae10b6a7983c1ceb621fc2b2fa9b47b3e68583a463e57a5092c5fd",
+      "next_lesson_slug": "test-for-path-confusion",
+      "previous_lesson_slug": "test-cloud-storage",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "test-for-path-confusion",
+      "slug": "test-for-path-confusion",
+      "title": "Test for Path Confusion",
+      "body": "{% include breadcrumb.html %}\n# Test Path Confusion\n\n|ID          |\n|------------|\n|WSTG-CONF-13|\n\n## Summary\n\nProper configuration of application paths is important because, if paths are not configured correctly, they allow an attacker to exploit other vulnerabilities at a later stage using this misconfiguration.\n\nFor example, if the routes are not configured correctly and the target also uses a CDN, the attacker can use this misconfiguration to execute web cache deception attacks.\n\nAs a result, to prevent other attacks, this configuration should be evaluated by the tester.\n\n## Test Objectives\n\n- Make sure application paths are configured correctly.\n\n## How To Test\n\n### Black-Box Testing\n\nIn a black-box testing scenario, the tester should replace all the existing paths with paths that do not exist, and then examine the behavior and status code of the target.\n\nFor example, there is a path in the application that is a dashboard and shows the amount of the user's account balance (money, game credits, etc).\n\nAssume the path is `https://example.com/user/dashboard`, the tester should test the different modes that the developer may have considered for this path. For Web Cache Deception vulnerabilities the analyst should consider a path such as `https:// example.com/user/dashboard/non.js` if dashboard information is visible, and the target uses a CDN (or other web cache), then Web Cache Deception attacks are likely applicable.\n\n### White-Box Testing\n\nExamine the application routing configuration, Most of the time, developers use regular expressions in application routing.\n\nIn this example, in the `urls.py` file of a Django framework application, we see an example of Path Confusion. The developer did not use the correct regular expression resulting in a vulnerability:\n\nIf the path `https://example.com/dashboard/none.js` is also opened by the user in the browser, the user dashboard information can be displayed, and if the target uses a CDN or web cache, a Web Cache Deception attack can be implemented.\n\n## Tools\n\n- [Zed Attack Proxy](https://www.zaproxy.org)\n- [Burp Suite](https://portswigger.net/burp)\n\n## Remediation\n\n- Refrain from classify/handling cached based on file extension or path (leverage content-type).\n- Ensure the caching mechanism(s) adhere to cache-control headers specified by your application.\n- Implement RFC compliant File Not Found handling and redirects.\n\n## References\n\n- [Bypassing Web Cache Poisoning Countermeasures](https://portswigger.net/research/bypassing-web-cache-poisoning-countermeasures)\n- [Path confusion: Web cache deception threatens user information online](https://portswigger.net/daily-swig/path-confusion-web-cache-deception-threatens-user-information-online)\n- [Web Cache Deception Attack](https://omergil.blogspot.com/2017/02/web-cache-deception-attack.html)",
+      "code_snippet": "// language: python\n    from django.urls import re_path\n    from . import views\n\n    urlpatterns = [\n\n        re_path(r'.*^dashboard', views.path_confusion ,name = 'index'),\n\n    ]",
+      "code_languages": [
+        "python"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 2,
+      "difficulty": "Advanced",
+      "tags": [
+        "Path",
+        "Confusion",
+        "Summary",
+        "Objectives",
+        "Black-box",
+        "White-box"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Path Confusion",
+      "table_of_contents": [
+        "Test Path Confusion",
+        "Summary",
+        "Test Objectives",
+        "How To Test",
+        "Black-Box Testing",
+        "White-Box Testing",
+        "Tools",
+        "Remediation",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 25,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/13-Test_for_Path_Confusion.md",
+      "content_hash": "5446ee81229ec679ef4e7df10dce1c2def4f0e2ab635284db8b0def7eaa45b36",
+      "next_lesson_slug": "test-other-http-security-header-misconfigurations",
+      "previous_lesson_slug": "test-for-content-security-policy",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    },
+    {
+      "id": "test-other-http-security-header-misconfigurations",
+      "slug": "test-other-http-security-header-misconfigurations",
+      "title": "Test Other HTTP Security Header Misconfigurations",
+      "body": "{% include breadcrumb.html %}\n# Test Other HTTP Security Header Misconfigurations\n\n| ID         |\n|------------|\n|WSTG-CONF-14|\n\n## Summary\n\nSecurity headers play a vital role in protecting web applications from a wide range of attacks, including Cross-Site Scripting (XSS), Clickjacking, and data injection attacks. These headers instruct the browser on how to handle security-related aspects of a website’s communication, reducing exposure to known attack vectors. However, misconfigurations can lead to vulnerabilities, weakening the intended security protections or rendering them ineffective. This section outlines common security header misconfigurations, their risks, and how to properly test for them.\n\n## Test Objectives\n\n- Identify improperly configured security headers.\n- Assess the impact of misconfigured security headers.\n- Validate the correct implementation of required security headers.\n\n## Common Security Header Misconfigurations\n\n- **Security Header with an Empty Value:** Headers that are present but lack a value may be ignored by browsers, making them ineffective.\n- **Security Header with an Invalid Value or Name (Typos):** Incorrect header names or misspellings result in headers not being recognized or enforced.\n- **Overpermissive Security Headers:** Headers configured too broadly (e.g., using wildcard characters `*` or overly permissive directives) can leak information or allow access to resources beyond the intended scope.\n- **Duplicate Security Headers:** Multiple occurrences of the same header with conflicting values can lead to unpredictable browser behavior, potentially disabling the security measures entirely.\n- **Legacy or Deprecated Headers:** Inclusion of obsolete headers (e.g., HPKP) or directives (e.g., `ALLOW-FROM` in X-Frame-Options) that are no longer supported by modern browsers may create unnecessary risks.\n- **Invalid Placement of Security Headers:** Some headers are only effective under specific conditions. For example, headers like HSTS must be delivered over HTTPS; if sent over HTTP, they become ineffective.\n- **META Tag Handling Mistakes:** In cases where security policies such as Content-Security-Policy (CSP) are enforced via both HTTP headers and META tags (using `http-equiv`), there is a risk that the META tag value might override or conflict with the secure logic defined in the HTTP header. This can lead to a scenario where an insecure policy inadvertently takes precedence, weakening the overall security posture.\n- **Hop-by-Hop Header Injection:** Occurs when intermediaries incorrectly process the `Connection` header, allowing attackers to list and \"strip\" sensitive internal security headers (like `X-Forwarded-For`) before the request reaches the backend.\n\n## Risks of Misconfigured Security Headers\n\n- **Reduced Effectiveness:** Misconfigured headers might not provide the intended protection, leaving the application vulnerable to attacks such as XSS, Clickjacking, or CORS-related exploits.\n- **Breakage of Security Measures:** Duplicate headers or conflicting directives can result in browsers ignoring the HTTP security headers entirely, thereby disabling the intended protections.\n- **Introduction of New Attack Vectors:** The use of legacy or deprecated headers may introduce risks rather than mitigate them if modern browsers no longer support the intended security measures.\n\n## How to Test\n\n### Fetch and Review HTTP Security Headers\n\nTo inspect the security headers used by an application, employ the following methods:\n\n- **Intercepting Proxies:** Use tools such as **Burp Suite** to analyze server responses.\n- **Command-line Tools:** Execute a curl command to retrieve HTTP response headers: `curl -I https://example.com`\n    - Sometimes the web application will redirect to a new page, in order to follow redirect use the following command:`curl -L -I https://example.com`\n    - Some Firewalls may block curl's default User-Agent and some TLS/SSL errors will also prevent it from returning the correct information, in this case you could try to use the following command:\n    `curl -I -L -k --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36\" https://example.com`\n- **Browser Developer Tools:** Open developer tools (F12), navigate to the **Network** tab, select a request, and view the **Headers** section.\n\n### Check for Overly Permissive Security Headers\n\n- **Identify Risky Headers:** Look for headers that could allow excessive access, such as:\n- **Evaluate Directives:** Verify whether strict directives are enforced. For example, an overpermissive setup might appear as:\n\n    ```http\n    Access-Control-Allow-Origin: *\n    Access-Control-Allow-Credentials: true\n    X-Permitted-Cross-Domain-Policies: all\n    Referrer-Policy: unsafe-url\n    ```\n\n    A safe configuration would look like:\n\n    ```http\n    Access-Control-Allow-Origin: {theallowedoriginurl}\n    X-Permitted-Cross-Domain-Policies: none\n    Referrer-Policy: no-referrer\n    ```\n\n- **Cross-Reference Documentation:** Use resources such as the [Mozilla Developer Network: Security Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers) to review secure and insecure directives.\n\n### Check for Duplicate, Deprecated / Obsolete Headers\n\n- **Duplicate Headers:** Ensure that the same header is not defined multiple times with conflicting values.\n- **Obsolete Headers:** Identify and remove deprecated headers (e.g., HPKP) and outdated directives (e.g., `ALLOW-FROM` in X-Frame-Options). Refer to sources like [Mozilla Developer Network: X-Frame-Options](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options) for current standards.\n\n### Confirm Proper Placement of Security Headers\n\n- **Protocol-Specific Requirements:** Validate that headers intended for secure contexts (e.g., HSTS) are delivered only under appropriate conditions (i.e., over HTTPS).\n- **Conditional Delivery:** Some headers may only be effective under specific circumstances. Verify that these conditions are met for the header to function as intended.\n\n### Evaluate META Tag Handling\n\n- **Dual Enforcement Checks:** When a security policy like CSP is applied through both an HTTP header and a META tag using `http-equiv`, confirm that the HTTP header (which is generally considered more authoritative) is not inadvertently overridden by the META tag.\n- **Review Browser Behavior:** Test the application in various browsers to see if any differences occur due to the presence of conflicting directives. Where possible, avoid using dual definitions to prevent unintended security lapses.\n\n### Test for Header Stripping (Hop-by-Hop Injection)\n\nAttackers can exploit this by listing sensitive security headers inside the `Connection` header. The proxy, following the standard, strips these headers before forwarding the request to the backend. This can lead to:\n\n- Bypassing IP-based Access Control Lists (ACLs).\n- Bypassing Identity/Authentication checks performed at the edge.\n- Disabling security features enforced by intermediary headers.\n\n#### Identification of Internal/Sensitive Headers (Reconnaissance)\n\nTo perform this test, you first need to identify which headers are used by the internal infrastructure. You can identify them by:\n\n- **Triggering Error Pages:** Send malformed requests to trigger error pages (404, 500), which might leak internal headers in the response.\n- **Reflection Endpoints:** Search for debugging or \"Echo\" pages (e.g., `/phpinfo`, `/debug`, `/env`) that display all headers received by the backend.\n- **Header Guessing:** Common targets include `X-Forwarded-For`, `X-Real-IP`, `X-Forwarded-Proto`, and `X-Authenticated-User`.\n\n#### Execution of the Injection\n\nAttempt to \"strip\" a target header by adding it as a value to the `Connection` header.\n\n##### Scenario A: Bypassing IP-based Restrictions\n\n##### Scenario B: Stripping Authentication Context\n\n#### Analyzing the Response\n\n- **Vulnerable:** The application behavior changes (e.g., access is granted, or a reflected IP disappears).\n- **Secure:** The application behavior remains unchanged, or the proxy returns a `400 Bad Request`.\n\n## Remediation\n\n- **Correct Header Configuration:** Ensure that headers are correctly implemented with proper values and no typos.\n- **Enforce Strict Directives:** Configure headers with the most secure settings that still allow for required functionality. For example, avoid using `*` in CORS policies unless absolutely necessary.\n- **Remove Deprecated Headers:** Replace legacy security headers with modern equivalents and remove any that are no longer supported.\n- **Avoid Conflicting Definitions:** Prevent duplicate header definitions and ensure that META tags do not conflict with HTTP headers for security policies.\n- **Restrict Connection Header:** Configure proxies to ignore client-supplied values in the `Connection` header that match sensitive internal headers.\n- **Zero Trust:** Avoid relying solely on hop-by-hop headers for critical security decisions.\n\n## Tools\n\n- [Mozilla Observatory](https://observatory.mozilla.org/)\n- [ZAP](https://www.zaproxy.org/)\n- [Burp Suite](https://portswigger.net/burp)\n- Browser Developer Tools (Chrome, Firefox, Edge)\n\n## References\n\n- [OWASP Secure Headers Project](https://owasp.org/www-project-secure-headers/)\n- [Mozilla Developer Network: Security Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers)\n- [RFC 6797 - HTTP Strict Transport Security (HSTS)](https://datatracker.ietf.org/doc/html/rfc6797)\n- [Google Web Security Guidelines](https://web.dev/security-headers/)\n- [HPKP is No More](https://scotthelme.co.uk/hpkp-is-no-more/)\n- [RFC 9110 - HTTP Semantics: Connection Header](https://datatracker.ietf.org/doc/html/rfc9110#section-7.6.1)\n- [Abusing HTTP Hop-by-Hop Request Headers](https://nathandavison.com/blog/abusing-http-hop-by-hop-request-headers)",
+      "code_snippet": "// language: http\nGET /admin HTTP/1.1\nHost: example.com\nX-Forwarded-For: 203.0.113.10\nConnection: close, X-Forwarded-For\n\n// language: http\nGET /api/user/profile HTTP/1.1\nHost: example.com\nX-Authenticated-User: victim_user\nConnection: close, X-Authenticated-User",
+      "code_languages": [
+        "http"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 6,
+      "difficulty": "Advanced",
+      "tags": [
+        "Other",
+        "HTTP",
+        "Security",
+        "Header",
+        "Misconfigurations",
+        "Summary"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Other HTTP Security Header Misconfigurations",
+      "table_of_contents": [
+        "Test Other HTTP Security Header Misconfigurations",
+        "Summary",
+        "Test Objectives",
+        "Common Security Header Misconfigurations",
+        "Risks of Misconfigured Security Headers",
+        "How to Test",
+        "Fetch and Review HTTP Security Headers",
+        "Check for Overly Permissive Security Headers",
+        "Check for Duplicate, Deprecated / Obsolete Headers",
+        "Confirm Proper Placement of Security Headers",
+        "Evaluate META Tag Handling",
+        "Test for Header Stripping (Hop-by-Hop Injection)",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 26,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management_Testing/14-Test_Other_HTTP_Security_Header_Misconfigurations.md",
+      "content_hash": "0dff227f58a805abf21d27e16b114fa017587866ab3c34a9d353db154ae5981f",
+      "next_lesson_slug": null,
+      "previous_lesson_slug": "test-for-path-confusion",
+      "related_lesson_slugs": [
+        "test-network-infrastructure-configuration",
+        "test-application-platform-configuration",
+        "test-file-extensions-handling-for-sensitive-information",
+        "enumerate-infrastructure-and-application-admin-interfaces",
+        "test-http-methods"
+      ]
+    }
+  ]
+}

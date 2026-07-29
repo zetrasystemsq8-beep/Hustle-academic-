@@ -1,0 +1,584 @@
+{
+  "id": "business-logic-testing",
+  "slug": "business-logic-testing",
+  "title": "Business Logic Testing",
+  "description": "Master Business Logic Testing through 11 focused lessons, covering Introduction to Business Logic, Test Business Logic Data Validation, Test Ability to Forge Requests, and 8 more. Includes practical examples and remediation guidance.",
+  "category": "Cyber Security",
+  "instructor": "Hustle Academy",
+  "icon": "Icons.security",
+  "color": "Colors.red",
+  "difficulty": "Advanced",
+  "duration_label": "1h 7m",
+  "total_minutes": 67,
+  "tags": [
+    "Introduction",
+    "Business",
+    "Logic",
+    "Limits",
+    "Restrictions",
+    "Challenges",
+    "Data",
+    "Validation"
+  ],
+  "prerequisites": [],
+  "lessons": [
+    {
+      "id": "introduction-to-business-logic",
+      "slug": "introduction-to-business-logic",
+      "title": "Introduction to Business Logic",
+      "body": "{% include breadcrumb.html %}\n# Introduction to Business Logic\n\nTesting for business logic flaws in a multi-functional dynamic web application requires thinking in unconventional methods. If an application's authentication mechanism is developed with the intention of performing steps 1, 2, 3 in that specific order to authenticate a user. What happens if the user goes from step 1 straight to step 3? In this simplistic example, does the application provide access by failing open; deny access, or just error out with a 500 message?\n\nThere are many examples that can be made, but the one constant lesson is \"think outside of conventional wisdom\". This type of vulnerability cannot be detected by a vulnerability scanner and relies upon the skills and creativity of the penetration tester. In addition, this type of vulnerability is usually one of the hardest to detect, and usually application specific but, at the same time, usually one of the most detrimental to the application, if exploited.\n\nThe classification of business logic flaws has been under-studied; although exploitation of business flaws frequently happens in real-world systems, and many applied vulnerability researchers investigate them. The greatest focus is in web applications. There is debate within the community about whether these problems represent particularly new concepts, or if they are variations of well-known principles.\n\nTesting of business logic flaws is similar to the test types used by functional testers that focus on logical or finite state testing. These types of tests require that security professionals think a bit differently, develop abuse and misuse cases and use many of the testing techniques embraced by functional testers. Automation of business logic abuse cases is not possible and remains a manual art relying on the skills of the tester and their knowledge of the complete business process and its rules.\n\n## Business Limits and Restrictions\n\nConsider the rules for the business function being provided by the application. Are there any limits or restrictions on people's behavior? Then consider whether the application enforces those rules. It's generally pretty easy to identify the test and analysis cases to verify the application if you're familiar with the business. If you are a third-party tester, then you're going to have to use your common sense or ask the business if different operations should be allowed by the application.\n\nSometimes, in very complex applications, the tester will not have a full understanding of every aspect of the application initially. In these situations, it is best to have the client walk the tester through the application, so that they may gain a better understanding of the limits and intended functionality of the application before the actual test begins. Additionally, having a direct line to the developers (if possible) during testing will help out greatly, if any questions arise regarding the application's functionality.\n\n## Challenges of Logic Testing\n\nAutomated tools find it hard to understand context, hence it's up to a person to perform these kinds of tests. The following two examples will illustrate how understanding the functionality of the application, the developer's intentions, and some creative \"out-of-the-box\" thinking can break the application's logic. The first example starts with a simplistic parameter manipulation, whereas the second is a real world example of a multi-step process leading to completely subverting the application.\n\n**Example 1**:\n\nSuppose an e-commerce site allows users to select items to purchase, view a summary page and then tender the sale. What if an attacker was able to go back to the summary page, maintaining their same valid session and inject a lower cost for an item and complete the transaction, and then check out?\n\n**Example 2**:\n\nHolding/locking resources and keeping others from purchasing these items online may result in attackers purchasing items at a lower price. The countermeasure to this problem is to implement timeouts and mechanisms to ensure that only the correct price can be charged.\n\n**Example 3**:\n\nWhat if a user was able to start a transaction linked to their club/loyalty account and then after points have been added to their account cancel out of the transaction? Will the points/credits still be applied to their account?\n\n## Tools\n\nWhile there are tools for testing and verifying that business processes are functioning correctly in valid situations these tools are incapable of detecting logical vulnerabilities. For example, tools have no means of detecting if a user is able to circumvent the business process flow through editing parameters, predicting resource names or escalating privileges to access restricted resources nor do they have any mechanism to help the human testers to suspect this state of affairs.\n\nThe following are some common tool types that can be useful in identifying business logic issues.\n\nWhen installing addons you should always be diligent in considering the permissions they request and your browser usage habits.\n\n### Intercepting Proxy\n\nTo Observe the Request and Response Blocks of HTTP Traffic\n\n- [Zed Attack Proxy (ZAP)](https://www.zaproxy.org)\n- [Burp Proxy](https://portswigger.net/burp)\n\n### Web Browser Plug-ins\n\nTo view and modify HTTP/HTTPS headers, post parameters, and observe the DOM of the Browser\n\n- [Tamper Data for FF Quantum](https://addons.mozilla.org/en-US/firefox/addon/tamper-data-for-ff-quantum)\n- [Tamper Chrome (for Google Chrome)](https://chrome.google.com/webstore/detail/tamper-chrome-extension/hifhgpdkfodlpnlmlnmhchnkepplebkb)\n\n## Miscellaneous Test Tools\n\n- [Web Developer toolbar](https://chrome.google.com/webstore/detail/bfbameneiokkgbdmiekhjnmfkcnldhhm)\n    - The Web Developer extension adds a toolbar button to the browser with various web developer tools. This is the official port of the Web Developer extension for Firefox.\n- [HTTP Request Maker for Chrome](https://chrome.google.com/webstore/detail/kajfghlhfkcocafkcjlajldicbikpgnp)\n- [HTTP Request Maker for Firefox](https://addons.mozilla.org/en-US/firefox/addon/http-request-maker)\n    - Request Maker is a tool for penetration testing. With it you can easily capture requests made by web pages, tamper with the URL, headers and POST data and, of course, make new requests\n- [Cookie Editor for Chrome](https://chrome.google.com/webstore/detail/fngmhnnpilhplaeedifhccceomclgfbg)\n- [Cookie Editor for Firefox](https://addons.mozilla.org/en-US/firefox/addon/cookie-editor)\n    - Cookie Editor is a cookie manager. You can add, delete, edit, search, protect, and block cookies\n\n## References\n\n### Whitepapers\n\n- [The Common Misuse Scoring System (CMSS): Metrics for Software Feature Misuse Vulnerabilities - NISTIR 7864](https://csrc.nist.gov/publications/detail/nistir/7864/final)\n- [Finite State testing of Graphical User Interfaces, Fevzi Belli](https://pdfs.semanticscholar.org/b57c/6c8022abfd2cb17ec785d3622027b3edfaaf.pdf)\n- [Principles and Methods of Testing Finite State Machines - A Survey, David Lee, Mihalis Yannakakis](https://ieeexplore.ieee.org/document/533956)\n- [Security Issues in Online Games, Jianxin Jeff Yan and Hyun-Jin Choi](https://www.researchgate.net/publication/220677013_Security_issues_in_online_games)\n- [Securing Virtual Worlds Against Real Attack, Dr. Igor Muttik, McAfee](https://www.info-point-security.com/open_downloads/2008/McAfee_wp_online_gaming_0808.pdf)\n- [Seven Business Logic Flaws That Put Your Website At Risk – Jeremiah Grossman Founder and CTO, WhiteHat Security](https://www.slideshare.net/jeremiahgrossman/seven-business-logic-flaws-that-put-your-website-at-risk-harvard-07062008)\n- [Toward Automated Detection of Logic Vulnerabilities in Web Applications - Viktoria Felmetsger Ludovico Cavedon Christopher Kruegel Giovanni Vigna](https://www.usenix.org/legacy/event/sec10/tech/full_papers/Felmetsger.pdf)\n\n### OWASP Related\n\n- [How to Prevent Business Flaws Vulnerabilities in Web Applications, Marco Morana](https://www.slideshare.net/slideshow/issa-louisville-2010morana/5391600)\n\n### Useful Sites\n\n- [Business logic](https://en.wikipedia.org/wiki/Business_logic)\n- [Business Logic Flaws and Yahoo Games](https://blog.jeremiahgrossman.com/2006/12/business-logic-flaws.html)\n- [CWE-840: Business Logic Errors](https://cwe.mitre.org/data/definitions/840.html)\n- [Defying Logic: Theory, Design, and Implementation of Complex Systems for Testing Application Logic](https://pdfs.semanticscholar.org/d14a/18f08f6488f903f2f691a1d159e95d8ee04f.pdf)\n\n### Books\n\n- [The Decision Model: A Business Logic Framework Linking Business and Technology, By Barbara Von Halle, Larry Goldberg, Published by CRC Press, ISBN1420082817 (2010)](https://isbnsearch.org/isbn/1420082817)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 6,
+      "difficulty": "Advanced",
+      "tags": [
+        "Introduction",
+        "Business",
+        "Logic",
+        "Limits",
+        "Restrictions",
+        "Challenges"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Introduction to Business Logic",
+      "table_of_contents": [
+        "Introduction to Business Logic",
+        "Business Limits and Restrictions",
+        "Challenges of Logic Testing",
+        "Tools",
+        "Intercepting Proxy",
+        "Web Browser Plug-ins",
+        "Miscellaneous Test Tools",
+        "References",
+        "Whitepapers",
+        "OWASP Related",
+        "Useful Sites",
+        "Books"
+      ],
+      "learning_objectives": [
+        "Understand business limits and restrictions",
+        "Understand challenges of logic testing",
+        "Understand tools"
+      ],
+      "order_index": 99,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/00-Introduction_to_Business_Logic.md",
+      "content_hash": "00a739697bcc0f8d064b1bee61fb40d69ad7329e917e61a366a1794974e45d53",
+      "next_lesson_slug": "test-business-logic-data-validation",
+      "previous_lesson_slug": null,
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-number-of-times-a-function-can-be-used-limits"
+      ]
+    },
+    {
+      "id": "test-business-logic-data-validation",
+      "slug": "test-business-logic-data-validation",
+      "title": "Test Business Logic Data Validation",
+      "body": "{% include breadcrumb.html %}\n# Test Business Logic Data Validation\n\n|ID          |\n|------------|\n|WSTG-BUSL-01|\n\n## Summary\n\nThe application must ensure that only logically valid data can be entered at the frontend as well as directly to the server-side of an application or system. Only verifying data on the client/frontend may leave applications vulnerable to server injections through proxies or at handoffs with other systems. This is different from simply performing Boundary Value Analysis (BVA) in that it is more difficult and in most cases cannot be simply verified at the entry point, but usually requires checking some other system.\n\nFor example: An application may ask for your Social Security Number. In BVA, the application should check formats and semantics (is the value 9 digits long, not negative, and not all 0's) for the data entered, but there are logic considerations also. SSNs are grouped and categorized. Is this person on a death file? Are they from a certain part of the country?\n\nVulnerabilities related to business data validation is unique in that they are application specific and different from the vulnerabilities related to forging requests in that they are more concerned about logical data as opposed to simply breaking the business logic workflow.\n\nThe frontend and the backend of the application should be verifying and validating that the data it has, is using, and is passing along is logically valid. Even if the user provides valid data to an application the business logic may make the application behave differently depending on data or circumstances.\n\n### Example 1\n\nSuppose you manage a multi-tiered e-commerce site that allows users to order carpet. The user selects their carpet, enters the size, makes the payment, and the frontend application has verified that all entered information is correct and valid for contact information, size, make and color of the carpet. But, the business logic in the background has two paths, if the carpet is in stock it is directly shipped from your warehouse, but if it is out of stock in your warehouse a call is made to a partner’s system and if they have it in-stock they will ship the order from their warehouse and reimbursed by them.\n\nWhat happens if an attacker is able to continue a valid in-stock transaction and send it as out-of-stock to your partner? What happens if an attacker is able to get in the middle and send messages to the partner warehouse ordering carpet without payment?\n\n### Example 2\n\nMany credit card systems are now downloading account balances nightly so the customers can check out more quickly for amounts under a certain value. The inverse is also true. If I pay my credit card off in the morning I may not be able to use the available credit in the evening. Another example may be if I use my credit card at multiple locations very quickly it may be possible to exceed my limit if the systems are basing decisions on last night’s data.\n\n### Example 3\n\n**[Distributed Denial of Dollar (DDo$)](https://news.hitb.org/content/pirate-bay-proposes-distributed-denial-dollars-attack-ddo):**\nThis was a campaign that was proposed by the founder of the site \"The Pirate Bay\" against the law firm who brought prosecutions against \"The Pirate Bay\". The goal was to take advantage of errors in the design of business features and in the process of credit transfer validation.\n\nThis attack was performed by sending very small amounts of money of 1 SEK ($0.13 USD) to the law firm.\nThe bank account to which the payments were directed had only 1000 free transfers, after which any transfers have a surcharge for the account holder (2 SEK). After the first thousand internet transactions every 1 SEK donation to the law firm will actually end up costing it 1 SEK instead.\n\n## Test Objectives\n\n- Identify data injection points.\n- Validate that all checks are occurring on the backend and can't be bypassed.\n- Attempt to break the format of the expected data and analyze how the application is handling it.\n\n## How to Test\n\n### Generic Test Method\n\n- Review the project documentation and use exploratory testing looking for data entry points or hand off points between systems or software.\n- Once found try to insert logically invalid data into the application/system.\n\nSpecific Testing Method:\n\n- Perform frontend GUI Functional Valid testing on the application to ensure that the only \"valid\" values are accepted.\n- Using an intercepting proxy observe the HTTP POST/GET looking for places that variables such as cost and quantity are passed. Specifically, look for \"hand-offs\" between application/systems that may be possible injection or tamper points.\n- Once variables are found start interrogating the field with logically \"invalid\" data, such as social security numbers or unique identifiers that do not exist or that do not fit the business logic. This testing verifies that the server functions properly and does not accept logically invalid data.\n\n## Related Test Cases\n\n- All [Input Validation](../07-Input_Validation_Testing/README.md) test cases.\n- [Testing for Account Enumeration and Guessable User Account](../03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.md).\n- [Testing for Bypassing Session Management Schema](../06-Session_Management_Testing/01-Testing_for_Session_Management_Schema.md).\n- [Testing for Exposed Session Variables](../06-Session_Management_Testing/04-Testing_for_Exposed_Session_Variables.md).\n\n## Remediation\n\nThe application/system must ensure that only \"logically valid\" data is accepted at all input and hand off points of the application or system and data is not simply trusted once it has entered the system.\n\n## Tools\n\n- [Zed Attack Proxy (ZAP)](https://www.zaproxy.org)\n- [Burp Suite](https://portswigger.net/burp)\n\n## References\n\n- [OWASP Proactive Controls (C5) - Validate All Inputs](https://owasp.org/www-project-proactive-controls/v3/en/c5-validate-inputs)\n- [OWASP Cheat Sheet Series - Input_Validation_Cheat_Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "Business",
+        "Logic",
+        "Data",
+        "Validation",
+        "Summary",
+        "Example"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Business Logic Data Validation",
+      "table_of_contents": [
+        "Test Business Logic Data Validation",
+        "Summary",
+        "Example 1",
+        "Example 2",
+        "Example 3",
+        "Test Objectives",
+        "How to Test",
+        "Generic Test Method",
+        "Related Test Cases",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 100,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/01-Test_Business_Logic_Data_Validation.md",
+      "content_hash": "fdf8ee5e83808abbc675dc87501b470e4c9bc17b6bb35bfa5738db3f57d9a36d",
+      "next_lesson_slug": "test-ability-to-forge-requests",
+      "previous_lesson_slug": "introduction-to-business-logic",
+      "related_lesson_slugs": [
+        "introduction-to-business-logic",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows"
+      ]
+    },
+    {
+      "id": "test-ability-to-forge-requests",
+      "slug": "test-ability-to-forge-requests",
+      "title": "Test Ability to Forge Requests",
+      "body": "{% include breadcrumb.html %}\n# Test Ability to Forge Requests\n\n|ID          |\n|------------|\n|WSTG-BUSL-02|\n\n## Summary\n\nForging requests is a method that attackers use to circumvent the frontend GUI application to directly submit information for backend processing. The goal of the attacker is to send HTTP POST/GET requests through an intercepting proxy with data values that are not supported, guarded against, or expected by the application's business logic. Some examples of forged requests include exploiting guessable or predictable parameters or exposing \"hidden\" features and functionality such as enabling debugging or presenting special screens or windows that are very useful during development but may leak information or bypass the business logic.\n\nVulnerabilities related to the ability to forge requests are unique to each application and different from business logic data validation in that its focus is on breaking the business logic workflow.\n\nApplications should have logic checks in place to prevent the system from accepting forged requests that may allow attackers the opportunity to exploit the business logic, process, or flow of the application. Request forgery is nothing new; the attacker uses an intercepting proxy to send HTTP POST/GET requests to the application. Through request forgeries attackers may be able to circumvent the business logic or process by finding, predicting and manipulating parameters to make the application think a process or task has or has not taken place.\n\nAlso, forged requests may allow subversion of programmatic or business logic flow by invoking \"hidden\" features or functionality such as debugging initially used by developers and testers sometimes referred to as an [\"Easter egg\"](https://en.wikipedia.org/wiki/Easter_egg_(media)). \"An Easter egg is an intentional inside joke, hidden message, or feature in a work such as a computer program, movie, book, or crossword. According to game designer Warren Robinett, the term was coined at Atari by personnel who were alerted to the presence of a secret message which had been hidden by Robinett in his already widely distributed game, Adventure. The name has been said to evoke the idea of a traditional Easter egg hunt.\"\n\n### Example 1\n\nSuppose an e-commerce theater site allows users to select their ticket, apply a onetime 10% Senior discount on the entire sale, view the subtotal and tender the sale. If an attacker is able to see through a proxy that the application has a hidden field (of 1 or 0) used by the business logic to determine if a discount has been taken already or not. The attacker is then able to submit the 1 or \"no discount has been taken\" value multiple times to take advantage of the same discount multiple times.\n\n### Example 2\n\nSuppose an online video game pays out tokens for points scored for finding pirate's treasure, pirates, and for each level completed. These tokens can later be exchanged for prizes. Additionally each level's points have a multiplier value equal to the level. If an attacker was able to see through a proxy that the application has a hidden field used during development and testing to quickly get to the highest levels of the game they could quickly get to the highest levels and accumulate unearned points quickly.\n\nAlso, if an attacker was able to see through a proxy that the application has a hidden field used during development and testing to enable a log that indicated where other online players, or hidden treasures were in relation to the attacker, they would then be able to quickly go to these locations and score points.\n\n## Test Objectives\n\n- Review the project documentation looking for guessable, predictable, or hidden functionality of fields.\n- Insert logically valid data in order to bypass normal business logic workflow.\n\n## How to Test\n\n### Through Identifying Guessable Values\n\n- Using an intercepting proxy observe the HTTP POST/GET looking for some indication that values are incrementing at a regular interval or are easily guessable.\n- If it is found that some value is guessable this value may be changed and one may gain unexpected visibility.\n\n### Through Identifying Hidden Options\n\n- Using an intercepting proxy observe the HTTP POST/GET looking for some indication of hidden features such as debug that can be switched on or activated.\n- If any are found try to guess and change these values to get a different application response or behavior.\n\n## Related Test Cases\n\n- [Testing for Exposed Session Variables](../06-Session_Management_Testing/04-Testing_for_Exposed_Session_Variables.md)\n- [Testing for Cross Site Request Forgery (CSRF)](../06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery.md)\n- [Testing for Account Enumeration and Guessable User Account](../03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.md)\n\n## Remediation\n\nThe application must be smart enough and designed with business logic that will prevent attackers from predicting and manipulating parameters to subvert programmatic or business logic flow, or exploiting hidden/undocumented functionality such as debugging.\n\n## Tools\n\n- [Zed Attack Proxy (ZAP)](https://www.zaproxy.org)\n- [Burp Suite](https://portswigger.net/burp)\n\n## References\n\n- [Easter egg](https://en.wikipedia.org/wiki/Easter_egg_(media))\n- [Top 10 Software Easter Eggs](https://lifehacker.com/371083/top-10-software-easter-eggs)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 4,
+      "difficulty": "Advanced",
+      "tags": [
+        "Ability",
+        "Forge",
+        "Requests",
+        "Summary",
+        "Example",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Ability to Forge Requests",
+      "table_of_contents": [
+        "Test Ability to Forge Requests",
+        "Summary",
+        "Example 1",
+        "Example 2",
+        "Test Objectives",
+        "How to Test",
+        "Through Identifying Guessable Values",
+        "Through Identifying Hidden Options",
+        "Related Test Cases",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 101,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/02-Test_Ability_to_Forge_Requests.md",
+      "content_hash": "72406b87710b1f4899d59b81a67ffc7ca4cd1e7add7749ac5899edc369e688c3",
+      "next_lesson_slug": "test-integrity-checks",
+      "previous_lesson_slug": "test-business-logic-data-validation",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows",
+        "test-defenses-against-application-misuse"
+      ]
+    },
+    {
+      "id": "test-integrity-checks",
+      "slug": "test-integrity-checks",
+      "title": "Test Integrity Checks",
+      "body": "{% include breadcrumb.html %}\n# Test Integrity Checks\n\n|ID          |\n|------------|\n|WSTG-BUSL-03|\n\n## Summary\n\nMany applications are designed to display different fields depending on the user or situation by leaving some inputs hidden. However, in many cases it is possible to submit hidden field values to the server using a proxy. In these cases the server-side controls must be smart enough to perform relational or server-side edits to ensure that the proper data is allowed to the server based on user and application specific business logic.\n\nAdditionally, the application must not depend on non-editable controls, drop-down menus or hidden fields for business logic processing because these fields remain non-editable only in the context of the browsers. Users may be able to edit their values using proxy editor tools and try to manipulate business logic. If the application exposes values related to business rules like quantity, etc. as non-editable fields, it must maintain a copy on the server-side and use the same for business logic processing. Finally, aside from application/system data, log systems must be secured to prevent read, writing, and updating.\n\nBusiness logic integrity check vulnerabilities are unique in that these misuse cases are application specific and if users are able to make changes, one should only be able to write or update/edit specific artifacts at specific times as per the business process logic.\n\nThe application must be smart enough to check for relational edits and not allow users to submit information directly to the server that is not valid, trusted because it came from a non-editable controls or the user is not authorized to submit through the frontend. Additionally, system artifacts such as logs must be \"protected\" from unauthorized read, writing and removal.\n\n### Example 1\n\nImagine an ASP.NET GUI application that only allows the admin user to change the password for other users in the system. The admin user will see the username and password fields to enter a username and password while other users will not see either field. However, if a non admin user submits information in the username and password field through a proxy they may be able to \"trick\" the server into believing that the request has come from an admin user and change password of other users.\n\n### Example 2\n\nMost web applications have dropdown lists making it easy for the user to quickly select their state, month of birth, etc. Suppose a Project Management application allowed users to login and depending on their privileges presented them with a drop down list of projects they have access to. What happens if an attacker finds the name of another project that they should not have access to and submits the information via a proxy. Will the application give access to the project? They should not have access even though they skipped an authorization business logic check.\n\n### Example 3\n\nSuppose the motor vehicle administration system required an employee initially verify each citizens' documentation and information when they issue an identification or driver's license. At this point the business process has created data with a high level of integrity as the integrity of submitted data is checked by the employees. Now suppose the application is moved to the internet so employees can log on for full service or citizens can log on for a reduced self-service application to update certain information. At this point an attacker may be able to use an intercepting proxy to add or update data that they should not have access to and they could destroy the integrity of the data by stating that the citizen was not married but supplying data for a spouse’s name. This type of inserting or updating of unverified data destroys the data integrity and might have been prevented if the business process logic was followed.\n\n### Example 4\n\nMany systems include logging for auditing and troubleshooting purposes. But, how good/valid is the information in these logs? Can they be manipulated by attackers either intentionally or accidentally having their integrity destroyed?\n\n## Test Objectives\n\n- Review the project documentation for components of the system that move, store, or handle data.\n- Determine what type of data is logically acceptable by the component and what types the system should guard against.\n- Determine who should be allowed to modify or read that data in each component.\n- Attempt to insert, update, or delete data values used by each component that should not be allowed per the business logic workflow.\n\n## How to Test\n\n### Specific Testing Method 1\n\n- Using a proxy capture HTTP traffic looking for hidden fields.\n- If a hidden field is found, see how these fields compare with the GUI application and start interrogating this value through the proxy by submitting different data values trying to circumvent the business process and manipulate values you were not intended to have access to.\n\n### Specific Testing Method 2\n\n- Using a proxy capture HTTP traffic looking for a place to insert information into areas of the application that are non-editable.\n- If it is found, see how these fields compare with the GUI application and start interrogating this value through the proxy by submitting different data values trying to circumvent the business process and manipulate values you were not intended to have access to.\n\n### Specific Testing Method 3\n\n- List components of the application or system that could be impacted, for example logs or databases.\n- For each component identified, try to read, edit or remove its information. For example log files should be identified and Testers should try to manipulate the data/information being collected.\n\n## Related Test Cases\n\nAll [Input Validation](../07-Input_Validation_Testing/README.md) test cases.\n\n## Remediation\n\nThe application should follow strict access controls on how data and artifacts can be modified and read, and through trusted channels that ensure the integrity of the data. Proper logging should be set in place to review and ensure that no unauthorized access or modification is happening.\n\n## Tools\n\n- Various system/application tools such as editors and file manipulation tools.\n- [Zed Attack Proxy (ZAP)](https://www.zaproxy.org)\n- [Burp Suite](https://portswigger.net/burp)\n\n## References\n\n- [Implementing Referential Integrity and Shared Business Logic in a RDB](https://agiledata.org/essays/referentialIntegrity.html)\n- [On Rules and Integrity Constraints in Database Systems](https://www.comp.nus.edu.sg/~lingtw/papers/IST92.teopk.pdf)\n- [Use referential integrity to enforce basic business rules in Oracle](https://www.techrepublic.com/article/use-referential-integrity-to-enforce-basic-business-rules-in-oracle/)\n- [Maximizing Business Logic Reuse with Reactive Logic](https://dzone.com/articles/maximizing-business-logic)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "Integrity",
+        "Checks",
+        "Summary",
+        "Example",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Integrity Checks",
+      "table_of_contents": [
+        "Test Integrity Checks",
+        "Summary",
+        "Example 1",
+        "Example 2",
+        "Example 3",
+        "Example 4",
+        "Test Objectives",
+        "How to Test",
+        "Specific Testing Method 1",
+        "Specific Testing Method 2",
+        "Specific Testing Method 3",
+        "Related Test Cases",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 102,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/03-Test_Integrity_Checks.md",
+      "content_hash": "69956d1b27cbed54b1f6c537594da98bb7340cf198138f17cfa7e8272eb939a5",
+      "next_lesson_slug": "test-for-process-timing",
+      "previous_lesson_slug": "test-ability-to-forge-requests",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows",
+        "test-defenses-against-application-misuse"
+      ]
+    },
+    {
+      "id": "test-for-process-timing",
+      "slug": "test-for-process-timing",
+      "title": "Test for Process Timing",
+      "body": "{% include breadcrumb.html %}\n# Test for Process Timing\n\n|ID          |\n|------------|\n|WSTG-BUSL-04|\n\n## Summary\n\nIt is possible that attackers can gather information on an application by monitoring the time it takes to complete a task or give a response. Additionally, attackers may be able to manipulate and break designed business process flows by simply keeping active sessions open and not submitting their transactions in the \"expected\" time frame.\n\nProcess timing logic vulnerabilities are unique in that these manual misuse cases should be created considering execution and transaction timing that are application/system specific.\n\nProcessing timing may give/leak information on what is being done in the application/system background processes. If an application allows users to guess what the particular next outcome will be by processing time variations, users will be able to adjust accordingly and change behavior based on the expectation and \"game the system\".\n\n### Example 1\n\nVideo gambling/slot machines may take longer to process a transaction just prior to a large payout. This would allow astute gamblers to gamble minimum amounts until they see the long process time which would then prompt them to bet the maximum.\n\n### Example 2\n\nMany system log on processes ask for the username and password. If you look closely you may be able to see that entering an invalid username and invalid user password takes more time to return an error than entering a valid username and invalid user password. This may allow the attacker to know if they have a valid username and not need to rely on the GUI message.\n\nA similar issue may be present in password reset functionality that would send an email to the user with a forgotten link or code, as sending emails can be significantly slower than just returning the HTTP response.\n\n![Example Control Flow of Login Form](images/Control_Flow_of_Login_Form.jpg)\\\n*Figure 4.10.4-1: Example Control Flow of Login Form*\n\n### Example 3\n\nMost Arenas or travel agencies have ticketing applications that allow users to purchase tickets and reserve seats. When the user requests the tickets, seats they pick are locked or reserved pending payment. What if an attacker keeps reserving seats but not checking out? Will the seats be released, or will no tickets be sold? Some ticket vendors now only allow users 5 minutes to complete a transaction or the transaction is invalidated.\n\n### Example 4\n\nSuppose a precious metals e-commerce site allows users to make purchases with a price quote based on market price at the time they log on. What if an attacker logs on and places an order but does not complete the transaction until later in the day only if the price of the metals goes up? Will the attacker get the initial lower price?\n\n## Test Objectives\n\n- Review the project documentation for system functionality that may be impacted by time.\n- Develop and execute misuse cases.\n\n## How to Test\n\nThe tester should identify which processes are dependent on time, whether it was a window for a task to be completed, or if it was execution time between two processes that could allow the bypass of certain controls.\n\nFollowing that, it is best to automate the requests that will abuse the above discovered processes, as tools are better fit to analyze the timing and are more precise than manual testing. If this is not possible, manual testing could still be used.\n\nThe tester should draw a diagram of how the process flows, the injection points, and prepare the requests before hand to launch them at the vulnerable processes. Once done, close analysis should be done to identify differences in the process execution, and if the process is misbehaving against the agreed upon business logic.\n\n## Related Test Cases\n\n- [Testing for Cookies Attributes](../06-Session_Management_Testing/02-Testing_for_Cookies_Attributes.md)\n- [Test Session Timeout](../06-Session_Management_Testing/07-Testing_Session_Timeout.md)\n\n## Remediation\n\nDevelop applications with processing time in mind. If attackers could possibly gain some type of advantage from knowing the different processing times and results add extra steps or processing so that no matter the results they are provided in the same time frame.\n\nAdditionally, the application/system must have mechanism in place to not allow attackers to extend transactions over an \"acceptable\" amount of time. This may be done by canceling or resetting transactions after a specified amount of time has passed like some ticket vendors are now using.",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": true,
+      "image_url": "images/Control_Flow_of_Login_Form.jpg",
+      "reading_minutes": 4,
+      "difficulty": "Advanced",
+      "tags": [
+        "Process",
+        "Timing",
+        "Summary",
+        "Example",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test for Process Timing",
+      "table_of_contents": [
+        "Test for Process Timing",
+        "Summary",
+        "Example 1",
+        "Example 2",
+        "Example 3",
+        "Example 4",
+        "Test Objectives",
+        "How to Test",
+        "Related Test Cases",
+        "Remediation"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 103,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/04-Test_for_Process_Timing.md",
+      "content_hash": "e160a267525bc5fd9ba6aefbf07f5f1501952c7c169e1d187d519d36f1535a9d",
+      "next_lesson_slug": "test-number-of-times-a-function-can-be-used-limits",
+      "previous_lesson_slug": "test-integrity-checks",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "testing-for-the-circumvention-of-work-flows",
+        "test-defenses-against-application-misuse"
+      ]
+    },
+    {
+      "id": "test-number-of-times-a-function-can-be-used-limits",
+      "slug": "test-number-of-times-a-function-can-be-used-limits",
+      "title": "Test Number of Times a Function Can Be Used Limits",
+      "body": "{% include breadcrumb.html %}\n# Test Number of Times a Function Can Be Used Limits\n\n|ID          |\n|------------|\n|WSTG-BUSL-05|\n\n## Summary\n\nMany of the problems that applications are solving require limits to the number of times a function can be used or action can be executed. Applications must be \"smart enough\" to not allow the user to exceed their limit on the use of these functions since in many cases each time the function is used the user may gain some type of benefit that must be accounted for to properly compensate the owner. For example: an eCommerce site may only allow a users apply a discount once per transaction, or some applications may be on a subscription plan and only allow users to download three complete documents monthly.\n\nVulnerabilities related to testing for the function limits are application specific and misuse cases must be created that strive to exercise parts of the application/functions/actions more than the allowable number of times.\n\nAttackers may be able to circumvent the business logic and execute a function more times than \"allowable\" exploiting the application for personal gain.\n\n### Example\n\nSuppose an eCommerce site allows users to take advantage of any one of many discounts on their total purchase and then proceed to checkout and tendering. What happens of the attacker navigates back to the discounts page after taking and applying the one \"allowable\" discount? Can they take advantage of another discount? Can they take advantage of the same discount multiple times?\n\n## Test Objectives\n\n- Identify functions that must set limits to the times they can be called.\n- Assess if there is a logical limit set on the functions and if it is properly validated.\n\n## How to Test\n\n- Review the project documentation and use exploratory testing looking for functions or features in the application or system that should not be executed more that a single time or specified number of times during the business logic workflow.\n- For each of the functions and features found that should only be executed a single time or specified number of times during the business logic workflow, develop abuse/misuse cases that may allow a user to execute more than the allowable number of times. For example, can a user navigate back and forth through the pages multiple times executing a function that should only execute once? or can a user load and unload shopping carts allowing for additional discounts.\n\n## Related Test Cases\n\n- [Testing for Account Enumeration and Guessable User Account](../03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.md)\n- [Testing for Weak lock out mechanism](../04-Authentication_Testing/03-Testing_for_Weak_Lock_Out_Mechanism.md)\n\n## Remediation\n\nThe application should set hard controls to prevent limit abuse. This can be achieved by setting a coupon to be no longer valid on the database level, to set a counter limit per user on the backend or database level, as all users should be identified through a session, whichever is better to the business requirement.\n\n## References\n\n- [Gold Trading Was Temporarily Halted On The CME This Morning](https://www.businessinsider.com/gold-halted-on-cme-for-stop-logic-event-2013-10)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 2,
+      "difficulty": "Advanced",
+      "tags": [
+        "Number",
+        "Times",
+        "Function",
+        "Can",
+        "Used",
+        "Limits"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Number of Times a Function Can Be Used Limits",
+      "table_of_contents": [
+        "Test Number of Times a Function Can Be Used Limits",
+        "Summary",
+        "Example",
+        "Test Objectives",
+        "How to Test",
+        "Related Test Cases",
+        "Remediation",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 104,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/05-Test_Number_of_Times_a_Function_Can_Be_Used_Limits.md",
+      "content_hash": "3c69a7fe54c61e76778804ff70b61e2fd96f004c2501fc99c38a461ac7b7e803",
+      "next_lesson_slug": "testing-for-the-circumvention-of-work-flows",
+      "previous_lesson_slug": "test-for-process-timing",
+      "related_lesson_slugs": [
+        "introduction-to-business-logic"
+      ]
+    },
+    {
+      "id": "testing-for-the-circumvention-of-work-flows",
+      "slug": "testing-for-the-circumvention-of-work-flows",
+      "title": "Testing for the Circumvention of Work Flows",
+      "body": "{% include breadcrumb.html %}\n# Testing for the Circumvention of Work Flows\n\n|ID          |\n|------------|\n|WSTG-BUSL-06|\n\n## Summary\n\nWorkflow vulnerabilities involve any type of vulnerability that allows the attacker to misuse an application/system in a way that will allow them to circumvent (not follow) the designed/intended workflow.\n\n[Definition of a workflow on Wikipedia](https://en.wikipedia.org/wiki/Workflow):\n\n> A workflow consists of a sequence of connected steps where each step follows without delay or gap and ends just before the subsequent step may begin. It is a depiction of a sequence of operations, declared as work of a person or group, an organization of staff, or one or more simple or complex mechanisms. Workflow may be seen as any abstraction of real work.\n\nThe application’s business logic must require that the user complete specific steps in the correct/specific order and if the workflow is terminated without correctly completing, all actions and spawned actions are \"rolled back\" or canceled. Vulnerabilities related to the circumvention of workflows or bypassing the correct business logic workflow are unique in that they are very application/system specific and careful manual misuse cases must be developed using requirements and use cases.\n\nThe applications business process must have checks to ensure that the user's transactions/actions are proceeding in the correct/acceptable order and if a transaction triggers some sort of action, that action will be \"rolled back\" and removed if the transaction is not successfully completed.\n\n### Example 1\n\nMany of us receive some type of \"club/loyalty points\" for purchases from grocery stores and gas stations. Suppose a user was able to start a transaction linked to their account and then after points have been added to their club/loyalty account cancel out of the transaction or remove items from their \"basket\" and tender. In this case the system either should not apply points/credits to the account until it is tendered or points/credits should be \"rolled back\" if the point/credit increment does not match the final tender. With this in mind, an attacker may start transactions and cancel them to build their point levels without actually buying anything.\n\n### Example 2\n\nAn electronic bulletin board system may be designed to ensure that initial posts do not contain profanity based on a list that the post is compared against. If a word on a deny list is found in the user entered text the submission is not posted. But, once a submission is posted the submitter can access, edit, and change the submission contents to include words included in the profanity/deny list since on edit the posting is never compared again. Keeping this in mind, attackers may open an initial blank or minimal discussion then add in whatever they like as an update.\n\n## Test Objectives\n\n- Review the project documentation for methods to skip or go through steps in the application process in a different order from the intended business logic flow.\n- Develop a misuse case and try to circumvent every logic flow identified.\n\n## How to Test\n\n### Testing Method 1\n\n- Start a transaction going through the application past the points that triggers credits/points to the users account.\n- Cancel out of the transaction or reduce the final tender so that the point values should be decreased and check the points/credit system to ensure that the proper points/credits were recorded.\n\n### Testing Method 2\n\n- On a content management or bulletin board system enter and save valid initial text or values.\n- Then try to append, edit and remove data that would leave the existing data in an invalid state or with invalid values to ensure that the user is not allowed to save the incorrect information. Some \"invalid\" data or information may be specific words (profanity) or specific topics (such as political issues).\n\n### Testing Method 3: Multi-Step Workflow and State Transition Abuse\n\nModern applications often implement workflows that span multiple requests, APIs, or backend services.\nIn such cases, workflow state may be inferred from client-controlled parameters or distributed system state rather than being strictly enforced server-side.\n\nAttackers may attempt to abuse these workflows by skipping required steps, reordering requests, or manipulating state transitions to reach unauthorized or unintended application states.\n\nCommon workflow and state transition abuse patterns include:\n\n- Skipping required workflow steps by directly invoking later-stage functionality\n- Reordering requests to bypass enforced sequence controls\n- Replaying or reusing state identifiers across workflow steps\n- Manipulating status, phase, or step parameters supplied by the client\n- Executing dependent actions in parallel to bypass sequence validation\n\nTest Steps:\n\n- Identify multi-step workflows and the functionality involved at each stage.\n- Capture requests associated with each workflow step and note any state or status parameters.\n- Attempt to invoke later-stage functionality without completing prerequisite steps.\n- Replay or reorder requests to determine whether sequence enforcement exists.\n- Modify state or status parameters to invalid, future, or unauthorized values.\n- Verify whether the application enforces workflow state validation server-side.\n\nExamples include:\n\n- Triggering order shipment or fulfillment actions without a confirmed payment step.\n- Accessing restricted or premium features by directly invoking activation or enablement endpoints.\n\n## Related Test Cases\n\n- [Testing Directory Traversal/File Include](../05-Authorization_Testing/01-Testing_Directory_Traversal_File_Include.md)\n- [Testing for Bypassing Authorization Schema](../05-Authorization_Testing/02-Testing_for_Bypassing_Authorization_Schema.md)\n- [Testing for Bypassing Session Management Schema](../06-Session_Management_Testing/01-Testing_for_Session_Management_Schema.md)\n- [Test Business Logic Data Validation](01-Test_Business_Logic_Data_Validation.md)\n- [Test Ability to Forge Requests](02-Test_Ability_to_Forge_Requests.md)\n- [Test Integrity Checks](03-Test_Integrity_Checks.md)\n- [Test for Process Timing](04-Test_for_Process_Timing.md)\n- [Test Number of Times a Function Can be Used Limits](05-Test_Number_of_Times_a_Function_Can_Be_Used_Limits.md)\n- [Test Defenses Against Application Mis-use](07-Test_Defenses_Against_Application_Misuse.md)\n- [Test Upload of Unexpected File Types](08-Test_Upload_of_Unexpected_File_Types.md)\n- [Test Upload of Malicious Files](09-Test_Upload_of_Malicious_Files.md)\n\n## Remediation\n\nThe application must be self-aware and have checks in place ensuring that the users complete each step in the work flow process in the correct order and prevent attackers from circumventing/skipping/or repeating any steps/processes in the workflow. Test for workflow vulnerabilities involves developing business logic abuse/misuse cases with the goal of successfully completing the business process while not completing the correct steps in the correct order.\n\n## References\n\n- [OWASP Abuse Case Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Abuse_Case_Cheat_Sheet.html)\n- [CWE-840: Business Logic Errors](https://cwe.mitre.org/data/definitions/840.html)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "Circumvention",
+        "Work",
+        "Flows",
+        "Summary",
+        "Example",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing for the Circumvention of Work Flows",
+      "table_of_contents": [
+        "Testing for the Circumvention of Work Flows",
+        "Summary",
+        "Example 1",
+        "Example 2",
+        "Test Objectives",
+        "How to Test",
+        "Testing Method 1",
+        "Testing Method 2",
+        "Testing Method 3: Multi-Step Workflow and State Transition Abuse",
+        "Related Test Cases",
+        "Remediation",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 105,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/06-Testing_for_the_Circumvention_of_Work_Flows.md",
+      "content_hash": "4b5a1f6c9731db5f0bd28ea65bbff77c8075f0f17368c64a84a722fdf3841493",
+      "next_lesson_slug": "test-defenses-against-application-misuse",
+      "previous_lesson_slug": "test-number-of-times-a-function-can-be-used-limits",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "test-defenses-against-application-misuse"
+      ]
+    },
+    {
+      "id": "test-defenses-against-application-misuse",
+      "slug": "test-defenses-against-application-misuse",
+      "title": "Test Defenses Against Application Misuse",
+      "body": "{% include breadcrumb.html %}\n# Test Defenses Against Application Misuse\n\n|ID          |\n|------------|\n|WSTG-BUSL-07|\n\n## Summary\n\nThe misuse and invalid use of valid functionality can identify attacks attempting to enumerate the web application, identify weaknesses, and exploit vulnerabilities. Tests should be undertaken to determine whether there are application-layer defensive mechanisms in place to protect the application.\n\nThe lack of active defenses allows an attacker to hunt for vulnerabilities without any recourse. The application's owner will thus not know their application is under attack.\n\n### Example\n\nAn authenticated user undertakes the following (unlikely) sequence of actions:\n\n1. Attempt to access a file ID their roles is not permitted to download\n2. Substitutes a single tick `'` instead of the file ID number\n3. Alters a GET request to a POST\n4. Adds an extra parameter\n5. Duplicates a parameter name/value pair\n\nThe application is monitoring for misuse and responds after the 5th event with extremely high confidence the user is an attacker. For example the application:\n\n- Disables critical functionality\n- Enables additional authentication steps to the remaining functionality\n- Adds time-delays into every request-response cycle\n- Begins to record additional data about the user's interactions (e.g. sanitized HTTP request headers, bodies and response bodies)\n\nIf the application does not respond in any way and the attacker can continue to abuse functionality and submit clearly malicious content at the application, the application has failed this test case. In practice the discrete example actions in the example above are unlikely to occur like that. It is much more probable that a fuzzing tool is used to identify weaknesses in each parameter in turn. This is what a security tester will have undertaken too.\n\n## Test Objectives\n\n- Generate notes from all tests conducted against the system.\n- Review which tests had a different functionality based on aggressive input.\n- Understand the defenses in place and verify if they are enough to protect the system against bypassing techniques.\n\n## How to Test\n\nThis test is unusual in that the result can be drawn from all the other tests performed against the web application. While performing all the other tests, take note of measures that might indicate the application has in-built self-defense:\n\n- Changed responses\n- Blocked requests\n- Actions that log a user out or lock their account\n\nThese may only be localized. Common localized (per function) defenses are:\n\n- Rejecting input containing certain characters\n- Locking out an account temporarily after a number of authentication failures\n\nLocalized security controls are not sufficient. There are often no defenses against general mis-use such as:\n\n- Forced browsing\n- Bypassing presentation layer input validation\n- Multiple access control errors\n- Additional, duplicated or missing parameter names\n- Multiple input validation or business logic verification failures with values that cannot be the result of user mistakes or typos\n- Structured data (e.g. JSON, XML) of an invalid format is received\n- Blatant cross-site scripting or SQL injection payloads are received\n- Utilizing the application faster than would be possible without automation tools\n- Change in continental geo-location of a user\n- Change of user agent\n- Accessing a multi-stage business process in the wrong order\n- Large number of, or high rate of use of, application-specific functionality (e.g. voucher code submission, failed credit card payments, file uploads, file downloads, log outs, etc).\n\n### UI Misrepresentation / Content Spoofing\n\nUI misrepresentation occurs when user-controlled input is rendered in trusted UI elements in a way that can mislead users or administrators, without requiring script execution. Unlike cross-site scripting, these issues rely on visual or contextual deception and can enable workflow abuse or social engineering within the application.\n\nThese issues represent application misuse because they abuse legitimate UI workflows and trust boundaries rather than exploiting a technical vulnerability.\n\nCommon examples include:\n\n- User-controlled filenames, titles, or labels displayed as system-generated messages\n- Renamed file uploads that appear as trusted documents or system artifacts\n- User-supplied text rendered as approval states, sender names, or workflow indicators\n\nFor example: an application allows users to name uploaded files. An attacker uploads a file named\n\"Payment Approved – Finance System\". When this filename is displayed in an administrative\nreview workflow without clear indication that it is user-supplied, reviewers may be misled\ninto approving a fraudulent process.\n\nDuring testing, assess whether:\n\n- User-controlled data is reflected in privileged or authoritative UI contexts\n- Injected text can mimic system messages, workflow states, or trusted labels\n- UI presentation could influence user decisions or business processes despite no technical exploit occurring\n\nThese defenses work best in authenticated parts of the application, although rate of creation of new accounts or accessing content (e.g. to scrape information) can be of use in public areas.\n\nNot all the above need to be monitored by the application, but there is a problem if none of them are. By testing the web application, doing the above type of actions, was any response taken against the tester? If not, the tester should report that the application appears to have no application-wide active defenses against misuse. Note it is sometimes possible that all responses to attack detection are silent to the user (e.g. logging changes, increased monitoring, alerts to administrators and and request proxying), so confidence in this finding cannot be guaranteed. In practice, very few applications (or related infrastructure such as a web application firewall) are detecting these types of misuse.\n\n## Related Test Cases\n\nAll other test cases are relevant.\n\n## Remediation\n\nApplications should implement active defenses to fend off attackers and abusers.\n\n## References\n\n- [Software Assurance](https://www.cisa.gov/uscert/sites/default/files/publications/infosheet_SoftwareAssurance.pdf), US Department Homeland Security\n- [IR 7684](https://csrc.nist.gov/publications/detail/nistir/7864/final) Common Misuse Scoring System (CMSS), NIST\n- [Common Attack Pattern Enumeration and Classification](https://capec.mitre.org/) (CAPEC), The Mitre Corporation\n- [OWASP AppSensor Project](https://owasp.org/www-project-appsensor/)\n- Watson C, Coates M, Melton J and Groves G, [Creating Attack-Aware Software Applications with Real-Time Defenses](https://pdfs.semanticscholar.org/0236/5631792fa6c953e82cadb0e7268be35df905.pdf), CrossTalk The Journal of Defense Software Engineering, Vol. 24, No. 5, Sep/Oct 2011",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 5,
+      "difficulty": "Advanced",
+      "tags": [
+        "Defenses",
+        "Against",
+        "Application",
+        "Misuse",
+        "Summary",
+        "Example"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Defenses Against Application Misuse",
+      "table_of_contents": [
+        "Test Defenses Against Application Misuse",
+        "Summary",
+        "Example",
+        "Test Objectives",
+        "How to Test",
+        "UI Misrepresentation / Content Spoofing",
+        "Related Test Cases",
+        "Remediation",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 106,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/07-Test_Defenses_Against_Application_Misuse.md",
+      "content_hash": "080946efa8b8e0a1b06cacc0d8c9e5672ae44619fe6dd255458454ebdb9736f8",
+      "next_lesson_slug": "test-upload-of-unexpected-file-types",
+      "previous_lesson_slug": "testing-for-the-circumvention-of-work-flows",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows"
+      ]
+    },
+    {
+      "id": "test-upload-of-unexpected-file-types",
+      "slug": "test-upload-of-unexpected-file-types",
+      "title": "Test Upload of Unexpected File Types",
+      "body": "{% include breadcrumb.html %}\n# Test Upload of Unexpected File Types\n\n|ID          |\n|------------|\n|WSTG-BUSL-08|\n\n## Summary\n\nMany applications' business processes allow for the upload and manipulation of data that is submitted via files. But the business process must check the files and only allow certain \"approved\" file types. Deciding what files are \"approved\" is determined by the business logic and is application/system specific. The risk is that by allowing users to upload files, attackers may submit an unexpected file type that could be executed and adversely impact the application or system through attacks that may deface the site, perform remote commands, browse the system files, browse the local resources, attack other servers, or exploit the local vulnerabilities, just to name a few.\n\nVulnerabilities related to the upload of unexpected file types is unique in that the upload should quickly reject a file if it does not have a specific extension. Additionally, this is different from uploading malicious files in that in most cases an incorrect file format may not by it self be inherently \"malicious\" but may be detrimental to the saved data. For example if an application accepts Windows Excel files, if a similar database file is uploaded it may be read but data extracted may be moved to incorrect locations.\n\nThe application may be expecting only certain file types to be uploaded for processing, such as `.csv` or `.txt` files. The application may not validate the uploaded file by extension (for low assurance file validation) or content (high assurance file validation). This may result in unexpected system or database results within the application/system or give attackers additional methods to exploit the application/system.\n\n### Example\n\nSuppose a picture sharing application allows users to upload a `.gif` or `.jpg` graphic file to the site. What if an attacker is able to upload an HTML file with a `<script>` tag in it or PHP file? The system may move the file from a temporary location to the final location where the PHP code can now be executed against the application or system.\n\n## Test Objectives\n\n- Review the project documentation for file types that are rejected by the system.\n- Verify that the unwelcomed file types are rejected and handled safely.\n- Verify that file batch uploads are secure and do not allow any bypass against the set security measures.\n\n## How to Test\n\n### Specific Testing Method\n\n- Study the applications logical requirements.\n- Prepare a library of files that are \"not approved\" for upload that may contain files such as: jsp, exe, or HTML files containing script.\n- In the application navigate to the file submission or upload mechanism.\n- Submit the \"not approved\" file for upload and verify that they are properly prevented from uploading\n- Check if the site only does file type checks in client-side JavaScript\n- Check if the site only checks the file type by \"Content-Type\" in HTTP request.\n- Check if the site only checks the file type by the file extension.\n- Check if other uploaded files can be accessed directly by specified URL.\n- Check if the uploaded file can include code or script injection.\n- Check if there is any file path checking for uploaded files. Especially, hackers may compress files with specified path in ZIP so that the extracted files can be uploaded to intended path after uploading and unzipping.\n\n## Related Test Cases\n\n- [Test File Extensions Handling for Sensitive Information](../02-Configuration_and_Deployment_Management_Testing/03-Test_File_Extensions_Handling_for_Sensitive_Information.md)\n- [Test Upload of Malicious Files](09-Test_Upload_of_Malicious_Files.md)\n\n## Remediation\n\nApplications should be developed with mechanisms to only accept and manipulate \"acceptable\" files that the rest of the application functionality is ready to handle and expecting. Some specific examples include: deny lists or allow lists of file extensions, using \"Content-Type\" from the header, or using a file type recognizer, all to only allow specified file types into the system.\n\n## References\n\n- [OWASP - Unrestricted File Upload](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload)\n- [File upload security best practices: Block a malicious file upload](https://www.computerweekly.com/answer/File-upload-security-best-practices-Block-a-malicious-file-upload)\n- [Stop people uploading malicious PHP files via forms](https://stackoverflow.com/questions/602539/stop-people-uploading-malicious-php-files-via-forms)\n- [CWE-434: Unrestricted Upload of File with Dangerous Type](https://cwe.mitre.org/data/definitions/434.html)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 3,
+      "difficulty": "Advanced",
+      "tags": [
+        "Upload",
+        "Unexpected",
+        "File",
+        "Types",
+        "Summary",
+        "Example"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Upload of Unexpected File Types",
+      "table_of_contents": [
+        "Test Upload of Unexpected File Types",
+        "Summary",
+        "Example",
+        "Test Objectives",
+        "How to Test",
+        "Specific Testing Method",
+        "Related Test Cases",
+        "Remediation",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 107,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/08-Test_Upload_of_Unexpected_File_Types.md",
+      "content_hash": "8472fbe24ef9eca3888b8ef3b9507f5029dd6e98e202d00e740911187da092d9",
+      "next_lesson_slug": "test-upload-of-malicious-files",
+      "previous_lesson_slug": "test-defenses-against-application-misuse",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows"
+      ]
+    },
+    {
+      "id": "test-upload-of-malicious-files",
+      "slug": "test-upload-of-malicious-files",
+      "title": "Test Upload of Malicious Files",
+      "body": "{% include breadcrumb.html %}\n# Test Upload of Malicious Files\n\n|ID          |\n|------------|\n|WSTG-BUSL-09|\n\n## Summary\n\nMany application’s business processes allow users to upload data to them. Although input validation is widely understood for text-based input fields, it is more complicated to implement when files are accepted. Although many sites implement simple restrictions based on a list of permitted (or blocked) extensions, this is not sufficient to prevent attackers from uploading legitimate file types that have malicious contents.\n\nVulnerabilities related to the uploading of malicious files is unique in that these \"malicious\" files can easily be rejected through including business logic that will scan files during the upload process and reject those perceived as malicious. Additionally, this is different from uploading unexpected files in that while the file type may be accepted the file may still be malicious to the system.\n\nFinally, \"malicious\" means different things to different systems, for example malicious files that may exploit SQL server vulnerabilities may not be considered as \"malicious\" in an environment using a NoSQL data store.\n\nThe application may allow the upload of malicious files that include exploits or shellcode without submitting them to malicious file scanning. Malicious files could be detected and stopped at various points of the application architecture such as: Intrusion Detection/Prevention System, application server anti-virus software or anti-virus scanning by application as files are uploaded (perhaps offloading the scanning using SCAP).\n\n### Example\n\nA common example of this vulnerability is an application such as a blog or forum that allows users to upload images and other media files. While these are considered safe, if an attacker is able to upload executable code (such as a PHP script), this could allow them to execute operating system commands, read and modify information in the filesystem, access the backend database and fully compromise the server.\n\n## Test Objectives\n\n- Identify the file upload functionality.\n- Review the project documentation to identify what file types are considered acceptable, and what types would be considered dangerous or malicious.\n    - If documentation is not available then consider what would be appropriate based on the purpose of the application.\n- Determine how the uploaded files are processed.\n- Obtain or create a set of malicious files for testing.\n- Try to upload the malicious files to the application and determine whether it is accepted and processed.\n\n## How to Test\n\n### Malicious File Types\n\nThe simplest checks that an application can do are to determine that only trusted types of files can be uploaded.\n\n#### Web Shells\n\nIf the server is configured to execute code, then it may be possible to obtain command execution on the server by uploading a file known as a web shell, which allows you to execute arbitrary code or operating system commands. In order for this attack to be successful, the file needs to be uploaded inside the webroot, and the server must be configured to execute the code.\n\nUploading this kind of shell onto an internet facing server is dangerous, because it allows anyone who knows (or guesses) the location of the shell to execute code on the server. A number of techniques can be used to protect the shell from unauthorised access, such as:\n\n- Uploading the shell with a randomly generated name.\n- Password protecting the shell.\n- Implementing IP based restrictions on the shell.\n\n**Remember to remove the shell when you are done.**\n\nThe example below shows a simple PHP based shell, that executes operating system commands passed to it in a GET parameter, and can only be accessed from a specific IP address:\n\nOnce the shell is uploaded (with a random name), you can execute operating system commands by passing them in the `cmd` GET parameter:\n\n`https://example.org/7sna8uuorvcx3x4fx.php?cmd=cat+/etc/passwd`\n\n#### Filter Evasion\n\nThe first step is to determine what the filters are allowing or blocking, and where they are implemented. If the restrictions are performed on the client-side using JavaScript, then they can be trivially bypassed with an intercepting proxy.\n\nIf the filtering is performed on the server-side, then various techniques can be attempted to bypass it, including:\n\n- Change the value of `Content-Type` as `image/jpeg` in HTTP request.\n- Change the extensions to a less common extension, such as `file.php5`, `file.shtml`, `file.asa`, `file.jsp`, `file.jspx`, `file.aspx`, `file.asp`, `file.phtml`, `file.cshtml`\n- Use double extensions such as `file.jpg.php` or `file.png.php`. For this to work properly, you must first understand how the web server handles files with multiple extensions. For instance, in certain scenario, the web server may only check if `.jpg` or `.png` is part of the file's extension which may allow attackers to bypass file extension filter.\n- Change the [file signature](https://en.wikipedia.org/wiki/List_of_file_signatures) or magic byte of the uploaded file.\n- Change the capitalisation of the extension, such as `file.PhP` or `file.AspX`\n- If the request includes multiple filenames, change them to different values.\n- Using special trailing characters such as spaces, dots or null characters such as `file.asp...`, `file.php;jpg`, `file.asp%00.jpg`, `1.jpg%00.php`\n- In badly configured versions of Nginx, uploading a file as `test.jpg/x.php` may allow it to be executed as `x.php`.\n- Upload an `.htaccess` file with the following content: `AddType application/x-httpd-php .png`. This will cause the Apache server to execute `.png` images as if they were `.php` resources.\n\nIn some situations, you may need to combine the different filter evasion techniques discussed above in order to successfully bypass server-side filters.**\n\n### Malicious File Contents\n\nOnce the file type has been validated, it is important to also ensure that the contents of the file are safe. This is significantly harder to do, as the steps required will vary depending on the types of file that are permitted.\n\n#### Malware\n\nApplications should generally scan uploaded files with anti-malware software to ensure that they do not contain anything malicious. The easiest way to test for this is using the [EICAR test file](https://www.eicar.org/download-anti-malware-testfile/), which is an safe file that is flagged as malicious by all anti-malware software.\n\nDepending on the type of application, it may be necessary to test for other dangerous file types, such as Office documents containing malicious macros. Tools such as the [Metasploit Framework](https://github.com/rapid7/metasploit-framework) and the [Social Engineer Toolkit (SET)](https://github.com/trustedsec/social-engineer-toolkit) can be used to generate malicious files for various formats.\n\nWhen this file is uploaded, it should be detected and quarantined or deleted by the application. Depending on how the application processes the file, it may not be obvious whether this has taken place.\n\n#### Archive Directory Traversal\n\nIf the application extracts archives (such as ZIP files), then it may be possible to write to unintended locations using directory traversal. This can be exploited by uploading a malicious ZIP file that contains paths that traverse the file system using sequences such as `..\\..\\..\\..\\shell.php`. This technique is discussed further in the [snyk advisory](https://snyk.io/research/zip-slip-vulnerability).\n\nA test against Archive Directory Traversal should include two parts:\n\n1. A malicious archive that breaks out of the target directory when extracted. This malicious archive should contain two files: a `base` file, extracted into the target directory, and a `traversed` file that attempts to navigate up the directory tree to hit the root folder - adding a file into the `tmp` directory. A malicious path will contain many levels of `../` (*i.e.* `../../../../../../../../tmp/traversed`) to stand a better chance of reaching the root directory. Once the attack is successful, the tester can find `/tmp/traversed` to be created on the webserver through the ZIP slip attack.\n2. Logic that extracts compressed files either using custom code or a library. Archive Directory Traversal vulnerabilities exist when the extraction functionality doesn’t validate file paths in the archive. The example below shows a vulnerable implementation in Java:\n\nFollow the steps below to create a ZIP file that can abuse the vulnerable code above once its uploaded to the web server:\n\n#### Archive Symlink Attacks\n\nIf the application extracts archive files (such as ZIP or TAR), it is important to verify how symbolic links contained within the archive are handled. Unlike Archive Directory Traversal (ZIP Slip), this technique does not rely on `../` path traversal sequences.\n\nAn attacker can craft an archive containing a symbolic link that points to a sensitive file on the server (for example `/etc/passwd`). If the extraction process preserves symbolic links without validation, and the application later processes or exposes the extracted files, this may result in unintended access to sensitive system files.\n\nFor example, a malicious archive may contain: `link.txt -> /etc/passwd`\n\nIf the backend extracts this archive without validating or rejecting symbolic links, and the application reads `link.txt`, it may inadvertently disclose the contents of `/etc/passwd`.\n\n##### How to Test\n\n1. Create a symbolic link: `ln -s /etc/passwd link.txt`\n1. Create an archive: `tar -czf malicious.tar.gz link.txt`\n1. Upload the archive to the application.\n1. Check:\n   - Is the symbolic link extracted?\n   - Does the application follow the link?\n   - Can sensitive file contents be accessed?\n\n##### Impact\n\n- Arbitrary file read\n- Disclosure of sensitive information\n\n#### ZIP Bombs\n\nA [ZIP bomb](https://en.wikipedia.org/wiki/zip_bomb) (more generally known as a decompression bomb) is an archive file that contains a large volume of data. It's intended to cause a denial of service by exhausting the disk space or memory of the target system that tries to extract the archive. Although the ZIP format is the most used example for this, other formats are also affected, including gzip (which is frequently used to compress data in transit).\n\nAt its simplest level, a ZIP bomb can be created by compressing a large file consisting of a single character. The example below shows how to create a 1MB file that will decompress to 1GB:\n\nThere are a number of methods that can be used to achieve much higher compression ratios, including multiple levels of compression, [abusing the ZIP format](https://www.bamsoftware.com/hacks/zipbomb/) and [quines](https://research.swtch.com/zip) (which are archives that contain a copy of themselves, causing infinite recursion).\n\nA successful ZIP bomb attack will result in a denial of service, and can also lead to increased costs if an auto-scaling cloud platform is used. **Do not carry out this kind of attack unless you have considered these risks and have written approval to do so.**\n\n#### XML Files\n\nXML files have a number of potential vulnerabilities such as XML eXternal Entities (XXE) and denial of service attacks such as the [billion laughs attack](https://en.wikipedia.org/wiki/Billion_laughs_attack).\n\nThese are discussed further in the [Testing for XML Injection](../07-Input_Validation_Testing/07-Testing_for_XML_Injection.md) guide.\n\n#### Other File Formats\n\nMany other file formats also have specific security concerns that need to be taken into account, such as:\n\n- Image files must be checked for maximum pixel/frame size.\n- CSV files may allow [CSV injection attacks](https://owasp.org/www-community/attacks/CSV_Injection).\n- Office files may contain malicious macros or PowerShell code.\n- PDFs may contain malicious JavaScript.\n\nThe permitted file formats should be carefully reviewed for potentially dangerous functionality, and where possible attempts should be made to exploit this during testing.\n\n### Source Code Review\n\nWhen there is file upload feature supported, the following API/methods are common to be found in the source code.\n\n- Java: `new file`, `import`, `upload`, `getFileName`, `Download`, `getOutputString`\n- C/C++: `open`, `fopen`\n- PHP: `move_uploaded_file()`, `Readfile`, `file_put_contents()`, `file()`, `parse_ini_file()`, `copy()`, `fopen()`, `include()`, `require()`\n\n## Related Test Cases\n\n- [Test File Extensions Handling for Sensitive Information](../02-Configuration_and_Deployment_Management_Testing/03-Test_File_Extensions_Handling_for_Sensitive_Information.md)\n- [Testing for XML Injection](../07-Input_Validation_Testing/07-Testing_for_XML_Injection.md)\n- [Test Upload of Unexpected File Types](08-Test_Upload_of_Unexpected_File_Types.md)\n\n## Remediation\n\nFully protecting against malicious file upload can be complex, and the exact steps required will vary depending on the types of files that are uploaded, and how the files are processed or parsed on the server. This is discussed more fully in the [File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).\n\n## Tools\n\n- Metasploit's payload generation functionality\n- Intercepting proxy\n\n## References\n\n- [OWASP - File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)\n- [OWASP - Unrestricted File Upload](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload)\n- [Why File Upload Forms are a Major Security Threat](https://www.acunetix.com/websitesecurity/upload-forms-threat/)\n- [8 Basic Rules to Implement Secure File Uploads](https://software-security.sans.org/blog/2009/12/28/8-basic-rules-to-implement-secure-file-uploads)\n- [Stop people uploading malicious PHP files via forms](https://stackoverflow.com/questions/602539/stop-people-uploading-malicious-php-files-via-forms)\n- [How to Tell if a File is Malicious](https://web.archive.org/web/20210710090809/https://www.techsupportalert.com/content/how-tell-if-file-malicious.htm)\n- [CWE-434: Unrestricted Upload of File with Dangerous Type](https://cwe.mitre.org/data/definitions/434.html)\n- [Implementing Secure File Upload](https://infosecauditor.wordpress.com/tag/malicious-file-upload/)\n- [Metasploit Generating Payloads](https://www.offensive-security.com/metasploit-unleashed/Generating_Payloads)\n- [List of file signatures](https://en.wikipedia.org/wiki/List_of_file_signatures)",
+      "code_snippet": "// language: php\n<?php\n    if ($_SERVER['REMOTE_HOST'] === \"FIXME\") { // Set your IP address here\n        if(isset($_REQUEST['cmd'])){\n            $cmd = ($_REQUEST['cmd']);\n            echo \"<pre>\\n\";\n            system($cmd);\n            echo \"</pre>\";\n        }\n    }\n?>\n\n// language: java\nEnumeration<ZipEntry> entries =​ ​zip​.g​etEntries();\n\nwhile(entries​.h​asMoreElements()){\n    ZipEntry e ​= ​entries.nextElement();\n    File f = new File(destinationDir, e.getName());\n    InputStream input = zip​.g​etInputStream(e);\n    IOUtils​.c​opy(input, write(f));\n}\n\n// language: bash\n# Open a new terminal and create a tree structure\n# (more directory levels might be required based on the system being targeted)\nmkdir -p a/b/c\n# Create a base file\necho 'base' > a/b/c/base\n# Create a traversed file\necho 'traversed' > traversed\n# You can double check the tree structure using `tree` at this stage\n# Navigate to a/b/c root directory\ncd a/b/c\n# Compress the files\nzip test.zip base ../../../traversed\n# Verify compressed files content\nunzip -l test.zip\n\n// language: bash\ndd if=/dev/zero bs=1M count=1024 | zip -9 > bomb.zip",
+      "code_languages": [
+        "bash",
+        "java",
+        "php"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 11,
+      "difficulty": "Advanced",
+      "tags": [
+        "Upload",
+        "Malicious",
+        "Files",
+        "Summary",
+        "Example",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Upload of Malicious Files",
+      "table_of_contents": [
+        "Test Upload of Malicious Files",
+        "Summary",
+        "Example",
+        "Test Objectives",
+        "How to Test",
+        "Malicious File Types",
+        "Malicious File Contents",
+        "Open a new terminal and create a tree structure",
+        "(more directory levels might be required based on the system being targeted)",
+        "Create a base file",
+        "Create a traversed file",
+        "You can double check the tree structure using `tree` at this stage",
+        "Navigate to a/b/c root directory",
+        "Compress the files",
+        "Verify compressed files content",
+        "Source Code Review",
+        "Related Test Cases",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 108,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/09-Test_Upload_of_Malicious_Files.md",
+      "content_hash": "d67371318c7a74ae67dd13c8fc94103398794056277f24a0762991c0890578ea",
+      "next_lesson_slug": "test-payment-functionality",
+      "previous_lesson_slug": "test-upload-of-unexpected-file-types",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows"
+      ]
+    },
+    {
+      "id": "test-payment-functionality",
+      "slug": "test-payment-functionality",
+      "title": "Test Payment Functionality",
+      "body": "{% include breadcrumb.html %}\n# Test Payment Functionality\n\n|ID          |\n|------------|\n|WSTG-BUSL-10|\n\n## Summary\n\nMany applications implement payment functionality, including e-commerce sites, subscriptions, charities, donation sites and currency exchanges. The security of this functionality is critical, as vulnerabilities could allow attackers to steal from the organization, make fraudulent purchases, or even to steal payment card details from other users. These issue could result in not only reputational damage to the organization, but also significant financial losses, both from direct losses and fines from industry regulators.\n\n## Test Objectives\n\n- Determine whether the business logic for the e-commerce functionality is robust.\n- Understand how the payment functionality works.\n- Determine whether the payment functionality is secure.\n\n## How to Test\n\n### Payment Gateway Integration Methods\n\nThere are several different ways that applications can integrate payment functionality, and the testing approach will vary depending on which one is used. The most common methods are:\n\n- Redirecting the user to a third-party payment gateway.\n- Loading a third-party payment gateway in an IFRAME on the application.\n- Having a HTML form that makes a cross-domain POST request to a third-party payment gateway.\n- Accepting the card details directly, and then making a POST from the application backend to the payment gateway's API.\n\n### PCI DSS\n\nThe Payment Card Industry Data Security Standard (PCI DSS) is a standard that organizations are required to follow in order process debit and card payments (although it's important to note that it is not a law). A full discussion of this standard is outside of the scope of this guide (and of most penetration tests) - but it's useful for testers to understand a few key points.\n\nThe most common misconception about PCI DSS is that it only applies to systems that store cardholder data (i.e, debit or credit card details). This is incorrect: it applies to any system that \"stores, processes or transmits\" this information. Exactly which requirements need to be followed depends on how which of the payment gateway integration methods are used. The [Visa Processing E-Commerce Payments guidance](https://web.archive.org/web/2023/https://www.visa.co.uk/dam/VCOM/regional/ve/unitedkingdom/PDF/risk/processing-e-commerce-payments-guide-73-17337.pdf) provides further details on this, but as a brief summary:\n\n| Integration Method | Self Assessment Questionnaire (SAQ) |\n|--------------------|-------------------------------------|\n| Redirect | [SAQ A](https://www.pcisecuritystandards.org/documents/PCI-DSS-v3_2_1-SAQ-A.pdf) |\n| IFRAME | [SAQ A](https://www.pcisecuritystandards.org/documents/PCI-DSS-v3_2_1-SAQ-A.pdf) |\n| Cross-domain POST | [SAQ A-EP](https://www.pcisecuritystandards.org/documents/PCI-DSS-v3_2-SAQ-A_EP-rev1_1.pdf) |\n| Backend API | [SAQ D](https://www.pcisecuritystandards.org/documents/PCI-DSS-v3_2_1-SAQ-D_Merchant.pdf) |\n\nIn addition to the differences in the attack surface and risk profile of each approach, there is also a significant difference in the number of requirements between SAQ A (22 requirements) and SAQ D (329 requirements) that the organization needs to meet. As such, it's worth highlighting applications that are not using an redirect or IFRAME, as they represent increased technical and compliance risks.\n\n### Quantity Tampering\n\nMost e-commerce sites allow users to add items to a basket before they start the checkout process. This basket should keep track of which items that have been added, and the quantity of each item. The quantity should normally be a positive integer, but if the site does not properly validate this then it may be possible to specify a decimal quantity of an item (such as `0.1`), or a negative quantity (such as `-1`). Depending on the backend processing, adding negative quantities of an item may result in a negative value, reducing the overall cost of the basket.\n\nThere are usually multiple ways to modify the contents of the basket that should be tested, such as:\n\n- Adding a negative quantity of an item.\n- Repeatedly removing items until the quantity is negative.\n- Updating the quantity to a negative value.\n\nSome sites may also provide a drop-down menu of valid quantities (such as items that must be bought in packs of 10), and it may be possible to tamper these requests to add other quantities of items.\n\nIf the full basket details are passed to the payment gateway (rather than simply passing a total value), it may also be possible to tamper the values at that stage.\n\nFinally, if the application is vulnerable to [HTTP parameter pollution](../07-Input_Validation_Testing/04-Testing_for_HTTP_Parameter_Pollution.md) then it may be possible to cause unexpected behavior by passing a parameter multiple times, such as:\n\n### Price Tampering\n\n#### On the Application\n\nWhen adding an item to the basket, the application should only include the item and a quantity, such as the example request below:\n\nHowever, in some cases the application may also include the price, meaning that it may be possible to tamper it:\n\nDifferent types of items may have different validation rules, so each type needs to be separately tested. Some applications also allow users to add an optional donation to charity as part of their purchase, and this donation can usually be an arbitrary amount. If this amount is not validated, it may be possible to add a negative donation amount, which would then reduce the total value of the basket.\n\n#### On the Payment Gateway\n\nIf the checkout process is performed on a third-party payment gateway, then it may be possible to tamper with the prices between the application and the gateway.\n\nThe transfer to the gateway may be performed using a cross-domain POST to the gateway, as shown in the HTML example below.\n\n> Note: The card details are not included in this request - the user will be prompted for them on the payment gateway:\n\nBy modifying the HTML form or intercepting the POST request, it may be possible to modify the prices of items, and to effectively purchase them for less. Consider many payment gateways will reject a transaction with a value of zero, so a total of 0.01 is more likely to succeed. However, some payment gateways may accept negative values (used to process refunds). Where there are multiple values (such as item prices, a shipping cost, and the total basket cost), all of these should be tested.\n\nIf the payment gateway uses an IFRAME instead, it may be possible to perform a similar type of attack by modifying the IFRAME URL:\n\n> Note: Payment gateways are usually run by a third-parties, and as such may not be included in the scope of testing. This means that while price tampering may be acceptable, other types of attacks (such as SQL injection) should not be performed without explicit written approval.\n\n#### Encrypted Transaction Details\n\nIn order to prevent the transaction being tampered with, some payment gateways will encrypt the details of the request that is made to them. For example, [PayPal](https://developer.paypal.com/api/nvp-soap/paypal-payments-standard/integration-guide/encryptedwebpayments/#link-usingewptoprotectmanuallycreatedpaymentbuttons) does this using public key cryptography.\n\nThe first thing to try is making an unencrypted request, as some payment gateways allow insecure transactions unless they have been specifically configured to reject them.\n\nIf this doesn't work, then you need to find the public key that is used to encrypt the transaction details, which could be exposed in a backup of the application, or if you can find a directory traversal vulnerability.\n\nAlternatively, it's possible that the application re-uses the same public/private key pair for the payment gateway and its digital certificate. You can obtain the public key from the server with the following command:\n\nOnce you have this key, you can then try and create an encrypted request (based on the payment gateway's documentation), and submit it to the gateway to see if it's accepted.\n\n#### Secure Hashes\n\nOther payment gateways use a secure hash (or a HMAC) of the transaction details to prevent tampering. The exact details of how this is done will vary between providers (for example, [Adyen](https://docs.adyen.com/online-payments/classic-integrations/hosted-payment-pages/hmac-signature-calculation) uses HMAC-SHA256), but it will normally include the details of the transaction and a secret value. For example, a hash may be calculated as:\n\nThis value is then added to the POST request that is sent to the payment gateway, and verified to ensure that the transaction hasn't been tampered with.\n\nThe first thing to try is removing the secure hash, as some payment gateways allow insecure transactions unless a specific configuration option has been set.\n\nThe POST request should contain all of the values required to calculate this hash, other than the secret key. This means that if you know how the hash is calculated (which should be included in the payment gateway's documentation), then you can attempt to brute-force the secret. Alternatively, if the site is running an off-the-shelf application, there may be a default secret in the configuration files or source code. Finally, if you can find a backup of the site, or otherwise gain access to the configuration files, you may be able to find the secret there.\n\nIf you can obtain this secret, you can then tamper the transaction details, and then generate your own secure hash which will be accepted by the payment gateway.\n\n#### Currency Tampering\n\nIf it's not possible to tamper with the actual prices, it may be possible to change the currency that is used, especially where applications support multiple currencies. For example, the application may validate that the price is 10, but if you can change the currency so that you pay 10 USD rather than 10 GBP, this would allow you to purchase items more cheaply.\n\n#### Time Delayed Requests\n\nIf the value of items on the site changes over time (for example on a currency exchange), then it may be possible to buy or sell at an old price by intercepting requests using a local proxy and delaying them. In order for this to be exploitable, the price would need to either be included in the request, or linked to something in the request (such as session or transaction ID). The example below shows how this could potentially be exploited on a application that allows users to buy and sell gold:\n\n- View the current price of gold on the site.\n- Initiate a buy request for 1oz of gold.\n- Intercept and freeze the request.\n- Wait one minutes to check the price of gold again:\n    - If it increases, allow the transaction to complete, and buy the gold for less than it's current value.\n    - If it decreases, drop the request.\n\nIf the site allows the user to make payments using cryptocurrencies (which are usually far more volatile), it may be possible to exploit this by obtaining a fixed price in that cryptocurrency, and then waiting to see if the value rises or falls compared to the main currency used by the site.\n\n### Discount Codes\n\nIf the application supports discount codes, then there are various checks that should be carried out:\n\n- Are the codes easily guessable (TEST, TEST10, SORRY, SORRY10, company name, etc)?\n    - If a code has a number in, can more codes be found by increasing the number?\n- Is there any brute-force protection?\n- Can multiple discount codes be applied at once?\n- Can discount codes be applied multiple times?\n- Can you [inject wildcard characters](../07-Input_Validation_Testing/05-Testing_for_SQL_Injection.md#sql-wildcard-injection) such as `%` or `*`?\n- Are discount codes exposed in the HTML source or hidden `<input>` fields anywhere on the application?\n\nIn addition to these, the usual vulnerabilities such as SQL injection should be tested for.\n\n### Breaking Payment Flows\n\nIf the checkout or payment process on an application involves multiple stages (such as adding items to a basket, entering discount codes, entering shipping details, and entering billing information), then it may be possible to cause unintended behavior by performing these steps outside of the expected sequence. For example, you could try:\n\n- Modifying the shipping address after the billing details have been entered to reduce shipping costs.\n- Removing items after entering shipping details, to avoid a minimum basket value.\n- Modifying the contents of the basket after applying a discount code.\n- Modifying the contents of a basket after completing the checkout process.\n\nIt may also be possible to skip the entire payment process for the transaction. For example, if the application redirects to a third-party payment gateway, the payment flow may be:\n\n- The user enters details on the application.\n- The user is redirected to the third-party payment gateway.\n- The user enters their card details.\n    - If the payment is successful, they are redirected to `success.php` on the application.\n    - If the payment is unsuccessful, they are redirected to `failure.php` on the application\n- The application updates its order database, and processes the order if it was successful.\n\nDepending on whether the application actually validates that the payment on the gateway was successful, it may be possible to force-browse to the `success.php` page (possibly including a transaction ID if one is required), which would cause the site to process the order as though the payment was successful. Additionally, it may be possible to make repeated requests to the `success.php` page to cause an order to be processed multiple times.\n\n### Exploiting Transaction Processing Fees\n\nMerchants normally have to pay fees for every transaction processed, which are typically made up of a small fixed fee, and a percentage of the total value. This means that receiving very small payments (such as $0.01) may result in the merchant actually losing money, as the transaction processing fees are greater than the total value of the transaction.\n\nThis issue is rarely exploitable on e-commerce sites, as the price of the cheapest item is usually high enough to prevent it. However, if the site allows customers to make payments with arbitrary amounts (such as donations), check that it enforces a sensible minimum value.\n\n### Test Payment Cards\n\nMost payment gateways have a set of defined test card details, which can be used by developers during testing and debugging. These should only be usable on development or sandbox versions of the gateways, but may be accepted on live sites if they have been misconfigured.\n\nExamples of these test details for various payment gateways are listed below:\n\n- [Adyen - Test Card Numbers](https://docs.adyen.com/development-resources/test-cards-and-credentials/test-card-numbers)\n- [Globalpay - Test Cards](https://developer.globalpay.com/resources/test-card-numbers)\n- [Stripe - Basic Test Card Numbers](https://stripe.com/docs/testing#cards)\n\n### Testing Logistics\n\nTesting payment functionality on applications can introduce additional complexity, especially if a live site is being tested. Areas that need to be considered include:\n\n- Obtaining test card payment details for the application.\n    - If these are not available, then it may be possible to obtain a pre-paid card or an alternative.\n- Keeping a record of any orders that are made so that they can be cancelled and refunded.\n- Not placing orders that can't be cancelled, or that will cause other actions (such as goods being immediately dispatched from a warehouse).\n\n#### Source Equals Destination\n\nIf the source of the transfer is equal to the destination, it may result in simply adding value to the account without any actual transfer occurring. This scenario should be tested to ensure that the application prevents such operations.\n\n#### Two-Step Payments or Transfers\n\nFor payments or transfers requiring two steps (initiation and confirmation), ensure that checks are performed during both phases. For example:\n\n- Initiate two separate payments.\n- Confirm them individually.\n\nVerify that necessary checks, such as daily limits or balance validations, are performed during the confirmation phase. Failure to do so may lead to negative balances or bypassing limits.\n\n#### Adding Items After Payment Initiation\n\nTest the scenario where a payment is initiated, and items are added to the cart afterward. Confirming the payment may result in marking the added items as paid, which could lead to inconsistencies in the payment process.\n\n#### Race Conditions\n\nA race condition occurs when the behavior of an application depends on the timing or sequence of events that are not properly controlled. In payment contexts, this typically manifests when multiple concurrent requests interact with shared state (such as an account balance, an inventory count, or a one-time-use coupon code) without adequate synchronization, allowing an attacker to exploit the time gap between a check and the subsequent action. This is commonly referred to as a Time-of-Check to Time-of-Use (TOCTOU) flaw.\n\nRace conditions are particularly impactful in:\n\n- Financial transactions (transfers, payments, withdrawals)\n- One-time-use tokens or codes (coupons, gift cards, referral bonuses)\n- Resource allocation with limited availability (inventory, seats, registrations)\n- State transitions that should happen exactly once (account activation, approval workflows)\n\nTo test, focus on endpoints where a value is checked and then modified, or where an action should only succeed once. Send multiple identical requests simultaneously and observe whether the application processes more than one successfully when only one should succeed.\n\nUsing curl, send 20 rapid requests to a state-changing endpoint:\n\nFor more precise timing, use [Burp Suite Turbo Intruder](https://github.com/PortSwigger/turbo-intruder) with the gate mechanism to hold all requests and release them simultaneously:\n\nCommon test scenarios include:\n\n- Concurrent Payment Confirmations:\n  Initiate multiple confirmation requests (e.g., `POST /confirm-payment`) simultaneously for the same order. This may result in the same order being processed multiple times.\n\n- Callback Replay or Flooding:\n  Intercept the gateway’s callback request (e.g., to `success.php` or `/payment/callback`) and replay it rapidly in parallel. If the backend lacks proper idempotency checks, this can:\n    - Trigger multiple order fulfillment events (e.g., shipping, credits).\n    - Mark the same order as \"paid\" multiple times.\n    - Cause balance inflation or inventory errors.\n\n- Balance Operations:\n  If an account has 100 credits, send multiple concurrent requests that each spend the full balance. If the total debited exceeds the original balance (e.g., balance goes to -100), the application is vulnerable.\n\n- One-Time-Use Tokens:\n  For coupon codes, invitation links, or password reset tokens, send multiple concurrent requests that each attempt to use the token. If more than one succeeds, the application fails to atomically invalidate the token.\n\nIndicators of vulnerability include: multiple success responses for a single-use action, negative balances after concurrent debits, resources allocated beyond stated capacity, or duplicate side effects (multiple emails, double charges).\n\nTo mitigate race conditions, wrap check-and-modify operations in database transactions with row-level locking (`SELECT ... FOR UPDATE`), implement optimistic locking with version columns, require idempotency keys for state-changing requests, and invalidate tokens atomically using operations like `DELETE FROM tokens WHERE token = ? RETURNING *`.\n\nSee also [CWE-362: Concurrent Execution using Shared Resource with Improper Synchronization](https://cwe.mitre.org/data/definitions/362.html).\n\n#### Multi-Input Systems (Bulk Payments)\n\nIn systems that support bulk payments, test scenarios where the total amount remains positive, but individual inputs include negative values. For example:\n\nEnsure that the application correctly handles such cases and prevents exploitation.\n\n## Related Test Cases\n\n- [Testing for HTTP Parameter Pollution](../07-Input_Validation_Testing/04-Testing_for_HTTP_Parameter_Pollution.md)\n- [Testing for SQL Injection](../07-Input_Validation_Testing/05-Testing_for_SQL_Injection.md)\n- [Testing for the Circumvention of Work Flows](06-Testing_for_the_Circumvention_of_Work_Flows.md)\n\n## Remediation\n\n- Avoid storing, transmitting or processing card details wherever possible.\n    - Use a redirect or IFRAME for the payment gateway.\n- Review payment gateway documentation and use all available security features (such as encryption and secure hashes).\n- Handle all pricing related information on server-side:\n    - The only things included in client-side requests should be item IDs and quantities.\n- Implement appropriate input validation and business logic constraints (such as checking for negative item numbers or values).\n- Ensure that application payment flow is robust and that steps can't be performed out of sequence.\n\n## References\n\n- [Payment Card Industry Data Security Standard (PCI DSS)](https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf)\n- [Visa Processing E-Commerce Payments guidance](https://web.archive.org/web/2023/https://www.visa.co.uk/dam/VCOM/regional/ve/unitedkingdom/PDF/risk/processing-e-commerce-payments-guide-73-17337.pdf)",
+      "code_snippet": "// language: http\nPOST /api/basket/add\nHost: example.org\n\nitem_id=1&quantity=5&quantity=4\n\n// language: http\nPOST /api/basket/add HTTP/1.1\nHost: example.org\n\nitem_id=1&quantity=5\n\n// language: http\nPOST /api/basket/add HTTP/1.1\nHost: example.org\n\nitem_id=1&quantity=5&price=2.00\n\n// language: html\n<form action=\"https://example.org/process_payment\" method=\"POST\">\n    <input type=\"hidden\" id=\"merchant_id\" value=\"123\" />\n    <input type=\"hidden\" id=\"basket_id\" value=\"456\" />\n    <input type=\"hidden\" id=\"item_id\" value=\"1\" />\n    <input type=\"hidden\" id=\"item_quantity\" value=\"5\" />\n    <input type=\"hidden\" id=\"item_total\" value=\"20.00\" />\n    <input type=\"hidden\" id=\"shipping_total\" value=\"2.00\" />\n    <input type=\"hidden\" id=\"basket_total\" value=\"22.00\" />\n    <input type=\"hidden\" id=\"currency\" value=\"GBP\" />\n    <input type=\"submit\" id=\"submit\" value=\"submit\" />\n</form>\n\n// language: html\n<iframe src=\"https://example.org/payment_iframe?merchant_id=123&basket_total=22.00\" />\n\n// language: bash\necho -e '\\0' | openssl s_client -connect example.org:443 2>/dev/null | openssl x509 -pubkey -noout\n\n// language: php\n$secure_hash = md5($merchant_id . $transaction_id . $items . $total_value . $secret)\n\n// language: bash\n# Send 20 near-concurrent requests to redeem a single-use coupon\nfor i in $(seq 1 20); do\n  curl -s -X POST https://example.com/api/redeem-coupon \\\n    -H \"Cookie: session=USER_SESSION\" \\\n    -H \"Content-Type: application/json\" \\\n    -d ‘{\"code\":\"SINGLE-USE-CODE\"}’ &\ndone\nwait\n\n// language: python\ndef queueRequests(target, wordlists):\n    engine = RequestEngine(endpoint=target.endpoint,\n                           concurrentConnections=20,\n                           requestsPerConnection=1,\n                           pipeline=False)\n    for i in range(20):\n        engine.queue(target.req, gate=’race’)\n    engine.openGate(‘race’)\n\ndef handleResponse(req, interesting):\n    table.add(req)\n\n// language: plaintext\naccount_id_1 = $5\naccount_id_2 = -$4\nTotal = $1 paid, but $5 credited",
+      "code_languages": [
+        "bash",
+        "html",
+        "http",
+        "php",
+        "plaintext",
+        "python"
+      ],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 17,
+      "difficulty": "Advanced",
+      "tags": [
+        "Payment",
+        "Functionality",
+        "Summary",
+        "Objectives",
+        "Gateway",
+        "Integration"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Payment Functionality",
+      "table_of_contents": [
+        "Test Payment Functionality",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Payment Gateway Integration Methods",
+        "PCI DSS",
+        "Quantity Tampering",
+        "Price Tampering",
+        "Discount Codes",
+        "Breaking Payment Flows",
+        "Exploiting Transaction Processing Fees",
+        "Test Payment Cards",
+        "Testing Logistics",
+        "Send 20 near-concurrent requests to redeem a single-use coupon",
+        "Related Test Cases",
+        "Remediation",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 109,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/10-Test-Payment-Functionality.md",
+      "content_hash": "06bed6875356b7a0247b1559c9c97e98f5a5e50024fa5d5823899d4cc78c4536",
+      "next_lesson_slug": null,
+      "previous_lesson_slug": "test-upload-of-malicious-files",
+      "related_lesson_slugs": [
+        "test-business-logic-data-validation",
+        "test-ability-to-forge-requests",
+        "test-integrity-checks",
+        "test-for-process-timing",
+        "testing-for-the-circumvention-of-work-flows"
+      ]
+    }
+  ]
+}

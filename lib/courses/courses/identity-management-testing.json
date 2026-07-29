@@ -1,0 +1,238 @@
+{
+  "id": "identity-management-testing",
+  "slug": "identity-management-testing",
+  "title": "Identity Management Testing",
+  "description": "Master Identity Management Testing through 5 focused lessons, covering Test Role Definitions, Test User Registration Process, Test Account Provisioning Process, and 2 more. Includes practical examples and remediation guidance.",
+  "category": "Cyber Security",
+  "instructor": "Hustle Academy",
+  "icon": "Icons.security",
+  "color": "Colors.red",
+  "difficulty": "Advanced",
+  "duration_label": "16 min",
+  "total_minutes": 16,
+  "tags": [
+    "Role",
+    "Definitions",
+    "Summary",
+    "Objectives",
+    "Roles",
+    "Identification",
+    "User",
+    "Registration"
+  ],
+  "prerequisites": [],
+  "lessons": [
+    {
+      "id": "test-role-definitions",
+      "slug": "test-role-definitions",
+      "title": "Test Role Definitions",
+      "body": "{% include breadcrumb.html %}\n# Test Role Definitions\n\n|ID          |\n|------------|\n|WSTG-IDNT-01|\n\n## Summary\n\nApplications have several types of functionalities and services, and those require access permissions based on the needs of the user. That user could be:\n\n- An administrator, where they manage the application functionalities.\n- An auditor, where they review the application transactions and provide a detailed report.\n- A support engineer, where they help customers debug and fix issues on their accounts.\n- A customer, where they interact with the application and benefit from its services.\n\nIn order to handle these uses and any other use case for that application, role definitions are setup (more commonly known as [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control)). Based on these roles, the user is capable of accomplishing the required task.\n\n## Test Objectives\n\n- Identify and document roles used by the application.\n- Attempt to switch, change, or access another role.\n- Review the granularity of the roles and the needs behind the permissions given.\n\n## How to Test\n\n### Roles Identification\n\nThe tester should start by identifying the application roles being tested through any of the following methods:\n\n- Application documentation.\n- Guidance by the developers or administrators of the application.\n- Application comments.\n- Fuzz possible roles:\n    - Cookie variable (*e.g.* `role=admin`, `isAdmin=True`)\n    - Account variable (*e.g.* `Role: manager`)\n    - Hidden directories or files (*e.g.* `/admin`, `/mod`, `/backups`)\n    - Switching to well known users (*e.g.* `admin`, `backups`, etc.)\n\n### Switching to Available Roles\n\nAfter identifying possible attack vectors, the tester needs to test and validate that they can access the available roles.\n\n> Note: Some applications define the roles of the user on creation, through rigorous checks and policies, or by ensuring that the user's role is properly protected through a signature created by the backend. Finding that roles exist doesn't mean that they're a vulnerability.\n\n### Review Roles Permissions\n\nAfter gaining access to the roles on the system, the tester must understand the permissions provided to each role.\n\nFor example, a support engineer generally shouldn't be able to conduct administrative functionalities, manage the backups, or conduct any transactions in the place of a user.\n\nUsers should also not be able to perform actions that increase their own privileges (such as adding themselves to a more privileged role) outside of very specific circumstances.\n\nAn administrator shouldn't have full powers on the system. Sensitive admin functionality should leverage a maker-checker principle, or use MFA to ensure that the administrator is conducting the transaction. A clear example on this was the [Twitter incident in 2020](https://blog.twitter.com/en_us/topics/company/2020/an-update-on-our-security-incident.html).\n\n## Tools\n\nThe above mentioned tests can be conducted without the use of any tool, except the one being used to access the system.\n\nTo make things easier and more documented, one can use:\n\n- [Burp's Autorize extension](https://github.com/Quitten/Autorize)\n- [ZAP's Access Control Testing add-on](https://www.zaproxy.org/docs/desktop/addons/access-control-testing/)\n\n## References\n\n- [Role Engineering for Enterprise Security Management, E Coyne & J Davis, 2007](https://www.bookdepository.co.uk/Role-Engineering-for-Enterprise-Security-Management-Edward-Coyne/9781596932180)\n- [Role engineering and RBAC standards](https://csrc.nist.gov/projects/role-based-access-control#rbac-standard)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 2,
+      "difficulty": "Intermediate",
+      "tags": [
+        "Role",
+        "Definitions",
+        "Summary",
+        "Objectives",
+        "Roles",
+        "Identification"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Role Definitions",
+      "table_of_contents": [
+        "Test Role Definitions",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Roles Identification",
+        "Switching to Available Roles",
+        "Review Roles Permissions",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 27,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/01-Test_Role_Definitions.md",
+      "content_hash": "8b044fe1030ed2f5c5bc28a6268c0ed5ac54f2b55834c777073e9675c89f91a7",
+      "next_lesson_slug": "test-user-registration-process",
+      "previous_lesson_slug": null,
+      "related_lesson_slugs": [
+        "test-user-registration-process",
+        "test-account-provisioning-process",
+        "testing-for-account-enumeration-and-guessable-user-account"
+      ]
+    },
+    {
+      "id": "test-user-registration-process",
+      "slug": "test-user-registration-process",
+      "title": "Test User Registration Process",
+      "body": "{% include breadcrumb.html %}\n# Test User Registration Process\n\n|ID          |\n|------------|\n|WSTG-IDNT-02|\n\n## Summary\n\nSome websites offer a user registration process that automates (or semi-automates) the provisioning of system access to users. The identity requirements for access vary from positive identification to none at all, depending on the security requirements of the system. Many public applications completely automate the registration and provisioning process because the size of the user base makes it impossible to manage manually. However, many corporate applications will provision users manually, so this test case may not apply.\n\n## Test Objectives\n\n- Verify that the identity requirements for user registration are aligned with business and security requirements.\n- Validate the registration process.\n\n## How to Test\n\nVerify that the identity requirements for user registration are aligned with business and security requirements:\n\n1. Can anyone register for access?\n2. Are registrations vetted by a human prior to provisioning, or are they automatically granted if the criteria are met?\n3. Can the same person or identity register multiple times?\n4. Can users register for different roles or permissions?\n5. What proof of identity is required for a registration to be successful?\n6. Are registered identities verified?\n\nValidate the registration process:\n\n1. Can identity information be easily forged or faked?\n2. Can the exchange of identity information be manipulated during registration?\n\n### Example\n\nIn the WordPress example below, the only identification requirement is an email address that is accessible to the registrant.\n\n![WordPress Registration Page](images/Wordpress_registration_page.jpg)\\\n*Figure 4.3.2-1: WordPress Registration Page*\n\nIn contrast, in the Google example below the identification requirements include name, date of birth, country, mobile phone number, email address and CAPTCHA response. While only two of these can be verified (email address and mobile number), the identification requirements are stricter than WordPress.\n\n![Google Registration Page](images/Google_registration_page.jpg)\\\n*Figure 4.3.2-2: Google Registration Page*\n\nSome applications may also automatically grant privileged roles to users when they register an account with an email address from a trusted domain. If ownership of the email address is not validated as part of the registration process, this could allow an attacker to gain access to a privileged account by registering a new user on that domain.\n\nAlternatively, if they only perform partial matching of the domain then it may be possible to register a privileged account using other similar domains. For example, if the application checks for email addresses ending in `example.org` then it may be possible to use the `notexample.org` domain; or if it checks for `@example.org` in the email address then it may be possible to use `@example.org.attacker.com`.\n\n## Remediation\n\nImplement identification and verification requirements that correspond to the security requirements of the information the credentials protect.\n\n## Tools\n\nA HTTP proxy can be a useful tool to test this control.\n\n## References\n\n[User Registration Design](https://mashable.com/2011/06/09/user-registration-design/)",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": true,
+      "image_url": "images/Wordpress_registration_page.jpg",
+      "reading_minutes": 2,
+      "difficulty": "Intermediate",
+      "tags": [
+        "User",
+        "Registration",
+        "Process",
+        "Summary",
+        "Objectives",
+        "Example"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test User Registration Process",
+      "table_of_contents": [
+        "Test User Registration Process",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Example",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 28,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/02-Test_User_Registration_Process.md",
+      "content_hash": "310c6a5c4ec99655d22bf5f4dc54fa071089116685f8689e470e1dd7c881be4f",
+      "next_lesson_slug": "test-account-provisioning-process",
+      "previous_lesson_slug": "test-role-definitions",
+      "related_lesson_slugs": [
+        "test-role-definitions",
+        "test-account-provisioning-process",
+        "testing-for-account-enumeration-and-guessable-user-account"
+      ]
+    },
+    {
+      "id": "test-account-provisioning-process",
+      "slug": "test-account-provisioning-process",
+      "title": "Test Account Provisioning Process",
+      "body": "{% include breadcrumb.html %}\n# Test Account Provisioning Process\n\n|ID          |\n|------------|\n|WSTG-IDNT-03|\n\n## Summary\n\nThe provisioning of accounts presents an opportunity for an attacker to create a valid account without application of the proper identification and authorization process.\n\n## Test Objectives\n\n- Verify which accounts may provision other accounts and of what type.\n\n## How to Test\n\nDetermine which roles are able to provision users and what sort of accounts they can provision.\n\n- Is there any verification, vetting and authorization of provisioning requests?\n- Is there any verification, vetting and authorization of de-provisioning requests?\n- Can an administrator provision other administrators or just users?\n- Can an administrator or other user provision accounts with privileges greater than their own?\n- Can an administrator or user de-provision themselves?\n- How are the files or resources owned by the de-provisioned user managed? Are they deleted? Is access transferred?\n\n### Example\n\nIn WordPress, only a user's name and email address are required to provision the user, as shown below:\n\n![WordPress User Add](images/Wordpress_useradd.png)\\\n*Figure 4.3.3-1: WordPress User Add*\n\nDe-provisioning of users requires the administrator to select the users to be de-provisioned, select Delete from the dropdown menu (circled) and then applying this action. The administrator is then presented with a dialog box asking what to do with the user's posts (delete or transfer them).\n\n![WordPress Auth and Users](images/Wordpress_authandusers.png)\\\n*Figure 4.3.3-2: WordPress Auth and Users*\n\n## Tools\n\nWhile the most thorough and accurate approach to completing this test is to conduct it manually, HTTP proxy tools could be also useful.",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": true,
+      "image_url": "images/Wordpress_useradd.png",
+      "reading_minutes": 1,
+      "difficulty": "Advanced",
+      "tags": [
+        "Account",
+        "Provisioning",
+        "Process",
+        "Summary",
+        "Objectives",
+        "Example"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Test Account Provisioning Process",
+      "table_of_contents": [
+        "Test Account Provisioning Process",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "Example",
+        "Tools"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 29,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/03-Test_Account_Provisioning_Process.md",
+      "content_hash": "e5fbf855071f38b888ebe64185571c646a74222880531244d8769e79e55bfbcd",
+      "next_lesson_slug": "testing-for-account-enumeration-and-guessable-user-account",
+      "previous_lesson_slug": "test-user-registration-process",
+      "related_lesson_slugs": [
+        "test-role-definitions",
+        "test-user-registration-process",
+        "testing-for-account-enumeration-and-guessable-user-account"
+      ]
+    },
+    {
+      "id": "testing-for-account-enumeration-and-guessable-user-account",
+      "slug": "testing-for-account-enumeration-and-guessable-user-account",
+      "title": "Testing for Account Enumeration and Guessable User Account",
+      "body": "{% include breadcrumb.html %}\n# Testing for Account Enumeration and Guessable User Account\n\n|ID          |\n|------------|\n|WSTG-IDNT-04|\n\n## Summary\n\nThe scope of this test is to verify if it is possible to collect a set of valid usernames by interacting with the authentication mechanism of the application. This test will be useful for brute force testing, in which the tester verifies if, given a valid username, it is possible to find the corresponding password.\n\nOften, web applications reveal when a username exists on system, either as a consequence of mis-configuration or as a design decision. For example, sometimes, when we submit wrong credentials, we receive a message that states that either the username is present on the system or the provided password is wrong. The information obtained can be used by an attacker to gain a list of users on system. This information can be used to attack the web application, for example, through a brute force or default username and password attack.\n\nThe tester should interact with the authentication mechanism of the application to understand if sending particular requests causes the application to answer in different manners. This issue exists because the information released from web application or web server when the user provides a valid username is different than when they use an invalid one.\n\nIn some cases, a message is received that reveals if the provided credentials are wrong because an invalid username or an invalid password was used. Sometimes, testers can enumerate the existing users by sending a username and an empty password.\n\n> Note: Some applications do not consider usernames sensitive, and may provide functionality that lets you directly view or list usernames. Ensure that you understand the security requirements of the application before reporting issues around username enumeration.\n\n## Test Objectives\n\n- Review processes that pertain to user identification (*e.g.* registration, login, etc.).\n- Enumerate users where possible through response analysis.\n\n## How to Test\n\nIn black-box testing, the tester knows nothing about the specific application, username, application logic, error messages on log in page, or password recovery facilities. If the application is vulnerable, the tester receives a response message that reveals, directly or indirectly, some information useful for enumerating users.\n\n### HTTP Response Message\n\n#### Testing for Valid Credentials\n\nRecord the server answer when you submit a valid user ID and valid password.\n\n> Using a web proxy, notice the information retrieved from this successful authentication (HTTP 200 Response, length of the response).\n\n#### Testing for Valid User with Wrong Password\n\nNow, the tester should try to insert a valid user ID and a wrong password and record the error message generated by the application.\n\n> The browser should display a message similar to the following one:\n>\n> ![Authentication Failed](images/AuthenticationFailed.png)\\\n> *Figure 4.3.4-1: Authentication Failed*\n>\n> Unlike any message that reveals the existence of the user like the following:\n>\n> `Login for User foo: invalid password`\n>\n> Using a web proxy, notice the information retrieved from this unsuccessful authentication attempt (HTTP 200 Response, length of the response).\n\n#### Testing for a Nonexistent Username\n\nNow, the tester should try to insert an invalid user ID and a wrong password and record the server answer (the tester should be confident that the username is not valid in the application). Record the error message and the server answer.\n\n> If the tester enters a nonexistent user ID, they can receive a message similar to:\n>\n> ![This User is Not Active](images/Userisnotactive.png)\\\n> *Figure 4.3.4-3: This User is Not Active*\n>\n> or a message like the following one:\n>\n> `Login failed for User foo: invalid Account`\n>\n> Generally the application should respond with the same error message and length to the different incorrect requests. If the responses are not the same, the tester should investigate and find out the key that creates a difference between the two responses. For example:\n>\n> 1. Client request: Valid user/wrong password\n> 2. Server response: The password is not correct\n> 3. Client request: Wrong user/wrong password\n> 4. Server response: User not recognized\n>\n> The above responses let the client understand that for the first request they have a valid username. So they can interact with the application requesting a set of possible user IDs and observing the answer.\n>\n> Looking at the second server response, the tester understand in the same way that they don't hold a valid username. So they can interact in the same manner and create a list of valid user ID looking at the server answers.\n\n### Other Ways to Enumerate Users\n\nTesters can enumerate users in several ways, such as:\n\n#### Analyzing the Error Code Received on Login Pages\n\nSome web application release a specific error code or message that we can analyze.\n\n#### Analyzing URLs and URL Redirections\n\nFor example:\n\n- `https://www.foo.com/err.jsp?User=baduser&Error=0`\n- `https://www.foo.com/err.jsp?User=gooduser&Error=2`\n\nAs is seen above, when a tester provides a user ID and password to the web application, they see a message indication that an error has occurred in the URL. In the first case they have provided a bad user ID and bad password. In the second, a good user ID and a bad password, so they can identify a valid user ID.\n\n#### URI Probing\n\nSometimes a web server responds differently if it receives a request for an existing directory or not. For instance in some portals every user is associated with a directory. If testers try to access an existing directory they could receive a web server error.\n\nSome of the common errors received from web servers are:\n\n- 403 Forbidden error code\n- 404 Not found error code\n\nExample:\n\n- `https://www.foo.com/account1` - we receive from web server: 403 Forbidden\n- `https://www.foo.com/account2` - we receive from web server: 404 file Not Found\n\nIn the first case the user exists, but the tester cannot view the web page, in second case instead the user \"account2\" does not exist. By collecting this information testers can enumerate the users.\n\n#### Analyzing Web Page Titles\n\nTesters can receive useful information on Title of web page, where they can obtain a specific error code or messages that reveal if the problems are with the username or password.\n\nFor instance, if a user cannot authenticate to an application and receives a web page whose title is similar to:\n\n- `Invalid user`\n- `Invalid authentication`\n\n#### Analyzing a Message Received from a Recovery Facility\n\nWhen we use a recovery facility (i.e. a forgotten password function) a vulnerable application might return a message that reveals if a username exists or not.\n\nFor example, messages similar to the following:\n\n- `Invalid username: email address is not valid or the specified user was not found.`\n- `Valid username: Your password has been successfully sent to the email address you registered with.`\n\n#### Friendly 404 Error Message\n\nWhen we request a user within the directory that does not exist, we don't always receive 404 error code. Instead, we may receive \"200 OK\" with an image, in this case we can assume that when we receive the specific image the user does not exist. This logic can be applied to other web server response; the trick is a good analysis of web server and web application messages.\n\n#### Analyzing Response Times\n\nAs well as looking at the content of the responses, the time that the response takes should also be considered. Particularly where the request causes an interaction with an external service (such as sending a forgotten password email), this can add several hundred milliseconds to the response, which can be used to determine whether the requested user is valid.\n\n### Guessing Users\n\n#### Predictable Username Structures\n\nIn many organizations, usernames follow consistent patterns (e.g., first initial + last name such as jbloggs, or structured identifiers such as CN000100). If the naming convention can be identified, valid usernames can often be derived systematically.\n\nTesters should:\n\n- Identify whether usernames follow a predictable structure.\n- Attempt to generate additional usernames based on observed patterns.\n- Use username dictionaries derived from organizational data (e.g., staff names, email formats).\n- Observe application responses to determine whether generated usernames are valid.\n\nPredictable username structures significantly reduce the effort required to enumerate valid accounts and can facilitate further attacks such as brute force attempts.\n\nIn some cases the user IDs are created with specific policies of administrator or company. For example we can view a user with a user ID created in sequential order:\n\nSometimes the usernames are created with a REALM alias and then a sequential numbers:\n\n- R1001 – user 001 for REALM1\n- R2001 – user 001 for REALM2\n\nIn the above sample we can create simple shell scripts that compose user IDs and submit a request with tool like wget to automate a web query to discern valid user IDs. To create a script we can also use Perl and curl.\n\nOther possibilities are: - user IDs associated with credit card numbers, or in general numbers with a pattern. - user IDs associated with real names, e.g. if Freddie Mercury has a user ID of \"fmercury\", then you might guess Roger Taylor to have the user ID of \"rtaylor\".\n\nAgain, we can guess a username from the information received from an LDAP query or from Google information gathering, for example, from a specific domain. Google can help to find domain users through specific queries or through a simple shell script or tool.\n\n> By enumerating user accounts, you risk locking out accounts after a predefined number of failed probes (based on application policy). Also, sometimes, your IP address can be banned by dynamic rules on the application firewall or Intrusion Prevention System.\n\n### Testing Staff Impersonation\n\nEnsure that unregistered users are unable to select reserved usernames (e.g., admin, administrator, moderator) during the registration process. Additionally, verify that users cannot edit their current username to one of these reserved usernames on the profile editing page.\n\nIf the web application has features that allow a user to access the web application's registration and profile editing functionality, the interactions to test include the following:\n\n- Registration process:\n    - Access the registration page as an unregistered user and fill in the registration form, entering one of the reserved usernames (e.g., admin, administrator, moderator), submit the registration form, and then verify the response.\n    - The registration process should reject the form submission and display an error message indicating that the selected username is not available for registration.\n- Profile editing page:\n    - Log into the web application using valid credentials and navigate to the profile editing page. Attempt to change the current username to one of the reserved usernames (e.g., admin, administrator, moderator) and save the changes to verify the behavior.\n    - The profile editing process should reject the username change request and display an error message indicating that the selected username is not available.\n- Test for variants and similarities:\n    - Repeat the above steps for different variations of the reserved usernames (e.g., Admin, ADMIN, Administrator) and perform tests with different combinations of uppercase and lowercase letters to ensure case insensitivity is handled correctly.\n    - The web application should treat these variants as identical to the reserved usernames, rejecting their selection or modification.\n\n### Gray-Box Testing\n\n#### Testing for Authentication Error Messages\n\nVerify that the application answers in the same manner for every client request that produces a failed authentication. For this issue the black-box testing and gray-box testing have the same concept based on the analysis of messages or error codes received from web application.\n\n> The application should answer in the same manner for every failed attempt of authentication.\n>\n> For Example: *Credentials submitted are not valid*\n\n## Remediation\n\nEnsure the application returns consistent generic error messages in response to invalid account name, password or other user credentials entered during the log in process.\n\nEnsure default system accounts and test accounts are deleted prior to releasing the system into production (or exposing it to an untrusted network).\n\n## Tools\n\n- [Zed Attack Proxy (ZAP)](https://www.zaproxy.org)\n- [curl](https://curl.haxx.se/)\n- [PERL](https://www.perl.org)\n\n## References\n\n- [Username Enumeration Vulnerabilities](https://www.gnucitizen.org/blog/username-enumeration-vulnerabilities/)\n- [Prevent WordPress Username Enumeration](https://www.jinsonvarghese.com/prevent-wordpress-username-enumeration/)\n- [Marco Mella, Sun Java Access & Identity Manager Users enumeration](https://www.exploit-db.com/exploits/32762)",
+      "code_snippet": "// language: text\nCN000100\nCN000101\n...",
+      "code_languages": [
+        "text"
+      ],
+      "has_image": true,
+      "image_url": "images/AuthenticationFailed.png",
+      "reading_minutes": 10,
+      "difficulty": "Advanced",
+      "tags": [
+        "Account",
+        "Enumeration",
+        "Guessable",
+        "User",
+        "Summary",
+        "Objectives"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing for Account Enumeration and Guessable User Account",
+      "table_of_contents": [
+        "Testing for Account Enumeration and Guessable User Account",
+        "Summary",
+        "Test Objectives",
+        "How to Test",
+        "HTTP Response Message",
+        "Other Ways to Enumerate Users",
+        "Guessing Users",
+        "Testing Staff Impersonation",
+        "Gray-Box Testing",
+        "Remediation",
+        "Tools",
+        "References"
+      ],
+      "learning_objectives": [
+        "Test Objectives"
+      ],
+      "order_index": 30,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/04-Testing_for_Account_Enumeration_and_Guessable_User_Account.md",
+      "content_hash": "52ab8b3bb3acbbbdeddf4bb177cf13f890fd18c8f818563ca493041d8180485e",
+      "next_lesson_slug": "testing-for-weak-or-unenforced-username-policy",
+      "previous_lesson_slug": "test-account-provisioning-process",
+      "related_lesson_slugs": [
+        "test-role-definitions",
+        "test-user-registration-process",
+        "test-account-provisioning-process"
+      ]
+    },
+    {
+      "id": "testing-for-weak-or-unenforced-username-policy",
+      "slug": "testing-for-weak-or-unenforced-username-policy",
+      "title": "Testing for Weak or Unenforced Username Policy",
+      "body": "{% include breadcrumb.html %}\n# Testing for Weak or Unenforced Username Policy\n\n|ID          |\n|------------|\n|WSTG-IDNT-05|\n\nThis test has been merged into WSTG-IDNT-04 (Testing for Account Enumeration and Guessable User Accounts) due to overlapping scope related to predictable username structures and enumeration techniques.",
+      "code_snippet": "",
+      "code_languages": [],
+      "has_image": false,
+      "image_url": "",
+      "reading_minutes": 1,
+      "difficulty": "Advanced",
+      "tags": [
+        "Weak",
+        "Unenforced",
+        "Username",
+        "Policy"
+      ],
+      "summary": "{% include breadcrumb.html %}\n# Testing for Weak or Unenforced Username Policy",
+      "table_of_contents": [
+        "Testing for Weak or Unenforced Username Policy"
+      ],
+      "learning_objectives": [
+        "Understand the fundamentals of testing for weak or unenforced username policy"
+      ],
+      "order_index": 31,
+      "source_path": "cybersecurity/latest/4-Web_Application_Security_Testing/03-Identity_Management_Testing/05-Testing_for_Weak_or_Unenforced_Username_Policy.md",
+      "content_hash": "5e499072ea22dba6705480a9db804680e635aee56024066afd59aba977b88ff3",
+      "next_lesson_slug": null,
+      "previous_lesson_slug": "testing-for-account-enumeration-and-guessable-user-account",
+      "related_lesson_slugs": []
+    }
+  ]
+}
