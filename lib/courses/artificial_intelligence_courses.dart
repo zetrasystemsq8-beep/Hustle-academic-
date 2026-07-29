@@ -2,7 +2,7 @@
 // Produced by generate_ai_courses.py
 
 import 'package:flutter/material.dart';
-import '../models/course_models.dart';
+import '../models/app_course.dart';
 
 final List<AppCourse> artificialIntelligenceCourses = [
   AppCourse(
