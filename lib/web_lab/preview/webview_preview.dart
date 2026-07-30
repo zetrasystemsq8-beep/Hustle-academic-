@@ -18,11 +18,19 @@ class WebviewPreview extends StatefulWidget {
   final PreviewController previewController;
   final ConsoleController consoleController;
 
+  /// When true, renders the classic device-frame styling (rounded
+  /// border, drop shadow, fixed portrait/landscape sizing) used by the
+  /// full-screen Preview screen. When false, fills all available space
+  /// with no frame — used for the compact split-view inside the Code
+  /// Editor, where screen space is already tight.
+  final bool showDeviceFrame;
+
   const WebviewPreview({
     super.key,
     required this.project,
     required this.previewController,
     required this.consoleController,
+    this.showDeviceFrame = true,
   });
 
   @override
@@ -46,6 +54,14 @@ class _WebviewPreviewState extends State<WebviewPreview> {
 
     widget.previewController.addListener(_handlePreviewControllerChanged);
     _loadDocument();
+  }
+
+  @override
+  void didUpdateWidget(covariant WebviewPreview oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The project reference itself doesn't change identity when its
+    // content is edited (it's mutated in place), so a plain project
+    // reload has to be triggered externally via previewController.refresh().
   }
 
   @override
@@ -78,6 +94,10 @@ class _WebviewPreviewState extends State<WebviewPreview> {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.showDeviceFrame) {
+      return WebViewWidget(controller: _webViewController);
+    }
+
     final orientation = widget.previewController.orientation;
     final isLandscape = orientation == PreviewOrientation.landscape;
 
