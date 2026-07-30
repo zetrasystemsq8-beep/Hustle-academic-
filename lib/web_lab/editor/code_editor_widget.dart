@@ -36,7 +36,11 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
   final ScrollController _codeScrollController = ScrollController();
   final ScrollController _lineNumberScrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
+
   bool _showSearch = false;
+  String _searchQuery = '';
+  List<SearchMatch> _matches = [];
+  int _currentMatchIndex = 0;
 
   static const Map<String, String> _bracketPairs = {
     '(': ')',
@@ -54,14 +58,19 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
   @override
   void didUpdateWidget(covariant CodeEditorWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Keep the field in sync if the underlying file switched (new tab
-    // focused) or content changed externally (e.g. via undo/redo).
     if (oldWidget.file.id != widget.file.id ||
         _controller.text != widget.file.content) {
       final selection = _controller.selection;
       _controller.text = widget.file.content;
       if (selection.start <= widget.file.content.length) {
         _controller.selection = selection;
+      }
+      if (oldWidget.file.id != widget.file.id) {
+        // Switching files clears any in-progress search state.
+        _showSearch = false;
+        _searchQuery = '';
+        _matches = [];
+        _currentMatchIndex = 0;
       }
     }
   }
@@ -83,15 +92,13 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
 
   int get _lineCount => '\n'.allMatches(_controller.text).length + 1;
 
-  /// Handles auto-indentation and bracket auto-closing on text change.
-  /// Applies simple, predictable rules rather than full language-aware
-  /// parsing, keeping behavior transparent to students.
   void _handleChanged(String newText) {
     widget.onChanged(newText);
+    if (_searchQuery.isNotEmpty) {
+      _recomputeMatches();
+    }
   }
 
-  /// Inserts a matching closing bracket immediately after typing an
-  /// opening one, placing the cursor between the pair.
   void _handleBracketAutoClose(String typed) {
     if (!_bracketPairs.containsKey(typed)) return;
     final closing = _bracketPairs[typed]!;
@@ -104,9 +111,6 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
     );
   }
 
-  /// Auto-indents a new line to match the previous line's leading
-  /// whitespace, plus one extra indent level if the previous line ends
-  /// with an opening bracket.
   void _handleNewLine() {
     final selection = _controller.selection;
     final text = _controller.text;
@@ -130,6 +134,70 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
       selection: TextSelection.collapsed(offset: newOffset),
     );
     widget.onChanged(newText);
+  }
+
+  // ---------------------------------------------------------------
+  // Search / Replace
+  // ---------------------------------------------------------------
+
+  void _recomputeMatches() {
+    setState(() {
+      _matches = EditorSearchEngine.findAll(_controller.text, _searchQuery);
+      if (_matches.isEmpty) {
+        _currentMatchIndex = 0;
+      } else if (_currentMatchIndex >= _matches.length) {
+        _currentMatchIndex = 0;
+      }
+    });
+    if (_matches.isNotEmpty) {
+      _selectMatch(_matches[_currentMatchIndex]);
+    }
+  }
+
+  void _selectMatch(SearchMatch match) {
+    _controller.selection = TextSelection(baseOffset: match.start, extentOffset: match.end);
+  }
+
+  void _onSearchQueryChanged(String query) {
+    _searchQuery = query;
+    _recomputeMatches();
+  }
+
+  void _goToNextMatch() {
+    if (_matches.isEmpty) return;
+    setState(() => _currentMatchIndex = (_currentMatchIndex + 1) % _matches.length);
+    _selectMatch(_matches[_currentMatchIndex]);
+  }
+
+  void _goToPreviousMatch() {
+    if (_matches.isEmpty) return;
+    setState(() => _currentMatchIndex = (_currentMatchIndex - 1 + _matches.length) % _matches.length);
+    _selectMatch(_matches[_currentMatchIndex]);
+  }
+
+  void _replaceCurrentMatch(String replacement) {
+    if (_matches.isEmpty) return;
+    final match = _matches[_currentMatchIndex];
+    final newText = EditorSearchEngine.replaceOne(_controller.text, match, replacement);
+    final newOffset = match.start + replacement.length;
+
+    _controller.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newOffset),
+    );
+    widget.onChanged(newText);
+    _recomputeMatches();
+  }
+
+  void _replaceAllMatches(String replacement) {
+    if (_searchQuery.isEmpty) return;
+    final newText = EditorSearchEngine.replaceAll(_controller.text, _searchQuery, replacement);
+    _controller.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+    widget.onChanged(newText);
+    _recomputeMatches();
   }
 
   @override
@@ -161,16 +229,18 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
               left: 8,
               right: 8,
               child: EditorSearchBar(
-                content: _controller.text,
-                onMatchIndexChanged: (_) {},
-                onReplaceOne: (replacement) {
-                  // Replaces the first match; a full implementation tracks
-                  // the active match index from the search bar callback.
-                  final searchBarState = context.findAncestorStateOfType<_EditorSearchBarState>();
-                  if (searchBarState == null) return;
-                },
-                onReplaceAll: (replacement) {},
-                onClose: () => setState(() => _showSearch = false),
+                matchCount: _matches.length,
+                currentIndex: _currentMatchIndex,
+                onQueryChanged: _onSearchQueryChanged,
+                onNext: _goToNextMatch,
+                onPrevious: _goToPreviousMatch,
+                onReplaceOne: _replaceCurrentMatch,
+                onReplaceAll: _replaceAllMatches,
+                onClose: () => setState(() {
+                  _showSearch = false;
+                  _searchQuery = '';
+                  _matches = [];
+                }),
               ),
             ),
         ],
@@ -241,41 +311,30 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
       controller: _codeScrollController,
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: KeyboardListener(
-          focusNode: FocusNode(skipTraversal: true),
-          onKeyEvent: (event) {
-            if (event is KeyDownEvent &&
-                event.logicalKey == LogicalKeyboardKey.enter) {
-              // Auto-indentation for hardware keyboards / Android
-              // keyboards that emit enter as a key event.
+        child: TextField(
+          controller: _controller,
+          focusNode: _focusNode,
+          maxLines: null,
+          minLines: 20,
+          cursorColor: Colors.white,
+          style: colors.baseStyle,
+          decoration: const InputDecoration(
+            isDense: true,
+            border: InputBorder.none,
+          ),
+          onChanged: (text) {
+            final selectionOffset = _controller.selection.baseOffset;
+            _handleChanged(text);
+            if (text.length > widget.file.content.length && selectionOffset > 0) {
+              final added = text[selectionOffset - 1];
+              if (added == '\n') {
+                _handleNewLine();
+              } else if (_bracketPairs.containsKey(added)) {
+                _handleBracketAutoClose(added);
+              }
             }
           },
-          child: TextField(
-            controller: _controller,
-            focusNode: _focusNode,
-            maxLines: null,
-            minLines: 20,
-            cursorColor: Colors.white,
-            style: colors.baseStyle,
-            decoration: const InputDecoration(
-              isDense: true,
-              border: InputBorder.none,
-            ),
-            onChanged: (text) {
-              _handleChanged(text);
-              if (text.length > widget.file.content.length) {
-                final added = text.characters.isEmpty
-                    ? ''
-                    : text[_controller.selection.baseOffset - 1];
-                if (added == '\n') {
-                  _handleNewLine();
-                } else if (_bracketPairs.containsKey(added)) {
-                  _handleBracketAutoClose(added);
-                }
-              }
-            },
-            buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,
-          ),
+          buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,
         ),
       ),
     );
