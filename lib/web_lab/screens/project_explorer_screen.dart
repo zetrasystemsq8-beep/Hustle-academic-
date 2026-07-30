@@ -7,8 +7,8 @@ import '../widgets/file_tree_widget.dart';
 import 'editor_screen.dart';
 
 /// VS Code-style Project Explorer for the currently open project: create,
-/// rename, delete, duplicate, and reorganize files and folders before
-/// jumping into the Code Editor.
+/// rename, delete, duplicate, move, and reorganize files and folders
+/// before jumping into the Code Editor.
 class ProjectExplorerScreen extends StatefulWidget {
   final ProjectController projectController;
 
@@ -57,6 +57,17 @@ class _ProjectExplorerScreenState extends State<ProjectExplorerScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  /// Locates the parent of [target] within [current]'s subtree, or null
+  /// if [target] is the root itself or not found.
+  FileNode? _findParent(FileNode current, FileNode target) {
+    for (final child in current.children) {
+      if (child.id == target.id) return current;
+      final found = _findParent(child, target);
+      if (found != null) return found;
+    }
+    return null;
   }
 
   Future<void> _createFile(FileNode parent) async {
@@ -115,6 +126,25 @@ class _ProjectExplorerScreenState extends State<ProjectExplorerScreen> {
     await widget.projectController.saveCurrentProject();
   }
 
+  /// Moves [dragged] into [targetFolder], locating its current parent
+  /// automatically so the caller (the file tree's drag target) doesn't
+  /// need to track parent references itself.
+  Future<void> _move(FileNode dragged, FileNode targetFolder) async {
+    final project = widget.projectController.currentProject;
+    if (project == null) return;
+
+    final oldParent = _findParent(project.root, dragged);
+    if (oldParent == null) return;
+
+    try {
+      _fileSystemService.moveNode(oldParent, targetFolder, dragged);
+      widget.projectController.notifyProjectChanged();
+      await widget.projectController.saveCurrentProject();
+    } catch (e) {
+      _showError(e.toString());
+    }
+  }
+
   void _toggleFolder(FileNode node) {
     _fileSystemService.toggleExpanded(node);
     widget.projectController.notifyProjectChanged();
@@ -168,6 +198,7 @@ class _ProjectExplorerScreenState extends State<ProjectExplorerScreen> {
             onDuplicate: _duplicate,
             onCreateFile: _createFile,
             onCreateFolder: _createFolder,
+            onMove: _move,
           ),
         );
       },
