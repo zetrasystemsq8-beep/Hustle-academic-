@@ -38,98 +38,108 @@ class FileTreeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rows = _buildChildRows(root, depth: 0);
+
+    if (rows.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Text(
+            'This project has no files yet.',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      children: _buildNodes(root, depth: 0),
+      children: rows,
     );
   }
 
-  List<Widget> _buildNodes(FileNode node, {required int depth}) {
+  /// Builds a row for every direct child of [node] at [depth], expanding
+  /// into a folder's own children (at [depth] + 1) only if that folder
+  /// is currently expanded. [node] itself is never rendered as a row —
+  /// callers pass the invisible tree root here to render its contents.
+  List<Widget> _buildChildRows(FileNode node, {required int depth}) {
     final widgets = <Widget>[];
-    final isRootCall = depth == 0;
 
-    if (!isRootCall) {
-      final parent = _findParent(root, node) ?? root;
+    for (final child in node.children) {
+      widgets.add(_buildRow(node, child, depth));
 
-      Widget row = _FileTreeRow(
-        node: node,
-        depth: depth,
-        isActive: node.id == activeFileId,
-        onTap: () {
-          if (node.isFolder) {
-            onToggleFolder(node);
-          } else {
-            onFileTap(node);
-          }
-        },
-        onRename: () => onRename(parent, node),
-        onDelete: () => onDelete(parent, node),
-        onDuplicate: () => onDuplicate(parent, node),
-        onCreateFile: node.isFolder ? () => onCreateFile(node) : null,
-        onCreateFolder: node.isFolder ? () => onCreateFolder(node) : null,
-      );
-
-      // Every row is draggable so files and folders alike can be moved.
-      row = LongPressDraggable<FileNode>(
-        data: node,
-        feedback: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            color: Colors.grey.shade900,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(FileIcons.iconFor(node), size: 16, color: FileIcons.colorFor(node)),
-                const SizedBox(width: 6),
-                Text(node.name, style: const TextStyle(color: Colors.white, fontSize: 13)),
-              ],
-            ),
-          ),
-        ),
-        childWhenDragging: Opacity(opacity: 0.3, child: row),
-        child: row,
-      );
-
-      // Only folders act as valid drop targets, and a node can never be
-      // dropped onto itself.
-      if (node.isFolder && onMove != null) {
-        row = DragTarget<FileNode>(
-          onWillAcceptWithDetails: (details) => details.data.id != node.id,
-          onAcceptWithDetails: (details) => onMove!(details.data, node),
-          builder: (context, candidateData, rejectedData) {
-            final isHovering = candidateData.isNotEmpty;
-            return Container(
-              decoration: BoxDecoration(
-                color: isHovering ? Colors.blueAccent.withOpacity(0.15) : null,
-                border: isHovering ? Border.all(color: Colors.blueAccent, width: 1) : null,
-              ),
-              child: row,
-            );
-          },
-        );
-      }
-
-      widgets.add(row);
-    }
-
-    if (node.isFolder && (isRootCall || node.isExpanded)) {
-      for (final child in node.children) {
-        widgets.addAll(_buildNodes(child, depth: isRootCall ? depth : depth + 1));
+      if (child.isFolder && child.isExpanded) {
+        widgets.addAll(_buildChildRows(child, depth: depth + 1));
       }
     }
 
     return widgets;
   }
 
-  FileNode? _findParent(FileNode current, FileNode target) {
-    for (final child in current.children) {
-      if (child.id == target.id) return current;
-      final found = _findParent(child, target);
-      if (found != null) return found;
+  /// Builds a single row for [node] (whose parent is [parent]), wired up
+  /// with drag source / drop target behavior.
+  Widget _buildRow(FileNode parent, FileNode node, int depth) {
+    Widget row = _FileTreeRow(
+      node: node,
+      depth: depth,
+      isActive: node.id == activeFileId,
+      onTap: () {
+        if (node.isFolder) {
+          onToggleFolder(node);
+        } else {
+          onFileTap(node);
+        }
+      },
+      onRename: () => onRename(parent, node),
+      onDelete: () => onDelete(parent, node),
+      onDuplicate: () => onDuplicate(parent, node),
+      onCreateFile: node.isFolder ? () => onCreateFile(node) : null,
+      onCreateFolder: node.isFolder ? () => onCreateFolder(node) : null,
+    );
+
+    // Every row is draggable so files and folders alike can be moved.
+    row = LongPressDraggable<FileNode>(
+      data: node,
+      feedback: Material(
+        elevation: 4,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          color: Colors.grey.shade900,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(FileIcons.iconFor(node), size: 16, color: FileIcons.colorFor(node)),
+              const SizedBox(width: 6),
+              Text(node.name, style: const TextStyle(color: Colors.white, fontSize: 13)),
+            ],
+          ),
+        ),
+      ),
+      childWhenDragging: Opacity(opacity: 0.3, child: row),
+      child: row,
+    );
+
+    // Only folders act as valid drop targets, and a node can never be
+    // dropped onto itself.
+    if (node.isFolder && onMove != null) {
+      row = DragTarget<FileNode>(
+        onWillAcceptWithDetails: (details) => details.data.id != node.id,
+        onAcceptWithDetails: (details) => onMove!(details.data, node),
+        builder: (context, candidateData, rejectedData) {
+          final isHovering = candidateData.isNotEmpty;
+          return Container(
+            decoration: BoxDecoration(
+              color: isHovering ? Colors.blueAccent.withOpacity(0.15) : null,
+              border: isHovering ? Border.all(color: Colors.blueAccent, width: 1) : null,
+            ),
+            child: row,
+          );
+        },
+      );
     }
-    return null;
+
+    return row;
   }
 }
 
