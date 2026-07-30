@@ -7,8 +7,11 @@ import '../models/project_model.dart';
 /// students can take their work outside the app (e.g. to host it, or
 /// submit it elsewhere).
 ///
-/// Depends on the `archive` package for ZIP encoding. Add to pubspec.yaml:
-/// `archive: ^3.4.0`
+/// Depends on the `archive` package (v4.x) for ZIP encoding. Uses
+/// `ArchiveFile.typedData`, the current constructor for storing raw
+/// bytes in an archive entry — the older positional `ArchiveFile(name,
+/// size, data)` constructor from archive 3.x is legacy in 4.x and best
+/// avoided.
 class ZipExportService {
   /// Builds a ZIP archive of [project]'s entire file tree and returns the
   /// raw bytes, ready to be written to disk or shared via a file picker.
@@ -16,9 +19,6 @@ class ZipExportService {
     final archive = Archive();
     _addNodeToArchive(archive, project.root, '');
     final bytes = ZipEncoder().encode(archive);
-    if (bytes == null) {
-      throw StateError('Failed to encode project "${project.name}" as ZIP.');
-    }
     return Uint8List.fromList(bytes);
   }
 
@@ -28,7 +28,7 @@ class ZipExportService {
   void _addNodeToArchive(Archive archive, FileNode node, String currentPath) {
     if (node.isFile) {
       final data = Uint8List.fromList(node.content.codeUnits);
-      archive.addFile(ArchiveFile(currentPath, data.length, data));
+      archive.addFile(ArchiveFile.typedData(currentPath, data));
       return;
     }
     for (final child in node.children) {
