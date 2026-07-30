@@ -6,6 +6,10 @@ import '../utils/file_icons.dart';
 /// mirroring a VS Code-style Project Explorer. All mutation actions
 /// (create/rename/delete/duplicate/move) are delegated via callbacks —
 /// this widget only renders state and reports user intent upward.
+///
+/// Drag-and-drop moving is supported: any row is draggable, and folder
+/// rows act as drop targets. Dropping a node onto a folder calls [onMove]
+/// with that node and destination folder.
 class FileTreeWidget extends StatelessWidget {
   final FileNode root;
   final String? activeFileId;
@@ -42,14 +46,12 @@ class FileTreeWidget extends StatelessWidget {
 
   List<Widget> _buildNodes(FileNode node, {required int depth}) {
     final widgets = <Widget>[];
-
-    // The invisible root folder isn't rendered as a row itself — only
-    // its children are, starting the visible tree at depth 0.
-    final children = depth == 0 ? node.children : node.children;
     final isRootCall = depth == 0;
 
     if (!isRootCall) {
-      widgets.add(_FileTreeRow(
+      final parent = _findParent(root, node) ?? root;
+
+      Widget row = _FileTreeRow(
         node: node,
         depth: depth,
         isActive: node.id == activeFileId,
@@ -60,16 +62,60 @@ class FileTreeWidget extends StatelessWidget {
             onFileTap(node);
           }
         },
-        onRename: () => onRename(_findParent(root, node) ?? root, node),
-        onDelete: () => onDelete(_findParent(root, node) ?? root, node),
-        onDuplicate: () => onDuplicate(_findParent(root, node) ?? root, node),
+        onRename: () => onRename(parent, node),
+        onDelete: () => onDelete(parent, node),
+        onDuplicate: () => onDuplicate(parent, node),
         onCreateFile: node.isFolder ? () => onCreateFile(node) : null,
         onCreateFolder: node.isFolder ? () => onCreateFolder(node) : null,
-      ));
+      );
+
+      // Every row is draggable so files and folders alike can be moved.
+      row = LongPressDraggable<FileNode>(
+        data: node,
+        feedback: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            color: Colors.grey.shade900,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(FileIcons.iconFor(node), size: 16, color: FileIcons.colorFor(node)),
+                const SizedBox(width: 6),
+                Text(node.name, style: const TextStyle(color: Colors.white, fontSize: 13)),
+              ],
+            ),
+          ),
+        ),
+        childWhenDragging: Opacity(opacity: 0.3, child: row),
+        child: row,
+      );
+
+      // Only folders act as valid drop targets, and a node can never be
+      // dropped onto itself.
+      if (node.isFolder && onMove != null) {
+        row = DragTarget<FileNode>(
+          onWillAcceptWithDetails: (details) => details.data.id != node.id,
+          onAcceptWithDetails: (details) => onMove!(details.data, node),
+          builder: (context, candidateData, rejectedData) {
+            final isHovering = candidateData.isNotEmpty;
+            return Container(
+              decoration: BoxDecoration(
+                color: isHovering ? Colors.blueAccent.withOpacity(0.15) : null,
+                border: isHovering ? Border.all(color: Colors.blueAccent, width: 1) : null,
+              ),
+              child: row,
+            );
+          },
+        );
+      }
+
+      widgets.add(row);
     }
 
     if (node.isFolder && (isRootCall || node.isExpanded)) {
-      for (final child in children) {
+      for (final child in node.children) {
         widgets.addAll(_buildNodes(child, depth: isRootCall ? depth : depth + 1));
       }
     }
