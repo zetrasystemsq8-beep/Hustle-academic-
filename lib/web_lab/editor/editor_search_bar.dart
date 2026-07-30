@@ -47,19 +47,28 @@ class EditorSearchEngine {
 
 /// Floating find/replace bar overlaid on top of the [CodeEditorWidget].
 ///
-/// Presents match count and next/previous navigation, matching the
-/// "search / replace" requirement without needing any external package.
+/// This widget is fully controlled: it holds no search state of its own
+/// (no match list, no current index) — that lives in the parent
+/// [CodeEditorWidget], which is the only place with access to the actual
+/// text controller a replace needs to mutate. This widget only renders
+/// what it's told and reports user intent upward via callbacks.
 class EditorSearchBar extends StatefulWidget {
-  final String content;
-  final ValueChanged<int> onMatchIndexChanged;
+  final int matchCount;
+  final int currentIndex;
+  final ValueChanged<String> onQueryChanged;
+  final VoidCallback onNext;
+  final VoidCallback onPrevious;
   final ValueChanged<String> onReplaceOne;
   final ValueChanged<String> onReplaceAll;
   final VoidCallback onClose;
 
   const EditorSearchBar({
     super.key,
-    required this.content,
-    required this.onMatchIndexChanged,
+    required this.matchCount,
+    required this.currentIndex,
+    required this.onQueryChanged,
+    required this.onNext,
+    required this.onPrevious,
     required this.onReplaceOne,
     required this.onReplaceAll,
     required this.onClose,
@@ -72,8 +81,6 @@ class EditorSearchBar extends StatefulWidget {
 class _EditorSearchBarState extends State<EditorSearchBar> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _replaceController = TextEditingController();
-  List<SearchMatch> _matches = [];
-  int _currentIndex = 0;
   bool _showReplace = false;
 
   @override
@@ -83,31 +90,11 @@ class _EditorSearchBarState extends State<EditorSearchBar> {
     super.dispose();
   }
 
-  void _runSearch(String query) {
-    setState(() {
-      _matches = EditorSearchEngine.findAll(widget.content, query);
-      _currentIndex = _matches.isEmpty ? 0 : _currentIndex % _matches.length;
-    });
-    if (_matches.isNotEmpty) {
-      widget.onMatchIndexChanged(_currentIndex);
-    }
-  }
-
-  void _next() {
-    if (_matches.isEmpty) return;
-    setState(() => _currentIndex = (_currentIndex + 1) % _matches.length);
-    widget.onMatchIndexChanged(_currentIndex);
-  }
-
-  void _previous() {
-    if (_matches.isEmpty) return;
-    setState(() => _currentIndex = (_currentIndex - 1 + _matches.length) % _matches.length);
-    widget.onMatchIndexChanged(_currentIndex);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hasMatches = widget.matchCount > 0;
+
     return Material(
       elevation: 6,
       borderRadius: BorderRadius.circular(12),
@@ -128,13 +115,13 @@ class _EditorSearchBarState extends State<EditorSearchBar> {
                       hintText: 'Find',
                       border: OutlineInputBorder(),
                     ),
-                    onChanged: _runSearch,
+                    onChanged: widget.onQueryChanged,
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text('${_matches.isEmpty ? 0 : _currentIndex + 1}/${_matches.length}'),
-                IconButton(icon: const Icon(Icons.keyboard_arrow_up), onPressed: _previous),
-                IconButton(icon: const Icon(Icons.keyboard_arrow_down), onPressed: _next),
+                Text('${hasMatches ? widget.currentIndex + 1 : 0}/${widget.matchCount}'),
+                IconButton(icon: const Icon(Icons.keyboard_arrow_up), onPressed: hasMatches ? widget.onPrevious : null),
+                IconButton(icon: const Icon(Icons.keyboard_arrow_down), onPressed: hasMatches ? widget.onNext : null),
                 IconButton(
                   icon: Icon(_showReplace ? Icons.expand_less : Icons.expand_more),
                   onPressed: () => setState(() => _showReplace = !_showReplace),
@@ -158,15 +145,11 @@ class _EditorSearchBarState extends State<EditorSearchBar> {
                   ),
                   const SizedBox(width: 8),
                   TextButton(
-                    onPressed: _matches.isEmpty
-                        ? null
-                        : () => widget.onReplaceOne(_replaceController.text),
+                    onPressed: hasMatches ? () => widget.onReplaceOne(_replaceController.text) : null,
                     child: const Text('Replace'),
                   ),
                   TextButton(
-                    onPressed: _matches.isEmpty
-                        ? null
-                        : () => widget.onReplaceAll(_replaceController.text),
+                    onPressed: hasMatches ? () => widget.onReplaceAll(_replaceController.text) : null,
                     child: const Text('All'),
                   ),
                 ],
