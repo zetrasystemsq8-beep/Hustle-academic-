@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   webview_flutter: ^4.7.0
-  archive: ^3.4.0
+  archive: ^4.0.9
 
   # Supabase
   supabase_flutter: ^2.8.0
@@ -23,7 +23,7 @@ dependencies:
   internet_connection_checker_plus: ^2.9.1+2
   dio: ^5.9.2
   http: ^1.6.0
-  xml: ^6.5.0
+  xml: ^7.0.1
 
   # State Management
   fpdart: ^1.2.0
