@@ -1,0 +1,107 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import '../controllers/console_controller.dart';
+import '../controllers/preview_controller.dart';
+import '../models/project_model.dart';
+
+/// Renders a project's live HTML/CSS/JS output inside an in-app WebView.
+///
+/// Wires up a JavaScript channel named `WebLabConsole` so `console.log`,
+/// `console.warn`, `console.error`, and uncaught runtime errors from the
+/// student's script are forwarded to [ConsoleController] in real time.
+///
+/// Requires the `webview_flutter` package in pubspec.yaml:
+/// `webview_flutter: ^4.7.0`
+class WebviewPreview extends StatefulWidget {
+  final ProjectModel project;
+  final PreviewController previewController;
+  final ConsoleController consoleController;
+
+  const WebviewPreview({
+    super.key,
+    required this.project,
+    required this.previewController,
+    required this.consoleController,
+  });
+
+  @override
+  State<WebviewPreview> createState() => _WebviewPreviewState();
+}
+
+class _WebviewPreviewState extends State<WebviewPreview> {
+  late final WebViewController _webViewController;
+  int _lastReloadToken = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _webViewController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.white)
+      ..addJavaScriptChannel(
+        'WebLabConsole',
+        onMessageReceived: _handleConsoleMessage,
+      );
+
+    widget.previewController.addListener(_handlePreviewControllerChanged);
+    _loadDocument();
+  }
+
+  @override
+  void dispose() {
+    widget.previewController.removeListener(_handlePreviewControllerChanged);
+    super.dispose();
+  }
+
+  void _handlePreviewControllerChanged() {
+    if (widget.previewController.reloadToken != _lastReloadToken) {
+      _loadDocument();
+    }
+  }
+
+  void _handleConsoleMessage(JavaScriptMessage message) {
+    try {
+      final payload = jsonDecode(message.message) as Map<String, dynamic>;
+      widget.consoleController.handleBridgeMessage(payload);
+    } catch (_) {
+      // Malformed bridge payloads are silently ignored rather than
+      // crashing the preview session.
+    }
+  }
+
+  void _loadDocument() {
+    _lastReloadToken = widget.previewController.reloadToken;
+    final document = widget.previewController.buildDocument(widget.project);
+    _webViewController.loadHtmlString(document);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final orientation = widget.previewController.orientation;
+    final isLandscape = orientation == PreviewOrientation.landscape;
+
+    return Center(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        width: isLandscape ? 640 : 360,
+        height: isLandscape ? 360 : 640,
+        constraints: const BoxConstraints(maxWidth: double.infinity, maxHeight: double.infinity),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.black87, width: 8),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: WebViewWidget(controller: _webViewController),
+      ),
+    );
+  }
+}
