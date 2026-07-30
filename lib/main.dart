@@ -8,7 +8,12 @@ import 'courses/artificial_intelligence_courses.dart';
 import 'courses/digital_marketing_courses.dart';
 import 'courses/cybersecurity_courses.dart';
 import 'courses/saas_courses.dart';
-void main() {
+import 'web_lab/web_lab_registry.dart';
+import 'web_lab/screens/home_screen.dart' as web_lab;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await webLab.initialize();
   runApp(const HustleAcademyApp());
 }
 
@@ -38,7 +43,6 @@ class HustleAcademyApp extends StatelessWidget {
     );
   }
 }
-
 
 // ============================================================
 // CATEGORIES
@@ -250,6 +254,8 @@ class HomeTab extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         _SearchBarStatic(),
+        const SizedBox(height: 20),
+        _WebLabBanner(),
         const SizedBox(height: 24),
         _SectionTitle('Categories'),
         const SizedBox(height: 12),
@@ -277,6 +283,62 @@ class HomeTab extends StatelessWidget {
         const SizedBox(height: 12),
         ...popular.map((c) => _CourseListTile(course: c)),
       ],
+    );
+  }
+}
+
+/// Entry point into the Web Lab module from the Home dashboard. Opens
+/// Web Lab's own Home screen, backed by the app-wide [webLab] registry
+/// so its project data persists across visits.
+class _WebLabBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => web_lab.HomeScreen(
+              projectController: webLab.projectController,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.indigo.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.indigo.shade100),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.indigo,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.terminal, color: Colors.white),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Web Lab', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Build real websites — HTML, CSS & JS',
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.indigo),
+          ],
+        ),
+      ),
     );
   }
 }
