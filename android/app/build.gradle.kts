@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zetra.hustleacademy"
+    namespace = "com.zetrasystems.nai"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -16,7 +16,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.zetra.hustleacademy"
+        applicationId = "com.zetrasystems.nai"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
