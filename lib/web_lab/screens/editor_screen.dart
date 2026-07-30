@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../controllers/console_controller.dart';
 import '../controllers/editor_controller.dart';
@@ -5,12 +6,20 @@ import '../controllers/preview_controller.dart';
 import '../controllers/project_controller.dart';
 import '../models/file_node_model.dart';
 import '../editor/code_editor_widget.dart';
+import '../editor/syntax_highlighter.dart';
+import '../preview/webview_preview.dart';
 import '../widgets/editor_tab_bar.dart';
+import '../widgets/quick_reference_panel.dart';
 import 'preview_screen.dart';
 
 /// The main coding workspace: a multi-file, multi-tab code editor over
 /// the currently open project. Wraps [EditorController] state and wires
 /// edits back into the project's file tree and local storage.
+///
+/// Supports an optional split view — code on top, a live auto-refreshing
+/// preview below — so students can see the effect of their HTML/CSS/JS
+/// changes without leaving the editor, alongside a per-language Quick
+/// Reference glossary for when the syntax itself is unfamiliar.
 class EditorScreen extends StatefulWidget {
   final ProjectController projectController;
   final FileNode? initialFile;
@@ -26,6 +35,11 @@ class _EditorScreenState extends State<EditorScreen> {
   late final PreviewController _previewController;
   late final ConsoleController _consoleController;
 
+  bool _splitView = false;
+  Timer? _debounceTimer;
+
+  static const Duration _liveRefreshDelay = Duration(milliseconds: 500);
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +53,7 @@ class _EditorScreenState extends State<EditorScreen> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
     _editorController.dispose();
     _previewController.dispose();
     _consoleController.dispose();
@@ -54,7 +69,18 @@ class _EditorScreenState extends State<EditorScreen> {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Project saved')));
   }
 
-  void _openPreview() {
+  /// Called on every keystroke. In split view, schedules a debounced
+  /// live preview refresh so the WebView doesn't reload on every single
+  /// character — only once typing pauses briefly.
+  void _scheduleLiveRefresh() {
+    if (!_splitView) return;
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(_liveRefreshDelay, () {
+      if (mounted) _previewController.refresh();
+    });
+  }
+
+  void _openFullPreview() {
     final project = widget.projectController.currentProject;
     if (project == null) return;
     Navigator.push(
@@ -69,6 +95,11 @@ class _EditorScreenState extends State<EditorScreen> {
     );
   }
 
+  void _showQuickReference(FileNode file) {
+    final language = SyntaxHighlighter.languageForExtension(file.extension);
+    QuickReferencePanel.show(context, language);
+  }
+
   @override
   Widget build(BuildContext context) {
     final project = widget.projectController.currentProject;
@@ -80,8 +111,13 @@ class _EditorScreenState extends State<EditorScreen> {
       appBar: AppBar(
         title: Text(project.name),
         actions: [
+          IconButton(
+            tooltip: _splitView ? 'Hide live preview' : 'Show live preview',
+            icon: Icon(_splitView ? Icons.vertical_split : Icons.splitscreen_outlined),
+            onPressed: () => setState(() => _splitView = !_splitView),
+          ),
           IconButton(tooltip: 'Save', icon: const Icon(Icons.save_outlined), onPressed: _saveAll),
-          IconButton(tooltip: 'Preview', icon: const Icon(Icons.play_arrow), onPressed: _openPreview),
+          IconButton(tooltip: 'Full Preview', icon: const Icon(Icons.play_arrow), onPressed: _openFullPreview),
         ],
       ),
       body: AnimatedBuilder(
@@ -105,20 +141,71 @@ class _EditorScreenState extends State<EditorScreen> {
                           style: TextStyle(color: Colors.white54),
                         ),
                       )
-                    : CodeEditorWidget(
-                        key: ValueKey(activeFile.id),
-                        file: activeFile,
-                        onChanged: (text) => _editorController.updateContent(activeFile, text),
-                        onUndo: () => _editorController.undo(activeFile),
-                        onRedo: () => _editorController.redo(activeFile),
-                        canUndo: _editorController.canUndo(activeFile),
-                        canRedo: _editorController.canRedo(activeFile),
-                      ),
+                    : _splitView
+                        ? _buildSplitView(activeFile, project)
+                        : _buildEditorOnly(activeFile),
               ),
             ],
           );
         },
       ),
+      floatingActionButton: _editorController.activeFile == null
+          ? null
+          : FloatingActionButton.small(
+              tooltip: 'Quick Reference',
+              onPressed: () => _showQuickReference(_editorController.activeFile!),
+              child: const Icon(Icons.help_outline),
+            ),
+    );
+  }
+
+  Widget _buildEditorOnly(FileNode activeFile) {
+    return CodeEditorWidget(
+      key: ValueKey(activeFile.id),
+      file: activeFile,
+      onChanged: (text) {
+        _editorController.updateContent(activeFile, text);
+        _scheduleLiveRefresh();
+      },
+      onUndo: () => _editorController.undo(activeFile),
+      onRedo: () => _editorController.redo(activeFile),
+      canUndo: _editorController.canUndo(activeFile),
+      canRedo: _editorController.canRedo(activeFile),
+    );
+  }
+
+  Widget _buildSplitView(FileNode activeFile, project) {
+    return Column(
+      children: [
+        Expanded(
+          flex: 3,
+          child: CodeEditorWidget(
+            key: ValueKey(activeFile.id),
+            file: activeFile,
+            onChanged: (text) {
+              _editorController.updateContent(activeFile, text);
+              _scheduleLiveRefresh();
+            },
+            onUndo: () => _editorController.undo(activeFile),
+            onRedo: () => _editorController.redo(activeFile),
+            canUndo: _editorController.canUndo(activeFile),
+            canRedo: _editorController.canRedo(activeFile),
+          ),
+        ),
+        Container(height: 3, color: Colors.black),
+        Expanded(
+          flex: 2,
+          child: Container(
+            color: Colors.grey.shade200,
+            child: WebviewPreview(
+              project: project,
+              previewController: _previewController,
+              consoleController: _consoleController,
+              showDeviceFrame: false,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
