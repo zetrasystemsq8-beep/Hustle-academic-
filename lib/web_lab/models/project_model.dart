@@ -8,43 +8,24 @@ enum PreviewOrientation {
 
 /// A single Web Lab project: a named workspace containing an HTML/CSS/JS
 /// file tree plus metadata needed by the Home dashboard, Project Manager,
-/// local storage layer, and the Publish feature.
+/// local storage layer, Publish feature, and Package Manager.
 class ProjectModel {
-  /// Unique identifier, stable across renames.
   final String id;
-
-  /// Human-readable project name shown throughout the UI.
   String name;
-
-  /// Root folder of the project's file tree. Always a [FileNodeType.folder].
   FileNode root;
-
-  /// When the project was first created.
   final DateTime createdAt;
-
-  /// When the project was last opened or saved. Drives the "Recent
-  /// Projects" ordering on the Home dashboard.
   DateTime lastOpenedAt;
-
-  /// Optional identifier of the template this project was created from,
-  /// if any (null for blank projects, which is the default for beginners).
   final String? templateId;
-
-  /// Last orientation the user previewed this project in, restored the
-  /// next time the Preview panel opens.
   PreviewOrientation previewOrientation;
-
-  /// IDs of challenges the learner has successfully completed while
-  /// working on this project, if it was created for a Challenge.
   List<String> completedChallengeIds;
-
-  /// The slug this project was last published under, or null if it has
-  /// never been published. Kept stable across republishes so the site's
-  /// public URL doesn't change every time the student updates it.
   String? publishedSlug;
-
-  /// When this project was last published, or null if never published.
   DateTime? publishedAt;
+
+  /// IDs of CDN packages (from [CdnPackageRegistry]) currently enabled
+  /// for this project. Tags for these are injected automatically into
+  /// the assembled preview/published document — the student's own
+  /// index.html text is never modified to add them.
+  List<String> enabledCdnPackageIds;
 
   ProjectModel({
     required this.id,
@@ -57,12 +38,12 @@ class ProjectModel {
     List<String>? completedChallengeIds,
     this.publishedSlug,
     this.publishedAt,
+    List<String>? enabledCdnPackageIds,
   })  : createdAt = createdAt ?? DateTime.now(),
         lastOpenedAt = lastOpenedAt ?? DateTime.now(),
-        completedChallengeIds = completedChallengeIds ?? <String>[];
+        completedChallengeIds = completedChallengeIds ?? <String>[],
+        enabledCdnPackageIds = enabledCdnPackageIds ?? <String>[];
 
-  /// Finds the first file node in the tree matching [name] (e.g.
-  /// "index.html"), searching depth-first. Returns null if not found.
   FileNode? findFileByName(String name) {
     FileNode? search(FileNode node) {
       if (node.isFile && node.name == name) return node;
@@ -76,17 +57,12 @@ class ProjectModel {
     return search(root);
   }
 
-  /// Convenience getters for the three core files every project starts
-  /// with. May return null for projects whose entry files were deleted
-  /// or renamed by the student.
   FileNode? get indexHtml => findFileByName('index.html');
   FileNode? get styleCss => findFileByName('style.css');
   FileNode? get scriptJs => findFileByName('script.js');
 
-  /// True if this project currently has a live published site.
   bool get isPublished => publishedSlug != null;
 
-  /// Serializes the full project, including its entire file tree, to JSON.
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -99,6 +75,7 @@ class ProjectModel {
       'completedChallengeIds': completedChallengeIds,
       'publishedSlug': publishedSlug,
       'publishedAt': publishedAt?.toIso8601String(),
+      'enabledCdnPackageIds': enabledCdnPackageIds,
     };
   }
 
@@ -121,6 +98,9 @@ class ProjectModel {
       publishedAt: json['publishedAt'] != null
           ? DateTime.tryParse(json['publishedAt'] as String)
           : null,
+      enabledCdnPackageIds: (json['enabledCdnPackageIds'] as List<dynamic>? ?? [])
+          .map((e) => e as String)
+          .toList(),
     );
   }
 }
