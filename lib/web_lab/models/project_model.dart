@@ -8,7 +8,7 @@ enum PreviewOrientation {
 
 /// A single Web Lab project: a named workspace containing an HTML/CSS/JS
 /// file tree plus metadata needed by the Home dashboard, Project Manager,
-/// and local storage layer.
+/// local storage layer, and the Publish feature.
 class ProjectModel {
   /// Unique identifier, stable across renames.
   final String id;
@@ -38,6 +38,14 @@ class ProjectModel {
   /// working on this project, if it was created for a Challenge.
   List<String> completedChallengeIds;
 
+  /// The slug this project was last published under, or null if it has
+  /// never been published. Kept stable across republishes so the site's
+  /// public URL doesn't change every time the student updates it.
+  String? publishedSlug;
+
+  /// When this project was last published, or null if never published.
+  DateTime? publishedAt;
+
   ProjectModel({
     required this.id,
     required this.name,
@@ -47,6 +55,8 @@ class ProjectModel {
     this.templateId,
     this.previewOrientation = PreviewOrientation.portrait,
     List<String>? completedChallengeIds,
+    this.publishedSlug,
+    this.publishedAt,
   })  : createdAt = createdAt ?? DateTime.now(),
         lastOpenedAt = lastOpenedAt ?? DateTime.now(),
         completedChallengeIds = completedChallengeIds ?? <String>[];
@@ -73,6 +83,9 @@ class ProjectModel {
   FileNode? get styleCss => findFileByName('style.css');
   FileNode? get scriptJs => findFileByName('script.js');
 
+  /// True if this project currently has a live published site.
+  bool get isPublished => publishedSlug != null;
+
   /// Serializes the full project, including its entire file tree, to JSON.
   Map<String, dynamic> toJson() {
     return {
@@ -84,6 +97,8 @@ class ProjectModel {
       'templateId': templateId,
       'previewOrientation': previewOrientation.name,
       'completedChallengeIds': completedChallengeIds,
+      'publishedSlug': publishedSlug,
+      'publishedAt': publishedAt?.toIso8601String(),
     };
   }
 
@@ -102,6 +117,10 @@ class ProjectModel {
           (json['completedChallengeIds'] as List<dynamic>? ?? [])
               .map((e) => e as String)
               .toList(),
+      publishedSlug: json['publishedSlug'] as String?,
+      publishedAt: json['publishedAt'] != null
+          ? DateTime.tryParse(json['publishedAt'] as String)
+          : null,
     );
   }
 }
