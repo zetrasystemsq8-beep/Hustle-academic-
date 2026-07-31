@@ -3,9 +3,8 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/project_model.dart';
+import '../package_manager/cdn_package_registry.dart';
 
-/// Result of a successful publish: the slug used and the public URL the
-/// site is now reachable at.
 class PublishResult {
   final String slug;
   final String publicUrl;
@@ -14,12 +13,7 @@ class PublishResult {
 }
 
 /// Publishes a project's HTML/CSS/JS as a real, publicly hosted static
-/// site using Supabase Storage — no custom backend server required.
-///
-/// Every call is scoped to the `web-lab-published-sites` bucket and the
-/// `web_lab_published_projects` table, both created specifically for
-/// this feature, so this never touches data belonging to any other app
-/// sharing the same Supabase project.
+/// site using Supabase Storage.
 class PublishService {
   static const String _bucketName = 'web-lab-published-sites';
   static const String _tableName = 'web_lab_published_projects';
@@ -27,9 +21,6 @@ class PublishService {
   final SupabaseClient _client = Supabase.instance.client;
   final Random _random = Random();
 
-  /// Publishes [project]. If [existingSlug] is provided (the project was
-  /// already published before), the same slug is reused so the URL stays
-  /// stable across republishes — otherwise a new slug is generated.
   Future<PublishResult> publish(ProjectModel project, {String? existingSlug}) async {
     final slug = existingSlug ?? _generateSlug(project.name);
     final document = _buildStandaloneDocument(project);
@@ -54,21 +45,15 @@ class PublishService {
     return PublishResult(slug: slug, publicUrl: publicUrlForSlug(slug));
   }
 
-  /// Removes a previously published site's file and metadata row.
   Future<void> unpublish(String slug) async {
     await _client.storage.from(_bucketName).remove(['$slug/index.html']);
     await _client.from(_tableName).delete().eq('slug', slug);
   }
 
-  /// Computes the public URL for a given slug without any network call —
-  /// used to redisplay a link for an already-published project.
   String publicUrlForSlug(String slug) {
     return _client.storage.from(_bucketName).getPublicUrl('$slug/index.html');
   }
 
-  /// Generates a URL-safe slug from the project's name plus a random
-  /// suffix, keeping published URLs short while avoiding collisions
-  /// between two students naming their projects the same thing.
   String _generateSlug(String name) {
     final base = name
         .trim()
@@ -85,15 +70,15 @@ class PublishService {
     return chars[_random.nextInt(chars.length)];
   }
 
-  /// Assembles a single standalone HTML document from the project's
-  /// index.html, style.css, and script.js — this is the actual file
-  /// uploaded and served publicly. No console bridge is injected here
-  /// (unlike the in-app Preview), since visitors to the published site
-  /// aren't debugging it in Web Lab's Console panel.
+  /// Assembles the real, standalone HTML document served publicly.
+  /// Enabled CDN packages are included here too, so a published site
+  /// using Bootstrap/Tailwind/etc. actually works for visitors — not
+  /// just inside the in-app preview.
   String _buildStandaloneDocument(ProjectModel project) {
     final html = project.indexHtml?.content ?? '';
     final css = project.styleCss?.content ?? '';
     final js = project.scriptJs?.content ?? '';
+    final cdnTags = CdnPackageRegistry.tagsForEnabled(project.enabledCdnPackageIds);
 
     return '''<!DOCTYPE html>
 <html>
@@ -101,6 +86,7 @@ class PublishService {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${project.name}</title>
+$cdnTags
 <style>
 $css
 </style>
