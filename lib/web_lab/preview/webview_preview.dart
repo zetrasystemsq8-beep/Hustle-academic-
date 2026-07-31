@@ -22,8 +22,22 @@ class WebviewPreview extends StatefulWidget {
   /// border, drop shadow, fixed portrait/landscape sizing) used by the
   /// full-screen Preview screen. When false, fills all available space
   /// with no frame — used for the compact split-view inside the Code
-  /// Editor, where screen space is already tight.
+  /// Editor and the DevTools Suite, where screen space is already tight.
   final bool showDeviceFrame;
+
+  /// When true, the DOM/network/storage instrumentation script is
+  /// injected into the loaded document, and any message it posts is
+  /// forwarded to [onDevToolsMessage]. Only [DevToolsScreen] sets this.
+  final bool enableDevTools;
+
+  /// Called with each decoded message from the `WebLabDevTools` JS
+  /// channel, when [enableDevTools] is true.
+  final ValueChanged<Map<String, dynamic>>? onDevToolsMessage;
+
+  /// Called once the underlying [WebViewController] is created, so a
+  /// parent (like [DevToolsScreen]) can execute JS against the live page
+  /// directly — e.g. to fetch computed styles for a selected element.
+  final ValueChanged<WebViewController>? onControllerReady;
 
   const WebviewPreview({
     super.key,
@@ -31,6 +45,9 @@ class WebviewPreview extends StatefulWidget {
     required this.previewController,
     required this.consoleController,
     this.showDeviceFrame = true,
+    this.enableDevTools = false,
+    this.onDevToolsMessage,
+    this.onControllerReady,
   });
 
   @override
@@ -52,16 +69,16 @@ class _WebviewPreviewState extends State<WebviewPreview> {
         onMessageReceived: _handleConsoleMessage,
       );
 
-    widget.previewController.addListener(_handlePreviewControllerChanged);
-    _loadDocument();
-  }
+    if (widget.enableDevTools) {
+      _webViewController.addJavaScriptChannel(
+        'WebLabDevTools',
+        onMessageReceived: _handleDevToolsMessage,
+      );
+    }
 
-  @override
-  void didUpdateWidget(covariant WebviewPreview oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // The project reference itself doesn't change identity when its
-    // content is edited (it's mutated in place), so a plain project
-    // reload has to be triggered externally via previewController.refresh().
+    widget.previewController.addListener(_handlePreviewControllerChanged);
+    widget.onControllerReady?.call(_webViewController);
+    _loadDocument();
   }
 
   @override
@@ -86,9 +103,21 @@ class _WebviewPreviewState extends State<WebviewPreview> {
     }
   }
 
+  void _handleDevToolsMessage(JavaScriptMessage message) {
+    try {
+      final payload = jsonDecode(message.message) as Map<String, dynamic>;
+      widget.onDevToolsMessage?.call(payload);
+    } catch (_) {
+      // Malformed bridge payloads are silently ignored.
+    }
+  }
+
   void _loadDocument() {
     _lastReloadToken = widget.previewController.reloadToken;
-    final document = widget.previewController.buildDocument(widget.project);
+    final document = widget.previewController.buildDocument(
+      widget.project,
+      includeDevToolsInstrumentation: widget.enableDevTools,
+    );
     _webViewController.loadHtmlString(document);
   }
 
