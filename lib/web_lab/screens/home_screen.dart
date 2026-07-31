@@ -4,9 +4,11 @@ import '../widgets/project_card.dart';
 import 'project_explorer_screen.dart';
 import 'templates_screen.dart';
 import 'challenges_screen.dart';
+import 'labs_hub_screen.dart';
 
 /// The Web Lab entry point: a dashboard with quick actions (New Website,
-/// Open Project, Learning Challenges) and a grid of recent projects.
+/// Open Project, Learning Challenges, Labs) and a grid of recent
+/// projects.
 class HomeScreen extends StatefulWidget {
   final ProjectController projectController;
 
@@ -80,6 +82,15 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ChallengesScreen(projectController: widget.projectController),
+      ),
+    );
+  }
+
+  void _openLabs() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LabsHubScreen(projectController: widget.projectController),
       ),
     );
   }
@@ -166,6 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _QuickActionButton(icon: Icons.folder_open_outlined, label: 'Open Project', onTap: _openExplorer),
         _QuickActionButton(icon: Icons.widgets_outlined, label: 'Templates', onTap: _openTemplates),
         _QuickActionButton(icon: Icons.emoji_events_outlined, label: 'Challenges', onTap: _openChallenges),
+        _QuickActionButton(icon: Icons.science_outlined, label: 'Labs', onTap: _openLabs),
       ],
     );
   }
