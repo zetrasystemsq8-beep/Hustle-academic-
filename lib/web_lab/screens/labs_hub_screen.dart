@@ -3,6 +3,8 @@ import '../controllers/project_controller.dart';
 import 'animation_lab_screen.dart';
 import 'component_workshop_screen.dart';
 import 'design_lab_screen.dart';
+import 'js_playground_screen.dart';
+import 'package_manager_screen.dart';
 import 'svg_studio_screen.dart';
 
 /// Central directory of every standalone lab tool in Web Lab.
@@ -48,6 +50,26 @@ class LabsHubScreen extends StatelessWidget {
             title: 'Animation Lab',
             subtitle: 'Design CSS keyframe animations with a live, accurate preview.',
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AnimationLabScreen(projectController: projectController))),
+          ),
+          const SizedBox(height: 12),
+          _LabTile(
+            icon: Icons.code,
+            color: Colors.indigo,
+            title: 'JS Playground',
+            subtitle: 'Scratch space to test snippets, inspect variables, and benchmark code.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const JsPlaygroundScreen())),
+          ),
+          const SizedBox(height: 12),
+          _LabTile(
+            icon: Icons.inventory_2_outlined,
+            color: Colors.brown,
+            title: 'Package Manager',
+            subtitle: 'Import Bootstrap, Tailwind, Alpine.js, Chart.js, Three.js, or GSAP via CDN.',
+            onTap: projectController.currentProject == null
+                ? () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Open a project first to manage its packages.')),
+                    )
+                : () => Navigator.push(context, MaterialPageRoute(builder: (_) => PackageManagerScreen(projectController: projectController))),
           ),
         ],
       ),
