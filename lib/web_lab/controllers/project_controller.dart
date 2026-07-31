@@ -4,10 +4,11 @@ import '../models/project_model.dart';
 import '../services/storage_service.dart';
 import '../services/file_system_service.dart';
 import '../services/zip_export_service.dart';
+import '../services/publish_service.dart';
 import '../storage/project_repository.dart';
 
 /// Owns the lifecycle of Web Lab projects: creating, opening, saving,
-/// renaming, duplicating, deleting, and exporting them.
+/// renaming, duplicating, deleting, exporting, and publishing them.
 ///
 /// This is the single source of truth for "which project is currently
 /// open" and its in-memory file tree. Screens listen to this via
@@ -16,14 +17,17 @@ class ProjectController extends ChangeNotifier {
   final StorageService _storageService;
   final FileSystemService _fileSystemService;
   final ZipExportService _zipExportService;
+  final PublishService _publishService;
 
   ProjectController({
     required StorageService storageService,
     required FileSystemService fileSystemService,
     required ZipExportService zipExportService,
+    required PublishService publishService,
   })  : _storageService = storageService,
         _fileSystemService = fileSystemService,
-        _zipExportService = zipExportService;
+        _zipExportService = zipExportService,
+        _publishService = publishService;
 
   ProjectModel? _currentProject;
   List<ProjectSummary> _recentProjects = [];
@@ -117,7 +121,7 @@ class ProjectController extends ChangeNotifier {
   }
 
   /// Persists the current project's in-memory state (file tree edits,
-  /// orientation, etc.) to local storage.
+  /// orientation, publish state, etc.) to local storage.
   Future<void> saveCurrentProject() async {
     final project = _currentProject;
     if (project == null) return;
@@ -146,7 +150,8 @@ class ProjectController extends ChangeNotifier {
   }
 
   /// Duplicates a stored project (not just the currently open one),
-  /// giving the copy a new id and a "(copy)" suffixed name.
+  /// giving the copy a new id and a "(copy)" suffixed name. The copy is
+  /// never marked as published, even if the original was.
   Future<ProjectModel?> duplicateProject(String projectId) async {
     final original = await _storageService.loadProject(projectId);
     if (original == null) return null;
@@ -184,6 +189,44 @@ class ProjectController extends ChangeNotifier {
     final bytes = _zipExportService.exportProject(project);
     final fileName = _zipExportService.suggestedFileName(project);
     return (bytes: bytes, fileName: fileName);
+  }
+
+  /// Publishes the current project as a live, publicly hosted site.
+  /// Reuses the project's existing slug if it was published before, so
+  /// republishing updates the same URL rather than creating a new one.
+  /// Throws if no project is currently open.
+  Future<PublishResult> publishCurrentProject() async {
+    final project = _currentProject;
+    if (project == null) {
+      throw StateError('No project open to publish.');
+    }
+
+    final result = await _publishService.publish(project, existingSlug: project.publishedSlug);
+    project.publishedSlug = result.slug;
+    project.publishedAt = DateTime.now();
+    await saveCurrentProject();
+    notifyListeners();
+    return result;
+  }
+
+  /// Removes the current project's published site, if any.
+  Future<void> unpublishCurrentProject() async {
+    final project = _currentProject;
+    if (project == null || project.publishedSlug == null) return;
+
+    await _publishService.unpublish(project.publishedSlug!);
+    project.publishedSlug = null;
+    project.publishedAt = null;
+    await saveCurrentProject();
+    notifyListeners();
+  }
+
+  /// The public URL of the current project's live site, or null if it
+  /// has never been published. Computed locally with no network call.
+  String? publicUrlForCurrentProject() {
+    final project = _currentProject;
+    if (project == null || project.publishedSlug == null) return null;
+    return _publishService.publicUrlForSlug(project.publishedSlug!);
   }
 
   /// Call after any in-place mutation of [currentProject]'s file tree
