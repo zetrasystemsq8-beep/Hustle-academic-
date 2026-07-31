@@ -11,15 +11,15 @@ import '../preview/webview_preview.dart';
 import '../widgets/editor_tab_bar.dart';
 import '../widgets/quick_reference_panel.dart';
 import 'preview_screen.dart';
+import 'publish_screen.dart';
 
 /// The main coding workspace: a multi-file, multi-tab code editor over
 /// the currently open project. Wraps [EditorController] state and wires
 /// edits back into the project's file tree and local storage.
 ///
 /// Supports an optional split view — code on top, a live auto-refreshing
-/// preview below — so students can see the effect of their HTML/CSS/JS
-/// changes without leaving the editor, alongside a per-language Quick
-/// Reference glossary for when the syntax itself is unfamiliar.
+/// preview below — a per-language Quick Reference glossary, and a
+/// Publish entry point for making the project a real, live website.
 class EditorScreen extends StatefulWidget {
   final ProjectController projectController;
   final FileNode? initialFile;
@@ -95,6 +95,17 @@ class _EditorScreenState extends State<EditorScreen> {
     );
   }
 
+  Future<void> _openPublish() async {
+    await _saveAll();
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PublishScreen(projectController: widget.projectController),
+      ),
+    );
+  }
+
   void _showQuickReference(FileNode file) {
     final language = SyntaxHighlighter.languageForExtension(file.extension);
     QuickReferencePanel.show(context, language);
@@ -118,6 +129,7 @@ class _EditorScreenState extends State<EditorScreen> {
           ),
           IconButton(tooltip: 'Save', icon: const Icon(Icons.save_outlined), onPressed: _saveAll),
           IconButton(tooltip: 'Full Preview', icon: const Icon(Icons.play_arrow), onPressed: _openFullPreview),
+          IconButton(tooltip: 'Publish', icon: const Icon(Icons.publish_outlined), onPressed: _openPublish),
         ],
       ),
       body: AnimatedBuilder(
