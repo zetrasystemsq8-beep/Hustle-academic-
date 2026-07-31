@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import '../devtools/devtools_instrumentation.dart';
 import '../models/project_model.dart';
 
 /// Drives the live Preview panel: assembling the student's HTML, CSS and
@@ -33,11 +34,19 @@ class PreviewController extends ChangeNotifier {
   /// project's index.html, style.css, and script.js, suitable for
   /// loading directly into a WebView via `loadHtmlString`.
   ///
-  /// A lightweight console bridge is injected so `console.log`,
-  /// `console.warn`, and `console.error` calls, plus uncaught errors, can
-  /// be forwarded out to the app's Console panel via a JS channel named
-  /// `WebLabConsole` (wired up in [WebviewPreview]).
-  String buildDocument(ProjectModel project) {
+  /// A lightweight console bridge is always injected so `console.log`,
+  /// `console.warn`, `console.error` calls, plus uncaught errors, can be
+  /// forwarded out to the app's Console panel via a JS channel named
+  /// `WebLabConsole`.
+  ///
+  /// When [includeDevToolsInstrumentation] is true, a second, heavier
+  /// instrumentation script is also injected — a DOM MutationObserver,
+  /// fetch/XHR interception, and storage watchers, all reporting to a
+  /// `WebLabDevTools` JS channel. This is only ever enabled for
+  /// [DevToolsController]-backed previews (the DevTools Suite screen),
+  /// never for the normal Preview screen, the editor's split view, or a
+  /// published site — those shouldn't pay the overhead.
+  String buildDocument(ProjectModel project, {bool includeDevToolsInstrumentation = false}) {
     final html = project.indexHtml?.content ?? '';
     final css = project.styleCss?.content ?? '';
     final js = project.scriptJs?.content ?? '';
@@ -81,6 +90,7 @@ $html
   };
 })();
 </script>
+${includeDevToolsInstrumentation ? '<script>${DevToolsInstrumentation.script}</script>' : ''}
 <script>
 $js
 </script>
