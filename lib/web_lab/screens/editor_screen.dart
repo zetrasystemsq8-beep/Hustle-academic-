@@ -10,6 +10,7 @@ import '../editor/syntax_highlighter.dart';
 import '../preview/webview_preview.dart';
 import '../widgets/editor_tab_bar.dart';
 import '../widgets/quick_reference_panel.dart';
+import 'devtools_screen.dart';
 import 'preview_screen.dart';
 import 'publish_screen.dart';
 
@@ -18,8 +19,9 @@ import 'publish_screen.dart';
 /// edits back into the project's file tree and local storage.
 ///
 /// Supports an optional split view — code on top, a live auto-refreshing
-/// preview below — a per-language Quick Reference glossary, and a
-/// Publish entry point for making the project a real, live website.
+/// preview below — a per-language Quick Reference glossary, a Publish
+/// entry point, and a DevTools Suite entry point for inspecting the
+/// live-running project like a real browser's developer tools.
 class EditorScreen extends StatefulWidget {
   final ProjectController projectController;
   final FileNode? initialFile;
@@ -106,6 +108,18 @@ class _EditorScreenState extends State<EditorScreen> {
     );
   }
 
+  Future<void> _openDevTools() async {
+    await _saveAll();
+    final project = widget.projectController.currentProject;
+    if (project == null || !mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DevToolsScreen(project: project),
+      ),
+    );
+  }
+
   void _showQuickReference(FileNode file) {
     final language = SyntaxHighlighter.languageForExtension(file.extension);
     QuickReferencePanel.show(context, language);
@@ -128,6 +142,7 @@ class _EditorScreenState extends State<EditorScreen> {
             onPressed: () => setState(() => _splitView = !_splitView),
           ),
           IconButton(tooltip: 'Save', icon: const Icon(Icons.save_outlined), onPressed: _saveAll),
+          IconButton(tooltip: 'DevTools', icon: const Icon(Icons.developer_mode), onPressed: _openDevTools),
           IconButton(tooltip: 'Full Preview', icon: const Icon(Icons.play_arrow), onPressed: _openFullPreview),
           IconButton(tooltip: 'Publish', icon: const Icon(Icons.publish_outlined), onPressed: _openPublish),
         ],
