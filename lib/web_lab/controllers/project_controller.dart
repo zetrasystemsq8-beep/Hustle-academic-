@@ -7,12 +7,6 @@ import '../services/zip_export_service.dart';
 import '../services/publish_service.dart';
 import '../storage/project_repository.dart';
 
-/// Owns the lifecycle of Web Lab projects: creating, opening, saving,
-/// renaming, duplicating, deleting, exporting, and publishing them.
-///
-/// This is the single source of truth for "which project is currently
-/// open" and its in-memory file tree. Screens listen to this via
-/// [ChangeNotifier] rather than talking to [StorageService] directly.
 class ProjectController extends ChangeNotifier {
   final StorageService _storageService;
   final FileSystemService _fileSystemService;
@@ -33,16 +27,10 @@ class ProjectController extends ChangeNotifier {
   List<ProjectSummary> _recentProjects = [];
   bool _isLoading = false;
 
-  /// The project currently open in the editor/preview, or null if the
-  /// user is on the Home dashboard with nothing open.
   ProjectModel? get currentProject => _currentProject;
-
-  /// Lightweight summaries for the Home dashboard's "Recent Projects".
   List<ProjectSummary> get recentProjects => List.unmodifiable(_recentProjects);
-
   bool get isLoading => _isLoading;
 
-  /// Loads the recent-projects index. Call once on Home screen init.
   Future<void> loadRecentProjects() async {
     _isLoading = true;
     notifyListeners();
@@ -51,9 +39,6 @@ class ProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Creates a brand-new blank project named [name] with three empty
-  /// files — index.html, style.css, script.js — exactly as required:
-  /// students write every line themselves, no pre-written boilerplate.
   Future<ProjectModel> createBlankProject(String name) async {
     final rootId = _fileSystemService.generateId();
     final root = FileNode(id: rootId, name: name, type: FileNodeType.folder, isExpanded: true);
@@ -75,8 +60,6 @@ class ProjectController extends ChangeNotifier {
     return project;
   }
 
-  /// Creates a new project pre-populated from a locked/advanced template's
-  /// starter files. Used only by the Templates flow for advanced users.
   Future<ProjectModel> createFromTemplate({
     required String name,
     required String templateId,
@@ -104,7 +87,6 @@ class ProjectController extends ChangeNotifier {
     return project;
   }
 
-  /// Opens an existing project by id, making it the current project.
   Future<void> openProject(String projectId) async {
     _isLoading = true;
     notifyListeners();
@@ -120,8 +102,6 @@ class ProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Persists the current project's in-memory state (file tree edits,
-  /// orientation, publish state, etc.) to local storage.
   Future<void> saveCurrentProject() async {
     final project = _currentProject;
     if (project == null) return;
@@ -129,7 +109,6 @@ class ProjectController extends ChangeNotifier {
     await loadRecentProjects();
   }
 
-  /// Renames the current project both in memory and in storage.
   Future<void> renameCurrentProject(String newName) async {
     final project = _currentProject;
     if (project == null) return;
@@ -139,8 +118,6 @@ class ProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Deletes a project by id. If it happens to be the currently open
-  /// project, clears the current-project state as well.
   Future<void> deleteProject(String projectId) async {
     await _storageService.deleteProject(projectId);
     if (_currentProject?.id == projectId) {
@@ -149,9 +126,6 @@ class ProjectController extends ChangeNotifier {
     await loadRecentProjects();
   }
 
-  /// Duplicates a stored project (not just the currently open one),
-  /// giving the copy a new id and a "(copy)" suffixed name. The copy is
-  /// never marked as published, even if the original was.
   Future<ProjectModel?> duplicateProject(String projectId) async {
     final original = await _storageService.loadProject(projectId);
     if (original == null) return null;
@@ -174,15 +148,11 @@ class ProjectController extends ChangeNotifier {
     return copy;
   }
 
-  /// Closes the current project, returning the user to a "no project
-  /// open" state (e.g. when navigating back to Home).
   void closeCurrentProject() {
     _currentProject = null;
     notifyListeners();
   }
 
-  /// Exports the current project as ZIP bytes ready for download/share.
-  /// Returns null if no project is currently open.
   ({List<int> bytes, String fileName})? exportCurrentProjectAsZip() {
     final project = _currentProject;
     if (project == null) return null;
@@ -191,10 +161,6 @@ class ProjectController extends ChangeNotifier {
     return (bytes: bytes, fileName: fileName);
   }
 
-  /// Publishes the current project as a live, publicly hosted site.
-  /// Reuses the project's existing slug if it was published before, so
-  /// republishing updates the same URL rather than creating a new one.
-  /// Throws if no project is currently open.
   Future<PublishResult> publishCurrentProject() async {
     final project = _currentProject;
     if (project == null) {
@@ -209,7 +175,6 @@ class ProjectController extends ChangeNotifier {
     return result;
   }
 
-  /// Removes the current project's published site, if any.
   Future<void> unpublishCurrentProject() async {
     final project = _currentProject;
     if (project == null || project.publishedSlug == null) return;
@@ -221,15 +186,30 @@ class ProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// The public URL of the current project's live site, or null if it
-  /// has never been published. Computed locally with no network call.
   String? publicUrlForCurrentProject() {
     final project = _currentProject;
     if (project == null || project.publishedSlug == null) return null;
     return _publishService.publicUrlForSlug(project.publishedSlug!);
   }
 
-  /// Call after any in-place mutation of [currentProject]'s file tree
-  /// (via [FileSystemService]) so listening widgets rebuild.
+  /// Toggles a CDN package on/off for the current project and persists
+  /// the change immediately, so the next preview/publish reflects it.
+  Future<void> togglePackage(String packageId) async {
+    final project = _currentProject;
+    if (project == null) return;
+
+    if (project.enabledCdnPackageIds.contains(packageId)) {
+      project.enabledCdnPackageIds.remove(packageId);
+    } else {
+      project.enabledCdnPackageIds.add(packageId);
+    }
+    await saveCurrentProject();
+    notifyListeners();
+  }
+
+  bool isPackageEnabled(String packageId) {
+    return _currentProject?.enabledCdnPackageIds.contains(packageId) ?? false;
+  }
+
   void notifyProjectChanged() => notifyListeners();
 }
