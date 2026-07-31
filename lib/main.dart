@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'courses/web_development_courses.dart';
 import 'courses/entrepreneurship_courses.dart';
 import 'courses/flutter_courses.dart';
@@ -13,7 +15,16 @@ import 'web_lab/screens/home_screen.dart' as web_lab;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: ".env");
+
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
   await webLab.initialize();
+
   runApp(const HustleAcademyApp());
 }
 
