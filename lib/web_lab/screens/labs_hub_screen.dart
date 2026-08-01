@@ -6,6 +6,7 @@ import 'design_lab_screen.dart';
 import 'js_playground_screen.dart';
 import 'package_manager_screen.dart';
 import 'svg_studio_screen.dart';
+import 'testing_lab_screen.dart';
 
 /// Central directory of every standalone lab tool in Web Lab.
 class LabsHubScreen extends StatelessWidget {
@@ -70,6 +71,18 @@ class LabsHubScreen extends StatelessWidget {
                       const SnackBar(content: Text('Open a project first to manage its packages.')),
                     )
                 : () => Navigator.push(context, MaterialPageRoute(builder: (_) => PackageManagerScreen(projectController: projectController))),
+          ),
+          const SizedBox(height: 12),
+          _LabTile(
+            icon: Icons.fact_check_outlined,
+            color: Colors.green,
+            title: 'Testing Lab',
+            subtitle: 'Check your HTML, CSS, JS, and accessibility for common mistakes.',
+            onTap: projectController.currentProject == null
+                ? () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Open a project first to test it.')),
+                    )
+                : () => Navigator.push(context, MaterialPageRoute(builder: (_) => TestingLabScreen(project: projectController.currentProject!))),
           ),
         ],
       ),
