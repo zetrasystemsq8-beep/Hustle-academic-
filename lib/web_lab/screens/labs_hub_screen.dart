@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import '../controllers/project_controller.dart';
 import 'animation_lab_screen.dart';
+import 'community_templates_screen.dart';
 import 'component_workshop_screen.dart';
 import 'design_lab_screen.dart';
 import 'js_playground_screen.dart';
+import 'legacy_screen.dart';
 import 'package_manager_screen.dart';
-import 'svg_studio_screen.dart';
 import 'sandbox_screen.dart';
-import 'community_templates_screen.dart';
+import 'svg_studio_screen.dart';
 import 'testing_lab_screen.dart';
+import 'svg_studio_screen.dart';
 
 /// Central directory of every standalone lab tool in Web Lab.
 class LabsHubScreen extends StatelessWidget {
@@ -37,22 +39,6 @@ class LabsHubScreen extends StatelessWidget {
             title: 'Component Workshop',
             subtitle: 'Build reusable buttons, cards, forms, and more — save your own library.',
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ComponentWorkshopScreen(projectController: projectController))),
-          ),
-          const SizedBox(height: 12),
-          _LabTile(
-            icon: Icons.science_outlined,
-            color: Colors.cyan,
-            title: 'Sandbox',
-            subtitle: 'No project needed — instant HTML/CSS/JS scratch space.',
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SandboxScreen(projectController: projectController))),
-          ),
-          const SizedBox(height: 12),
-          _LabTile(
-            icon: Icons.people_outline,
-            color: Colors.deepOrange,
-            title: 'Community Templates',
-            subtitle: 'Free templates shared by other students — browse, use, or share your own.',
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CommunityTemplatesScreen(projectController: projectController))),
           ),
           const SizedBox(height: 12),
           _LabTile(
@@ -101,6 +87,30 @@ class LabsHubScreen extends StatelessWidget {
                       const SnackBar(content: Text('Open a project first to test it.')),
                     )
                 : () => Navigator.push(context, MaterialPageRoute(builder: (_) => TestingLabScreen(project: projectController.currentProject!))),
+          ),
+          const SizedBox(height: 12),
+          _LabTile(
+            icon: Icons.science_outlined,
+            color: Colors.cyan,
+            title: 'Sandbox',
+            subtitle: 'No project needed — instant HTML/CSS/JS scratch space.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SandboxScreen(projectController: projectController))),
+          ),
+          const SizedBox(height: 12),
+          _LabTile(
+            icon: Icons.people_outline,
+            color: Colors.deepOrange,
+            title: 'Community Templates',
+            subtitle: 'Free templates shared by other students — browse, use, or share your own.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => CommunityTemplatesScreen(projectController: projectController))),
+          ),
+          const SizedBox(height: 12),
+          _LabTile(
+            icon: Icons.hub_outlined,
+            color: Colors.indigoAccent,
+            title: 'Citation Chain',
+            subtitle: 'See which shared templates became the seed for other students\' work.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CitationChainScreen())),
           ),
         ],
       ),
