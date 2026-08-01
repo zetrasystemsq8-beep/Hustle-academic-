@@ -11,17 +11,22 @@ import '../preview/webview_preview.dart';
 import '../widgets/editor_tab_bar.dart';
 import '../widgets/quick_reference_panel.dart';
 import 'devtools_screen.dart';
+import 'experiment_runner_screen.dart';
+import 'legacy_screen.dart';
 import 'preview_screen.dart';
 import 'publish_screen.dart';
+import 'research_notebook_screen.dart';
 import 'rfc_screen.dart';
+
 /// The main coding workspace: a multi-file, multi-tab code editor over
-/// the currently open project. Wraps [EditorController] state and wires
-/// edits back into the project's file tree and local storage.
+/// the currently open project.
 ///
-/// Supports an optional split view — code on top, a live auto-refreshing
-/// preview below — a per-language Quick Reference glossary, a Publish
-/// entry point, and a DevTools Suite entry point for inspecting the
-/// live-running project like a real browser's developer tools.
+/// Primary actions (split view, save, DevTools, Full Preview, Publish)
+/// sit as direct app bar icons. Research, RFCs, Experiments, and the
+/// Knowledge Graph — the "institute" tools — are grouped under a single
+/// overflow menu instead of adding four more icons, since a phone-width
+/// app bar can't fit nine icons without things getting cramped or
+/// clipped.
 class EditorScreen extends StatefulWidget {
   final ProjectController projectController;
   final FileNode? initialFile;
@@ -71,9 +76,6 @@ class _EditorScreenState extends State<EditorScreen> {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Project saved')));
   }
 
-  /// Called on every keystroke. In split view, schedules a debounced
-  /// live preview refresh so the WebView doesn't reload on every single
-  /// character — only once typing pauses briefly.
   void _scheduleLiveRefresh() {
     if (!_splitView) return;
     _debounceTimer?.cancel();
@@ -102,9 +104,7 @@ class _EditorScreenState extends State<EditorScreen> {
     if (!mounted) return;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => PublishScreen(projectController: widget.projectController),
-      ),
+      MaterialPageRoute(builder: (context) => PublishScreen(projectController: widget.projectController)),
     );
   }
 
@@ -112,39 +112,45 @@ class _EditorScreenState extends State<EditorScreen> {
     await _saveAll();
     final project = widget.projectController.currentProject;
     if (project == null || !mounted) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => DevToolsScreen(project: project),
-      ),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => DevToolsScreen(project: project)));
   }
-IconButton(
-  tooltip: 'Research Notebook',
-  icon: const Icon(Icons.menu_book_outlined),
-  onPressed: () {
+
+  void _openResearchNotebook() {
     final project = widget.projectController.currentProject;
     if (project == null) return;
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => ResearchNotebookScreen(projectId: project.id, projectName: project.name),
-      ),
+      MaterialPageRoute(builder: (context) => ResearchNotebookScreen(projectId: project.id, projectName: project.name)),
     );
-  },
-),
-  IconButton(
-  tooltip: 'RFCs',
-  icon: const Icon(Icons.description_outlined),
-  onPressed: () {
+  }
+
+  void _openRfcs() {
     final project = widget.projectController.currentProject;
     if (project == null) return;
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => RfcListScreen(filterProjectId: project.id, filterProjectName: project.name)),
     );
-  },
-),
+  }
+
+  void _openExperiments() {
+    final project = widget.projectController.currentProject;
+    if (project == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ExperimentListScreen(projectId: project.id, projectName: project.name)),
+    );
+  }
+
+  void _openKnowledgeGraph() {
+    final project = widget.projectController.currentProject;
+    if (project == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => KnowledgeGraphScreen(project: project)),
+    );
+  }
+
   void _showQuickReference(FileNode file) {
     final language = SyntaxHighlighter.languageForExtension(file.extension);
     QuickReferencePanel.show(context, language);
@@ -170,6 +176,32 @@ IconButton(
           IconButton(tooltip: 'DevTools', icon: const Icon(Icons.developer_mode), onPressed: _openDevTools),
           IconButton(tooltip: 'Full Preview', icon: const Icon(Icons.play_arrow), onPressed: _openFullPreview),
           IconButton(tooltip: 'Publish', icon: const Icon(Icons.publish_outlined), onPressed: _openPublish),
+          PopupMenuButton<String>(
+            tooltip: 'Research tools',
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              switch (value) {
+                case 'notebook':
+                  _openResearchNotebook();
+                  break;
+                case 'rfcs':
+                  _openRfcs();
+                  break;
+                case 'experiments':
+                  _openExperiments();
+                  break;
+                case 'knowledge_graph':
+                  _openKnowledgeGraph();
+                  break;
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(value: 'notebook', child: ListTile(leading: Icon(Icons.menu_book_outlined), title: Text('Research Notebook'))),
+              PopupMenuItem(value: 'rfcs', child: ListTile(leading: Icon(Icons.description_outlined), title: Text('RFCs'))),
+              PopupMenuItem(value: 'experiments', child: ListTile(leading: Icon(Icons.science_outlined), title: Text('Experiments'))),
+              PopupMenuItem(value: 'knowledge_graph', child: ListTile(leading: Icon(Icons.hub_outlined), title: Text('Knowledge Graph'))),
+            ],
+          ),
         ],
       ),
       body: AnimatedBuilder(
