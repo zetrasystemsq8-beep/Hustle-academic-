@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/project_controller.dart';
 import '../models/project_model.dart';
-
+import 'legacy_screen.dart';
 /// A free template another student shared publicly — real HTML/CSS/JS,
 /// not a locked premium item. Anyone can browse it and clone it into a
 /// new project of their own.
@@ -174,6 +174,7 @@ class _CommunityTemplatesScreenState extends State<CommunityTemplatesScreen> {
       templateId: 'community_${template.id}',
       starterFiles: {'index.html': template.html, 'style.css': template.css, 'script.js': template.js},
     );
+    await CitationRepository().record(templateId: template.id, templateTitle: template.title, newProjectName: name.trim());
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Created "$name" — find it from Home.')));
