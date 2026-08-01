@@ -13,7 +13,7 @@ import '../widgets/quick_reference_panel.dart';
 import 'devtools_screen.dart';
 import 'preview_screen.dart';
 import 'publish_screen.dart';
-
+import 'rfc_screen.dart';
 /// The main coding workspace: a multi-file, multi-tab code editor over
 /// the currently open project. Wraps [EditorController] state and wires
 /// edits back into the project's file tree and local storage.
@@ -130,6 +130,18 @@ IconButton(
       MaterialPageRoute(
         builder: (context) => ResearchNotebookScreen(projectId: project.id, projectName: project.name),
       ),
+    );
+  },
+),
+  IconButton(
+  tooltip: 'RFCs',
+  icon: const Icon(Icons.description_outlined),
+  onPressed: () {
+    final project = widget.projectController.currentProject;
+    if (project == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RfcListScreen(filterProjectId: project.id, filterProjectName: project.name)),
     );
   },
 ),
