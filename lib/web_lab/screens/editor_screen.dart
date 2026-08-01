@@ -119,7 +119,20 @@ class _EditorScreenState extends State<EditorScreen> {
       ),
     );
   }
-
+IconButton(
+  tooltip: 'Research Notebook',
+  icon: const Icon(Icons.menu_book_outlined),
+  onPressed: () {
+    final project = widget.projectController.currentProject;
+    if (project == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ResearchNotebookScreen(projectId: project.id, projectName: project.name),
+      ),
+    );
+  },
+),
   void _showQuickReference(FileNode file) {
     final language = SyntaxHighlighter.languageForExtension(file.extension);
     QuickReferencePanel.show(context, language);
