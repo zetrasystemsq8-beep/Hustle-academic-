@@ -12,6 +12,7 @@ import 'courses/cybersecurity_courses.dart';
 import 'courses/saas_courses.dart';
 import 'web_lab/web_lab_registry.dart';
 import 'web_lab/screens/home_screen.dart' as web_lab;
+import 'web_lab/screens/innovation_engine_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -267,6 +268,8 @@ class HomeTab extends StatelessWidget {
         _SearchBarStatic(),
         const SizedBox(height: 20),
         _WebLabBanner(),
+        const SizedBox(height: 12),
+        _InnovationEngineBanner(),
         const SizedBox(height: 24),
         _SectionTitle('Categories'),
         const SizedBox(height: 12),
@@ -347,6 +350,58 @@ class _WebLabBanner extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right, color: Colors.indigo),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point into the Innovation Engine — the research layer that
+/// sits alongside Web Lab, organizing both existing and new systems
+/// (Research Notebook, RFCs, Simulation Center, Language Factory, Web
+/// Universe, Browser Constructor, Tool Builder, Visualization Center,
+/// Plugin System, and more) under one identity, without altering
+/// anything Web Lab already does on its own.
+class _InnovationEngineBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => InnovationEngineScreen(
+              projectController: webLab.projectController,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF4338CA), Color(0xFF7C3AED)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.hub_outlined, color: Colors.white),
+            SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Innovation Engine', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
+                  SizedBox(height: 2),
+                  Text('Research, simulate, and invent new web technologies', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: Colors.white),
           ],
         ),
       ),
