@@ -178,7 +178,7 @@ class LanguageCompiler {
     return CompileResult(compiledJs: current, passesUsed: passes);
   }
 
-  String _applyReplacement(String template, RegExpMatch match) {
+  String _applyReplacement(String template, Match match) {
     var result = template;
     for (var i = match.groupCount; i >= 1; i--) {
       result = result.replaceAll('\$$i', match.group(i) ?? '');
