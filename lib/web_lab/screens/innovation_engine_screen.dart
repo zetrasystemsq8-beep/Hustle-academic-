@@ -3,6 +3,7 @@ import '../controllers/project_controller.dart';
 import 'animation_lab_screen.dart';
 import 'automation_engine_screen.dart';
 import 'community_templates_screen.dart';
+import 'comparator_screen.dart';
 import 'component_workshop_screen.dart';
 import 'design_lab_screen.dart';
 import 'experiment_runner_screen.dart';
@@ -18,6 +19,7 @@ import 'rfc_screen.dart';
 import 'sandbox_screen.dart';
 import 'simulation_center_screen.dart';
 import 'svg_studio_screen.dart';
+import 'system_builder_screen.dart';
 import 'testing_lab_screen.dart';
 import 'tool_builder_screen.dart';
 import 'visualization_center_screen.dart';
@@ -31,8 +33,9 @@ import 'web_universe_screen.dart';
 /// Center, Theory Center, Simulation Center, Language Factory, Compiler
 /// Factory, Protocol Factory, Browser Engine Lab, Rendering Lab,
 /// Automation Factory, Tool Builder, Visualization Center, Experiment
-/// Center, Publication Center, Knowledge Graph, Version Evolution, and
-/// Plugin System.
+/// Center, Publication Center, Knowledge Graph, Version Evolution,
+/// Plugin System, and — newest — Cognition Lab: System Builder and its
+/// Comparator, for assembling and testing real cognitive architectures.
 class InnovationEngineScreen extends StatelessWidget {
   final ProjectController projectController;
 
@@ -91,6 +94,24 @@ class InnovationEngineScreen extends StatelessWidget {
             title: 'RFC System',
             subtitle: 'Formal proposals: Motivation, Design, Alternatives, Open Questions.',
             onTap: () => _requireProject(context, () => Navigator.push(context, MaterialPageRoute(builder: (_) => RfcListScreen(filterProjectId: project!.id, filterProjectName: project.name)))),
+          ),
+
+          const SizedBox(height: 20),
+          _SectionHeader('Cognition Lab'),
+          _EngineTile(
+            icon: Icons.psychology_outlined,
+            color: Colors.deepPurple,
+            title: 'System Builder',
+            subtitle: 'Assemble Memory, Reasoning, Learning, Planning, Perception, and Action into a real working system.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SystemBuilderListScreen())),
+          ),
+          const SizedBox(height: 10),
+          _EngineTile(
+            icon: Icons.compare_arrows,
+            color: Colors.deepPurpleAccent,
+            title: 'Comparator',
+            subtitle: 'Pit two systems — or your system vs. a real Groq LLM — against the same task.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ComparatorScreen())),
           ),
 
           const SizedBox(height: 20),
