@@ -161,13 +161,17 @@ class ProjectController extends ChangeNotifier {
     return (bytes: bytes, fileName: fileName);
   }
 
-  Future<PublishResult> publishCurrentProject() async {
+  /// Publishes the current project, optionally attaching a claimed
+  /// Inventor Handle so it shows up on that student's public profile.
+  /// [authorHandle] is optional since not every student will have
+  /// claimed one yet.
+  Future<PublishResult> publishCurrentProject({String? authorHandle}) async {
     final project = _currentProject;
     if (project == null) {
       throw StateError('No project open to publish.');
     }
 
-    final result = await _publishService.publish(project, existingSlug: project.publishedSlug);
+    final result = await _publishService.publish(project, existingSlug: project.publishedSlug, authorHandle: authorHandle);
     project.publishedSlug = result.slug;
     project.publishedAt = DateTime.now();
     await saveCurrentProject();
