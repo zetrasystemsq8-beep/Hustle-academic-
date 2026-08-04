@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/project_controller.dart';
 import '../models/project_model.dart';
 import 'inventor_profile_screen.dart' show InventorRepository;
+import 'legacy_screen.dart' show CitationRepository;
 
 /// A free template another student shared publicly — real HTML/CSS/JS,
 /// not a locked premium item. Anyone can browse it and clone it into a
@@ -182,11 +183,11 @@ class _CommunityTemplatesScreenState extends State<CommunityTemplatesScreen> {
       starterFiles: {'index.html': template.html, 'style.css': template.css, 'script.js': template.js},
     );
 
-    final handle = await InventorRepository().loadMyHandle();
-    if (handle != null) {
-      // Real citation record: this template's author gets credit that
-      // their shared work seeded another student's new project.
-    }
+    // Real citation record: this template's author gets credit that
+    // their shared work seeded another student's new project — this is
+    // what feeds the Citation Chain and, through it, the "cited" count
+    // on the author's Inventor Profile.
+    await CitationRepository().record(templateId: template.id, templateTitle: template.title, newProjectName: name.trim());
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Created "$name" — find it from Home.')));
