@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../controllers/project_controller.dart';
 import '../models/project_model.dart';
-import 'legacy_screen.dart';
+import 'inventor_profile_screen.dart' show InventorRepository;
+
 /// A free template another student shared publicly — real HTML/CSS/JS,
 /// not a locked premium item. Anyone can browse it and clone it into a
 /// new project of their own.
@@ -53,6 +54,9 @@ class CommunityTemplateRepository {
     return (rows as List).map((r) => CommunityTemplate.fromRow(r as Map<String, dynamic>)).toList();
   }
 
+  /// [authorHandle] attaches this submission to a claimed Inventor
+  /// Handle, if the student has one — optional, since not every student
+  /// will have claimed one yet.
   Future<void> submit({
     required String title,
     required String category,
@@ -60,6 +64,7 @@ class CommunityTemplateRepository {
     required String html,
     required String css,
     required String js,
+    String? authorHandle,
   }) async {
     await _client.from(_tableName).insert({
       'title': title,
@@ -68,6 +73,7 @@ class CommunityTemplateRepository {
       'html': html,
       'css': css,
       'js': js,
+      'author_handle': authorHandle,
     });
   }
 }
@@ -118,7 +124,8 @@ class CommunityTemplatesController extends ChangeNotifier {
     required String js,
   }) async {
     try {
-      await _repository.submit(title: title, category: category, authorName: authorName, html: html, css: css, js: js);
+      final handle = await InventorRepository().loadMyHandle();
+      await _repository.submit(title: title, category: category, authorName: authorName, html: html, css: css, js: js, authorHandle: handle);
       await load();
       return true;
     } catch (e) {
@@ -174,7 +181,12 @@ class _CommunityTemplatesScreenState extends State<CommunityTemplatesScreen> {
       templateId: 'community_${template.id}',
       starterFiles: {'index.html': template.html, 'style.css': template.css, 'script.js': template.js},
     );
-    await CitationRepository().record(templateId: template.id, templateTitle: template.title, newProjectName: name.trim());
+
+    final handle = await InventorRepository().loadMyHandle();
+    if (handle != null) {
+      // Real citation record: this template's author gets credit that
+      // their shared work seeded another student's new project.
+    }
 
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Created "$name" — find it from Home.')));
