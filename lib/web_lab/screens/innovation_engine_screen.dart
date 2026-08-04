@@ -9,6 +9,7 @@ import 'design_lab_screen.dart';
 import 'experiment_runner_screen.dart';
 import 'frontier_labs_screen.dart';
 import 'invention_timeline_screen.dart';
+import 'inventor_profile_screen.dart';
 import 'js_playground_screen.dart';
 import 'language_factory_screen.dart';
 import 'legacy_screen.dart';
@@ -28,14 +29,7 @@ import 'web_universe_screen.dart';
 /// Innovation Engine: the top-level research layer of Hustle Academy,
 /// sitting alongside — never replacing — Web Lab. Every existing Web
 /// Lab feature is reachable from here exactly as it always was; nothing
-/// underneath was rewritten to build this screen. This is purely an
-/// organizing layer matching the requested architecture: Research
-/// Center, Theory Center, Simulation Center, Language Factory, Compiler
-/// Factory, Protocol Factory, Browser Engine Lab, Rendering Lab,
-/// Automation Factory, Tool Builder, Visualization Center, Experiment
-/// Center, Publication Center, Knowledge Graph, Version Evolution,
-/// Plugin System, and — newest — Cognition Lab: System Builder and its
-/// Comparator, for assembling and testing real cognitive architectures.
+/// underneath was rewritten to build this screen.
 class InnovationEngineScreen extends StatelessWidget {
   final ProjectController projectController;
 
@@ -77,6 +71,16 @@ class InnovationEngineScreen extends StatelessWidget {
             ),
           ),
 
+          _SectionHeader('Your Profile'),
+          _EngineTile(
+            icon: Icons.badge_outlined,
+            color: Colors.indigo,
+            title: 'Inventor Profile',
+            subtitle: 'Your public, permanent identity — published sites, templates, and plugins on one shareable page.',
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const InventorProfileScreen())),
+          ),
+
+          const SizedBox(height: 20),
           _SectionHeader('Research Center'),
           _EngineTile(
             icon: Icons.menu_book_outlined,
