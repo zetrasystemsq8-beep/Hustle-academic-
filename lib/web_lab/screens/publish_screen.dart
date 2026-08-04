@@ -3,10 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import '../controllers/project_controller.dart';
+import 'inventor_profile_screen.dart' show InventorRepository;
 
 /// Lets a student publish their current project as a real, live website
 /// with a shareable URL, backed by Supabase Storage. Supports
-/// republishing (updates the same URL) and unpublishing.
+/// republishing (updates the same URL) and unpublishing. If the student
+/// has claimed an Inventor Handle, the publish is attached to it so it
+/// appears on their public profile automatically.
 class PublishScreen extends StatefulWidget {
   final ProjectController projectController;
 
@@ -26,7 +29,8 @@ class _PublishScreenState extends State<PublishScreen> {
       _error = null;
     });
     try {
-      await widget.projectController.publishCurrentProject();
+      final handle = await InventorRepository().loadMyHandle();
+      await widget.projectController.publishCurrentProject(authorHandle: handle);
     } catch (e) {
       setState(() => _error = 'Publishing failed. Check your connection and try again.');
     } finally {
