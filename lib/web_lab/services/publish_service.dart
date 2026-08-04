@@ -21,7 +21,12 @@ class PublishService {
   final SupabaseClient _client = Supabase.instance.client;
   final Random _random = Random();
 
-  Future<PublishResult> publish(ProjectModel project, {String? existingSlug}) async {
+  /// Publishes [project]. If [existingSlug] is provided (the project was
+  /// already published before), the same slug is reused so the URL stays
+  /// stable across republishes. [authorHandle] attaches this publish to
+  /// a claimed Inventor Handle, if the student has one — optional, since
+  /// not every student will have claimed one yet.
+  Future<PublishResult> publish(ProjectModel project, {String? existingSlug, String? authorHandle}) async {
     final slug = existingSlug ?? _generateSlug(project.name);
     final document = _buildStandaloneDocument(project);
     final bytes = Uint8List.fromList(utf8.encode(document));
@@ -38,6 +43,7 @@ class PublishService {
         'project_name': project.name,
         'storage_path': '$slug/index.html',
         'published_at': DateTime.now().toIso8601String(),
+        'author_handle': authorHandle,
       },
       onConflict: 'slug',
     );
