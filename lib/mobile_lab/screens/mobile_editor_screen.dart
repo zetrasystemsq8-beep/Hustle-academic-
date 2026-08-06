@@ -1,7 +1,13 @@
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:archive/archive.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'build_service.dart';
+import 'build_center_screen.dart';
+import 'build_history_screen.dart';
 
 // ============================================================
 // MODELS — a Flutter project's editable file tree
@@ -251,6 +257,36 @@ flutter:
     root.children.add(pubspecFile);
 
     return root;
+  }
+}
+
+// ============================================================
+// PROJECT ZIPPER — packs a MobileProject's file tree into a
+// Flutter-shaped zip in memory. This is what gets uploaded to
+// Supabase Storage and unzipped by mobile-lab-build.yml on the
+// GitHub Actions runner.
+// ============================================================
+
+class MobileProjectZipper {
+  static List<int> zip(MobileProject project) {
+    final archive = Archive();
+    _addNode(archive, project.root, '');
+    final zipData = ZipEncoder().encode(archive);
+    return zipData;
+  }
+
+  static void _addNode(Archive archive, MobileFileNode node, String pathPrefix) {
+    final nodePath = pathPrefix.isEmpty ? node.name : '$pathPrefix/${node.name}';
+
+    if (node.isFile) {
+      final bytes = Uint8List.fromList(utf8.encode(node.content));
+      archive.addFile(ArchiveFile(nodePath, bytes.length, bytes));
+      return;
+    }
+
+    for (final child in node.children) {
+      _addNode(archive, child, nodePath);
+    }
   }
 }
 
@@ -1475,17 +1511,25 @@ class MobileEditorScreen extends StatefulWidget {
 
 class _MobileEditorScreenState extends State<MobileEditorScreen> {
   late final MobileEditorController _editorController;
+  late final BuildService _buildService;
+  bool _isStartingBuild = false;
 
   @override
   void initState() {
     super.initState();
     _editorController = MobileEditorController();
     if (widget.initialFile != null) _editorController.openFile(widget.initialFile!);
+    _buildService = BuildService(
+      supabase: Supabase.instance.client,
+      userId: Supabase.instance.client.auth.currentUser!.id,
+    );
+    _buildService.initialize();
   }
 
   @override
   void dispose() {
     _editorController.dispose();
+    _buildService.dispose();
     super.dispose();
   }
 
@@ -1498,6 +1542,47 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Project saved')));
   }
 
+  /// Zips the current project, uploads it, and triggers the invisible
+  /// GitHub Actions build via BuildService. Navigates to Build Center
+  /// so the user watches live progress. This is the ONLY place that
+  /// starts a build for this project.
+  Future<void> _generateApk(MobileProject project) async {
+    if (_isStartingBuild) return;
+    setState(() => _isStartingBuild = true);
+
+    await _saveAll();
+
+    if (!mounted) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BuildCenterScreen(
+          buildService: _buildService,
+          projectId: project.id,
+          projectName: project.name,
+        ),
+      ),
+    );
+
+    try {
+      final zipBytes = MobileProjectZipper.zip(project);
+      await _buildService.createBuild(
+        projectId: project.id,
+        projectName: project.name,
+        projectZipBytes: zipBytes,
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to start build: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isStartingBuild = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final project = widget.projectController.currentProject;
@@ -1506,7 +1591,20 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(project.name),
-        actions: [IconButton(tooltip: 'Save', icon: const Icon(Icons.save_outlined), onPressed: _saveAll)],
+        actions: [
+          IconButton(tooltip: 'Save', icon: const Icon(Icons.save_outlined), onPressed: _saveAll),
+          IconButton(
+            tooltip: 'Generate APK',
+            icon: _isStartingBuild
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Icon(Icons.android),
+            onPressed: _isStartingBuild ? null : () => _generateApk(project),
+          ),
+        ],
       ),
       body: AnimatedBuilder(
         animation: _editorController,
@@ -1615,10 +1713,36 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (_) => MobileProjectExplorerScreen(projectController: _projectController)));
   }
 
+  /// Opens "My Builds" — build history across ALL of the user's
+  /// projects, not just the one currently open.
+  void _openBuildHistory() {
+    final buildService = BuildService(
+      supabase: Supabase.instance.client,
+      userId: Supabase.instance.client.auth.currentUser!.id,
+    );
+    buildService.initialize();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BuildHistoryScreen(buildService: buildService),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mobile Lab')),
+      appBar: AppBar(
+        title: const Text('Mobile Lab'),
+        actions: [
+          IconButton(
+            tooltip: 'My Builds',
+            icon: const Icon(Icons.build_circle_outlined),
+            onPressed: _openBuildHistory,
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(onPressed: _createNewProject, icon: const Icon(Icons.add), label: const Text('New Project')),
       body: AnimatedBuilder(
         animation: _projectController,
