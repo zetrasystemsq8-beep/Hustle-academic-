@@ -1,0 +1,137 @@
+name: Mobile Lab Cloud Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        description: 'Mobile Lab build job ID'
+        required: true
+      project_id:
+        description: 'Project ID'
+        required: true
+      project_name:
+        description: 'Project name'
+        required: true
+      project_zip_url:
+        description: 'Signed URL to download the student project zip'
+        required: true
+      supabase_callback_url:
+        description: 'Webhook to report build progress back to Supabase'
+        required: true
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Report - Preparing Environment
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"preparingEnvironment","status":"active"}'
+
+      - name: Download and unzip student project
+        run: |
+          mkdir -p project
+          curl -L "${{ inputs.project_zip_url }}" -o project.zip
+          unzip -q project.zip -d project
+
+      - name: Report - Installing Flutter
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"installingFlutter","status":"active"}'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.5'
+          channel: 'stable'
+
+      - name: Report - Installing Dependencies
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"installingDependencies","status":"active"}'
+
+      - name: flutter pub get
+        working-directory: project
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"runningPubGet","status":"active"}'
+          flutter pub get
+
+      - name: Ensure android platform folder exists
+        working-directory: project
+        run: |
+          if [ ! -d "android" ]; then
+            flutter create --platforms=android .
+          fi
+
+      - name: Set app label to project name
+        working-directory: project
+        run: |
+          sed -i "s/android:label=\"[^\"]*\"/android:label=\"${{ inputs.project_name }}\"/" \
+            android/app/src/main/AndroidManifest.xml || true
+
+      - name: Analyze project
+        working-directory: project
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"analyzingProject","status":"active"}'
+          flutter analyze || true
+
+      - name: Build release APK
+        working-directory: project
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"compilingReleaseApk","status":"active"}'
+          flutter build apk --release
+
+      - name: Report - Optimizing & Signing
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"signingApk","status":"active"}'
+
+      - name: Upload APK to Supabase Storage
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","stage":"uploadingApk","status":"active"}'
+
+          APK_PATH="project/build/app/outputs/flutter-apk/app-release.apk"
+          APK_SIZE=$(du -h "$APK_PATH" | cut -f1)
+
+          curl -s -X POST "$SUPABASE_URL/storage/v1/object/build-artifacts/${{ inputs.build_id }}.apk" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/vnd.android.package-archive" \
+            --data-binary "@$APK_PATH"
+
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"build_id\":\"${{ inputs.build_id }}\",\"stage\":\"buildComplete\",\"status\":\"complete\",\"apk_size\":\"$APK_SIZE\",\"flutter_version\":\"3.44.5\"}"
+
+      - name: Report failure
+        if: failure()
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"build_id":"${{ inputs.build_id }}","status":"failed","error_logs":"Build failed - check Actions run logs"}'
