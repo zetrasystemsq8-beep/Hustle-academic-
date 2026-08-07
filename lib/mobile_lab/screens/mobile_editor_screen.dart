@@ -10,6 +10,32 @@ import 'build_center_screen.dart';
 import 'build_history_screen.dart';
 
 // ============================================================
+// DEVICE IDENTITY — since this app has no login screen, we need a
+// stable userId for BuildService/Supabase regardless. If a real
+// Supabase auth user exists, use that. Otherwise generate a random
+// id once and persist it locally so builds/history stay consistent
+// across app restarts on this device.
+// ============================================================
+
+class MobileDeviceIdentity {
+  static const String _key = 'mobile_lab.device_user_id';
+
+  static Future<String> getOrCreateUserId() async {
+    final existingAuthUser = Supabase.instance.client.auth.currentUser;
+    if (existingAuthUser != null) return existingAuthUser.id;
+
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getString(_key);
+    if (stored != null && stored.isNotEmpty) return stored;
+
+    final generated =
+        'device_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
+    await prefs.setString(_key, generated);
+    return generated;
+  }
+}
+
+// ============================================================
 // MODELS — a Flutter project's editable file tree
 // ============================================================
 
@@ -1511,7 +1537,7 @@ class MobileEditorScreen extends StatefulWidget {
 
 class _MobileEditorScreenState extends State<MobileEditorScreen> {
   late final MobileEditorController _editorController;
-  late final BuildService _buildService;
+  BuildService? _buildService;
   bool _isStartingBuild = false;
 
   @override
@@ -1519,17 +1545,32 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     super.initState();
     _editorController = MobileEditorController();
     if (widget.initialFile != null) _editorController.openFile(widget.initialFile!);
-    _buildService = BuildService(
+    _initBuildService();
+  }
+
+  // BuildService needs a userId, but this app has no login screen, so
+  // Supabase.instance.client.auth.currentUser is always null and the
+  // old code's `.currentUser!.id` crashed on every file open. This
+  // resolves a stable id (real auth user if one ever exists, otherwise
+  // a persisted per-device id) before constructing BuildService.
+  Future<void> _initBuildService() async {
+    final userId = await MobileDeviceIdentity.getOrCreateUserId();
+    final service = BuildService(
       supabase: Supabase.instance.client,
-      userId: Supabase.instance.client.auth.currentUser!.id,
+      userId: userId,
     );
-    _buildService.initialize();
+    await service.initialize();
+    if (!mounted) {
+      service.dispose();
+      return;
+    }
+    setState(() => _buildService = service);
   }
 
   @override
   void dispose() {
     _editorController.dispose();
-    _buildService.dispose();
+    _buildService?.dispose();
     super.dispose();
   }
 
@@ -1548,6 +1589,15 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
   /// starts a build for this project.
   Future<void> _generateApk(MobileProject project) async {
     if (_isStartingBuild) return;
+
+    final buildService = _buildService;
+    if (buildService == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Still starting up — try again in a moment.')),
+      );
+      return;
+    }
+
     setState(() => _isStartingBuild = true);
 
     await _saveAll();
@@ -1558,7 +1608,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => BuildCenterScreen(
-          buildService: _buildService,
+          buildService: buildService,
           projectId: project.id,
           projectName: project.name,
         ),
@@ -1567,7 +1617,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
 
     try {
       final zipBytes = MobileProjectZipper.zip(project);
-      await _buildService.createBuild(
+      await buildService.createBuild(
         projectId: project.id,
         projectName: project.name,
         projectZipBytes: zipBytes,
@@ -1715,13 +1765,15 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
 
   /// Opens "My Builds" — build history across ALL of the user's
   /// projects, not just the one currently open.
-  void _openBuildHistory() {
+  Future<void> _openBuildHistory() async {
+    final userId = await MobileDeviceIdentity.getOrCreateUserId();
     final buildService = BuildService(
       supabase: Supabase.instance.client,
-      userId: Supabase.instance.client.auth.currentUser!.id,
+      userId: userId,
     );
-    buildService.initialize();
+    await buildService.initialize();
 
+    if (!mounted) return;
     Navigator.push(
       context,
       MaterialPageRoute(
