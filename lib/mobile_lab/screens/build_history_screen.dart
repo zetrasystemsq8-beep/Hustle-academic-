@@ -426,15 +426,28 @@ class _BuildHistoryScreenState extends ConsumerState<BuildHistoryScreen> {
   }
 
   Future<void> _rebuild(BuildJob build) async {
-    await widget.buildService.createBuild(
-      projectId: build.projectId,
-      projectName: build.projectName,
-      projectZipPath: 'path/to/project.zip',
-    );
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Rebuild started')),
+    try {
+      final zipBytes = await widget.buildService.supabase.storage
+          .from('project-zips')
+          .download('${build.userId}/${build.id}.zip');
+
+      await widget.buildService.createBuild(
+        projectId: build.projectId,
+        projectName: build.projectName,
+        projectZipBytes: zipBytes,
       );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Rebuild started')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Rebuild failed: $e')),
+        );
+      }
     }
   }
 
