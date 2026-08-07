@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'build_service.dart';
@@ -9,10 +10,12 @@ import 'build_service.dart';
 class BuildCenterScreen extends ConsumerStatefulWidget {
   final String projectId;
   final String projectName;
+  final BuildService buildService;
 
   const BuildCenterScreen({
     required this.projectId,
     required this.projectName,
+    required this.buildService,
     Key? key,
   }) : super(key: key);
 
@@ -26,61 +29,43 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   late BuildService _buildService;
   bool _isBuilding = false;
   String? _activeBuildId;
+  StreamSubscription<String>? _logSubscription;
+  final List<String> _logs = [];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    // Initialize build service
-    _buildService = BuildService(
-      supabase: Supabase.instance.client,
-      userId: Supabase.instance.client.auth.currentUser!.id,
-    );
-    _buildService.initialize();
+    // Reuse the BuildService the caller already created/started a build
+    // on — do NOT construct a second one here, or this screen will be
+    // watching a different service instance than the one running the build.
+    _buildService = widget.buildService;
+    _logSubscription = _buildService.logStream.listen((log) {
+      if (mounted) setState(() => _logs.add(log));
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _buildService.dispose();
+    _logSubscription?.cancel();
+    // Don't dispose _buildService here — its owner (MobileEditorScreen)
+    // is responsible for disposing it.
     super.dispose();
   }
 
   Future<void> _startBuild() async {
-    if (_isBuilding) return;
-
-    setState(() => _isBuilding = true);
-
-    try {
-      final build = await _buildService.createBuild(
-        projectId: widget.projectId,
-        projectName: widget.projectName,
-        projectZipPath: 'path/to/project.zip',
+    // This screen doesn't have the project's zip bytes — builds are
+    // started from the project editor's "Generate APK" button, which
+    // zips the project and calls BuildService.createBuild before
+    // navigating here. Retry/rebuild should be triggered from there too.
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Go back to the project editor and tap "Generate APK" to start a new build.'),
+        ),
       );
-
-      setState(() => _activeBuildId = build.id);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Build started for ${widget.projectName}'),
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to start build: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isBuilding = false);
-      }
     }
   }
 
@@ -489,59 +474,45 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   }
 
   Widget _buildLogsTab() {
-    return StreamBuilder<String>(
-      stream: _buildService.logStream,
-      builder: (context, snapshot) {
-        return Container(
-          color: Colors.black,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Build Console',
-                style: TextStyle(
-                  color: Colors.green[400],
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[700]!),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: StreamBuilder<List<String>>(
-                    stream: _buildService.logStream.scan<List<String>>(
-                      [],
-                      (prev, current, _) => [...prev, current],
-                    ),
-                    builder: (context, snapshot) {
-                      final logs = snapshot.data ?? [];
-                      return SingleChildScrollView(
-                        reverse: true,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Text(
-                            logs.join('\n'),
-                            style: TextStyle(
-                              color: Colors.green[400],
-                              fontFamily: 'monospace',
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
+    return Container(
+      color: Colors.black,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Build Console',
+            style: TextStyle(
+              color: Colors.green[400],
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
-        );
-      },
+          const SizedBox(height: 12),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[700]!),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: SingleChildScrollView(
+                reverse: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    _logs.join('\n'),
+                    style: TextStyle(
+                      color: Colors.green[400],
+                      fontFamily: 'monospace',
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
