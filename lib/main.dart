@@ -13,6 +13,7 @@ import 'courses/saas_courses.dart';
 import 'web_lab/web_lab_registry.dart';
 import 'web_lab/screens/home_screen.dart' as web_lab;
 import 'web_lab/screens/innovation_engine_screen.dart';
+import 'mobile_lab/screens/mobile_editor_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -270,6 +271,8 @@ class HomeTab extends StatelessWidget {
         _WebLabBanner(),
         const SizedBox(height: 12),
         _InnovationEngineBanner(),
+        const SizedBox(height: 12),
+        _MobileLabBanner(),
         const SizedBox(height: 24),
         _SectionTitle('Categories'),
         const SizedBox(height: 12),
@@ -402,6 +405,59 @@ class _InnovationEngineBanner extends StatelessWidget {
               ),
             ),
             Icon(Icons.chevron_right, color: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point into Mobile Lab from the Home dashboard — build real
+/// Flutter apps and generate an installable APK via the cloud build
+/// pipeline (Supabase Edge Functions + GitHub Actions, invisible to
+/// the user).
+class _MobileLabBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const MobileLabHomeScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.teal.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.teal.shade100),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.teal,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.smartphone, color: Colors.white),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Mobile Lab', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Build real Flutter apps and generate an APK',
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.teal),
           ],
         ),
       ),
