@@ -9,6 +9,7 @@ import 'build_service.dart';
 import 'build_center_screen.dart';
 import 'build_history_screen.dart';
 import 'project_secrets_screen.dart';
+import 'mobile_templates_screen.dart';
 
 // ============================================================
 // MODELS — a Flutter project's editable file tree
@@ -756,8 +757,15 @@ class MobileProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<MobileProject> createProject(String name) async {
-    final root = MobileProject.buildStarterTree(name);
+  /// Creates a new project. By default it seeds the blank counter
+  /// starter tree — pass [treeBuilder] (e.g. from
+  /// MobileAppTemplates.buildProjectTree) to seed from a template
+  /// instead.
+  Future<MobileProject> createProject(
+    String name, {
+    MobileFileNode Function(String projectName)? treeBuilder,
+  }) async {
+    final root = treeBuilder != null ? treeBuilder(name) : MobileProject.buildStarterTree(name);
     final project = MobileProject(id: _fileSystemService.generateId(), name: name, root: root);
     await _repository.saveProject(project);
     _currentProject = project;
@@ -1708,6 +1716,15 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (_) => MobileProjectExplorerScreen(projectController: _projectController)));
   }
 
+  void _openTemplatePicker() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MobileTemplatePickerScreen(projectController: _projectController),
+      ),
+    );
+  }
+
   void _openBuildHistory() {
     final buildService = BuildService(
       supabase: Supabase.instance.client,
@@ -1730,6 +1747,11 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
         title: const Text('Mobile Lab'),
         actions: [
           IconButton(
+            tooltip: 'Templates',
+            icon: const Icon(Icons.dashboard_customize_outlined),
+            onPressed: _openTemplatePicker,
+          ),
+          IconButton(
             tooltip: 'My Builds',
             icon: const Icon(Icons.build_circle_outlined),
             onPressed: _openBuildHistory,
@@ -1746,7 +1768,18 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text('No Flutter projects yet — create your first one above.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('No Flutter projects yet.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600)),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: _openTemplatePicker,
+                      icon: const Icon(Icons.dashboard_customize_outlined),
+                      label: const Text('Browse Templates'),
+                    ),
+                  ],
+                ),
               ),
             );
           }
