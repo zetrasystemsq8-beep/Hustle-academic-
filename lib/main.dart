@@ -145,14 +145,25 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        final loggedIn = authService.isLoggedIn;
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => loggedIn
-                ? const MainScreen()
-                : LoginScreen(onLoggedIn: () => const MainScreen()),
-          ),
+        final hasSession = authService.isLoggedIn;
+final fullyVerified = authService.isFullyVerified;
+
+Navigator.of(context).pushReplacement(
+  MaterialPageRoute(
+    builder: (_) {
+      if (fullyVerified) return const MainScreen();
+      if (hasSession) {
+        // Session exists but OTP was never completed — force it,
+        // don't let them into the app.
+        return OtpScreen(
+          internalEmail: authService.lastInternalEmail!,
+          onVerified: () => const MainScreen(),
         );
+      }
+      return LoginScreen(onLoggedIn: () => const MainScreen());
+    },
+  ),
+);
       }
     });
   }
