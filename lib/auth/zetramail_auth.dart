@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// ============================================================
-// ZETRAMAIL AUTH — login-only. Accounts are created elsewhere
-// (Zetra ID); this app just signs existing users in and verifies
-// via OTP, using the same resolve_login_email / request_otp /
-// verify_otp RPC pattern as Tribunal.
-// ============================================================
-
 const String TABLE_PROFILES = 'profiles';
 final SupabaseClient supabase = Supabase.instance.client;
 
@@ -43,7 +36,18 @@ class UserProfile {
 
 class AuthService {
   String? get lastInternalEmail => supabase.auth.currentUser?.email;
+
+  /// A session exists (password was correct) — but OTP may still
+  /// be unverified. Use [isFullyVerified] to gate app access.
   bool get isLoggedIn => supabase.auth.currentUser != null;
+
+  /// True only once the OTP step has actually been completed for
+  /// this session. This is what gates entry into MainScreen.
+  bool get isFullyVerified {
+    final user = supabase.auth.currentUser;
+    if (user == null) return false;
+    return user.userMetadata?['hustle_otp_verified'] == true;
+  }
 
   Future<UserProfile> signIn({
     required String zetramail,
