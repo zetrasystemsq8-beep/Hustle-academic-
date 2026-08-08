@@ -14,6 +14,7 @@ import 'web_lab/web_lab_registry.dart';
 import 'web_lab/screens/home_screen.dart' as web_lab;
 import 'web_lab/screens/innovation_engine_screen.dart';
 import 'mobile_lab/screens/mobile_editor_screen.dart';
+import 'auth/zetramail_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -144,8 +145,13 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
+        final loggedIn = authService.isLoggedIn;
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const MainScreen()),
+          MaterialPageRoute(
+            builder: (_) => loggedIn
+                ? const MainScreen()
+                : LoginScreen(onLoggedIn: () => const MainScreen()),
+          ),
         );
       }
     });
@@ -362,10 +368,8 @@ class _WebLabBanner extends StatelessWidget {
 
 /// Entry point into the Innovation Engine — the research layer that
 /// sits alongside Web Lab, organizing both existing and new systems
-/// (Research Notebook, RFCs, Simulation Center, Language Factory, Web
-/// Universe, Browser Constructor, Tool Builder, Visualization Center,
-/// Plugin System, and more) under one identity, without altering
-/// anything Web Lab already does on its own.
+/// under one identity, without altering anything Web Lab already
+/// does on its own.
 class _InnovationEngineBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
