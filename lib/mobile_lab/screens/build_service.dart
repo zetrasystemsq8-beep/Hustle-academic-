@@ -305,6 +305,13 @@ class BuildService {
   Map<String, List<String>> _buildLogs = {};
   bool _isListening = false;
 
+  // Tracks the most recent build job so screens can seed a
+  // StreamBuilder's initialData when they rebuild (e.g. switching
+  // tabs) instead of showing an empty "No active builds" state
+  // until a new event happens to fire.
+  BuildJob? _latestJob;
+  BuildJob? get latestBuildJob => _latestJob;
+
   BuildService({
     required this.supabase,
     required this.userId,
@@ -364,6 +371,7 @@ class BuildService {
       await supabase.from('build_jobs').insert(buildJob.toJson());
 
       _buildJobs[buildId] = buildJob;
+      _latestJob = buildJob;
       _buildJobController.add(buildJob);
 
       // Start upload process
@@ -398,6 +406,7 @@ class BuildService {
             currentMessage: 'Uploading project: $i%',
           );
           _buildJobs[buildId] = updatedJob;
+          _latestJob = updatedJob;
           _buildJobController.add(updatedJob);
         }
       }
@@ -488,6 +497,7 @@ class BuildService {
             currentMessage: message,
           );
           _buildJobs[buildId] = updatedJob;
+          _latestJob = updatedJob;
           _buildJobController.add(updatedJob);
         }
 
@@ -524,6 +534,7 @@ class BuildService {
 
     final updatedJob = job.copyWith(stages: stages);
     _buildJobs[buildId] = updatedJob;
+    _latestJob = updatedJob;
     _buildJobController.add(updatedJob);
 
     // Update in database
@@ -545,6 +556,7 @@ class BuildService {
         buildLogs: _buildLogs[buildId]!.join('\n'),
       );
       _buildJobs[buildId] = updatedJob;
+      _latestJob = updatedJob;
     }
 
     _logController.add(logEntry);
@@ -570,6 +582,7 @@ class BuildService {
     );
 
     _buildJobs[buildId] = updatedJob;
+    _latestJob = updatedJob;
     _buildJobController.add(updatedJob);
     _updateBuildInDatabase(buildId, updatedJob);
   }
@@ -589,6 +602,7 @@ class BuildService {
     );
 
     _buildJobs[buildId] = updatedJob;
+    _latestJob = updatedJob;
     _buildJobController.add(updatedJob);
     _updateBuildInDatabase(buildId, updatedJob);
   }
@@ -625,6 +639,7 @@ class BuildService {
       if (payload.newRecord.isNotEmpty) {
         final buildJob = BuildJob.fromJson(payload.newRecord);
         _buildJobs[buildJob.id] = buildJob;
+        _latestJob = buildJob;
         _buildJobController.add(buildJob);
       }
     } catch (e) {
@@ -644,6 +659,7 @@ class BuildService {
       );
 
       _buildJobs[buildId] = updatedJob;
+      _latestJob = updatedJob;
       _buildJobController.add(updatedJob);
       await _updateBuildInDatabase(buildId, updatedJob);
       _addLog(buildId, '⚠️ Build cancelled by user');
