@@ -405,27 +405,36 @@ class BuildService {
       _addLog(buildId, '✅ Project uploaded successfully');
       _updateBuildStage(buildId, BuildStage.uploadingProject, isCompleted: true);
 
+      // Generate a signed, downloadable URL for the uploaded zip so the
+      // GitHub Actions runner (which has no Supabase auth context) can
+      // fetch it with a plain HTTP GET.
+      final signedUrl = await supabase.storage
+          .from('project-zips')
+          .createSignedUrl(storagePath, 3600); // valid for 1 hour
+
       // Trigger Supabase Edge Function
-      await _triggerGitHubAction(buildId, storagePath);
+      await _triggerGitHubAction(buildId, signedUrl);
     } catch (e) {
       _addLog(buildId, '❌ Upload failed: $e');
       _failBuild(buildId, 'Upload failed: $e');
     }
   }
 
-  Future<void> _triggerGitHubAction(String buildId, String storagePath) async {
+  Future<void> _triggerGitHubAction(String buildId, String projectZipUrl) async {
     try {
       _updateBuildStage(buildId, BuildStage.queued, isActive: true);
       _addLog(buildId, '⏳ Queuing build on GitHub Actions...');
 
-      // Call Supabase Edge Function to trigger GitHub Actions
+      // Call Supabase Edge Function to trigger GitHub Actions.
+      // Field names must match the edge function's expected snake_case
+      // keys exactly: build_id, project_id, project_name, project_zip_url.
       final response = await supabase.functions.invoke(
         'trigger-flutter-build',
         body: {
-          'buildId': buildId,
-          'projectId': _buildJobs[buildId]?.projectId,
-          'projectName': _buildJobs[buildId]?.projectName,
-          'projectZipPath': storagePath,
+          'build_id': buildId,
+          'project_id': _buildJobs[buildId]?.projectId,
+          'project_name': _buildJobs[buildId]?.projectName,
+          'project_zip_url': projectZipUrl,
         },
       );
 
