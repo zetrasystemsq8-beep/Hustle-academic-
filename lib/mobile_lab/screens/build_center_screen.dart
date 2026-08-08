@@ -107,6 +107,11 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   Widget _buildActiveBuildTab() {
     return StreamBuilder<BuildJob>(
       stream: _buildService.buildJobStream,
+      // Seeds the StreamBuilder with the last known build so switching
+      // tabs and coming back doesn't show "No active builds" — without
+      // this, the StreamBuilder has nothing to show until a NEW event
+      // fires after the widget rebuilds.
+      initialData: _buildService.latestBuildJob,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Center(
