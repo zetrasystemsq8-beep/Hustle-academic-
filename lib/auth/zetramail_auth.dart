@@ -104,14 +104,20 @@ class AuthService {
     await _requestOtp();
   }
 
+  /// Verifies the OTP for the currently authenticated session.
+  ///
+  /// The `verify_otp` Postgres function reads `auth.uid()` internally
+  /// to know whose code to check, so it only takes `p_code` — no
+  /// email is passed. [internalEmail] is kept as a parameter here so
+  /// call sites (e.g. OtpScreen) don't need to change, but it isn't
+  /// used in the RPC call.
   Future<bool> verifyOtp({
     required String internalEmail,
     required String otpCode,
   }) async {
     try {
       final result = await supabase.rpc('verify_otp', params: {
-        'p_email': internalEmail,
-        'p_otp': otpCode,
+        'p_code': otpCode,
       });
 
       if (result == true) {
