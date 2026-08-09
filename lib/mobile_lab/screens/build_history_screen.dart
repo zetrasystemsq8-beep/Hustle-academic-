@@ -440,13 +440,38 @@ class _BuildHistoryScreenState extends ConsumerState<BuildHistoryScreen> {
     }
   }
 
-  /// Fetches and shows the exact raw log file the GitHub Actions
-  /// runner produced for this build — real command output, not the
-  /// short cached build.buildLogs summary.
   void _viewLogs(BuildJob build) {
     showDialog(
       context: context,
-      builder: (context) => _LogDialog(buildService: widget.buildService, build: build),
+      builder: (context) => AlertDialog(
+        title: Text('Logs — ${build.projectName}'),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 400,
+          child: Container(
+            color: Colors.black,
+            padding: const EdgeInsets.all(12),
+            child: SingleChildScrollView(
+              child: Text(
+                build.buildLogs ?? build.errorLogs ?? 'No logs available',
+                style: TextStyle(
+                  color: build.errorLogs != null
+                      ? Colors.red[300]
+                      : Colors.green[400],
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -515,67 +540,5 @@ class _BuildHistoryScreenState extends ConsumerState<BuildHistoryScreen> {
 
   String _formatDateTime(DateTime dt) {
     return '${dt.day}/${dt.month}/${dt.year} ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-/// Fetches and displays the exact raw log file produced by the
-/// GitHub Actions runner for this build.
-class _LogDialog extends StatefulWidget {
-  final BuildService buildService;
-  final BuildJob build;
-
-  const _LogDialog({required this.buildService, required this.build});
-
-  @override
-  State<_LogDialog> createState() => _LogDialogState();
-}
-
-class _LogDialogState extends State<_LogDialog> {
-  String? _log;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    final log = await widget.buildService.fetchFullBuildLog(widget.build.id);
-    if (!mounted) return;
-    setState(() {
-      _log = log;
-      _isLoading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Logs — ${widget.build.projectName}'),
-      content: SizedBox(
-        width: double.maxFinite,
-        height: 400,
-        child: Container(
-          color: Colors.black,
-          padding: const EdgeInsets.all(12),
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  child: SelectableText(
-                    _log ?? widget.build.buildLogs ?? widget.build.errorLogs ?? 'No logs available',
-                    style: TextStyle(
-                      color: widget.build.status == BuildStatus.failed ? Colors.red[300] : Colors.green[400],
-                      fontFamily: 'monospace',
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-        ),
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
-      ],
-    );
   }
 }
