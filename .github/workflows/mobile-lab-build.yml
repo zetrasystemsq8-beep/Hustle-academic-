@@ -15,6 +15,9 @@ on:
       project_zip_url:
         description: 'Signed URL to download the student project zip'
         required: true
+      secrets_url:
+        description: 'Signed URL to a JSON file of dart-define values (optional)'
+        required: false
       supabase_callback_url:
         description: 'Webhook to report build progress back to Supabase'
         required: true
@@ -22,6 +25,7 @@ on:
 env:
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
   SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  BUILD_LOG: ${{ github.workspace }}/build.log
 
 jobs:
   build:
@@ -29,8 +33,12 @@ jobs:
     timeout-minutes: 30
 
     steps:
+      - name: Initialize log file
+        run: echo "=== Mobile Lab Build Log — ${{ inputs.build_id }} ===" > "$BUILD_LOG"
+
       - name: Report - Preparing Environment
         run: |
+          echo "[Preparing Environment]" | tee -a "$BUILD_LOG"
           curl -s -X POST "${{ inputs.supabase_callback_url }}" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
@@ -38,12 +46,14 @@ jobs:
 
       - name: Download and unzip student project
         run: |
+          echo "[Downloading project archive]" | tee -a "$BUILD_LOG"
           mkdir -p project
           curl -L "${{ inputs.project_zip_url }}" -o project.zip
-          unzip -q project.zip -d project
+          unzip -o -q project.zip -d project
 
       - name: Report - Installing Flutter
         run: |
+          echo "[Installing Flutter]" | tee -a "$BUILD_LOG"
           curl -s -X POST "${{ inputs.supabase_callback_url }}" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
@@ -56,6 +66,7 @@ jobs:
 
       - name: Report - Installing Dependencies
         run: |
+          echo "[Installing Dependencies]" | tee -a "$BUILD_LOG"
           curl -s -X POST "${{ inputs.supabase_callback_url }}" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
@@ -68,13 +79,24 @@ jobs:
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
             -d '{"build_id":"${{ inputs.build_id }}","stage":"runningPubGet","status":"active"}'
-          flutter pub get
+          echo "[flutter pub get]" | tee -a "$BUILD_LOG"
+          flutter pub get 2>&1 | tee -a "$BUILD_LOG"
+
+      - name: Download secrets (if any)
+        working-directory: project
+        run: |
+          if [ -n "${{ inputs.secrets_url }}" ]; then
+            curl -L "${{ inputs.secrets_url }}" -o dart_defines.json
+          else
+            echo '{}' > dart_defines.json
+          fi
 
       - name: Ensure android platform folder exists
         working-directory: project
         run: |
           if [ ! -d "android" ]; then
-            flutter create --platforms=android .
+            echo "[Generating android/ scaffold]" | tee -a "$BUILD_LOG"
+            flutter create --platforms=android . 2>&1 | tee -a "$BUILD_LOG"
           fi
 
       - name: Set app label to project name
@@ -90,7 +112,8 @@ jobs:
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
             -d '{"build_id":"${{ inputs.build_id }}","stage":"analyzingProject","status":"active"}'
-          flutter analyze || true
+          echo "[flutter analyze]" | tee -a "$BUILD_LOG"
+          flutter analyze 2>&1 | tee -a "$BUILD_LOG" || true
 
       - name: Build release APK
         working-directory: project
@@ -99,10 +122,12 @@ jobs:
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
             -d '{"build_id":"${{ inputs.build_id }}","stage":"compilingReleaseApk","status":"active"}'
-          flutter build apk --release
+          echo "[flutter build apk --release]" | tee -a "$BUILD_LOG"
+          flutter build apk --release --dart-define-from-file=dart_defines.json 2>&1 | tee -a "$BUILD_LOG"
 
-      - name: Report - Optimizing & Signing
+      - name: Report - Signing APK
         run: |
+          echo "[Signing APK]" | tee -a "$BUILD_LOG"
           curl -s -X POST "${{ inputs.supabase_callback_url }}" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
@@ -116,13 +141,31 @@ jobs:
             -d '{"build_id":"${{ inputs.build_id }}","stage":"uploadingApk","status":"active"}'
 
           APK_PATH="project/build/app/outputs/flutter-apk/app-release.apk"
-          APK_SIZE=$(du -h "$APK_PATH" | cut -f1)
+          if [ -f "$APK_PATH" ]; then
+            APK_SIZE=$(du -h "$APK_PATH" | cut -f1)
+            echo "[Uploading APK — size: $APK_SIZE]" | tee -a "$BUILD_LOG"
 
-          curl -s -X POST "$SUPABASE_URL/storage/v1/object/build-artifacts/${{ inputs.build_id }}.apk" \
+            curl -s -X POST "$SUPABASE_URL/storage/v1/object/build-artifacts/${{ inputs.build_id }}.apk" \
+              -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Content-Type: application/vnd.android.package-archive" \
+              --data-binary "@$APK_PATH"
+
+            echo "APK_SIZE=$APK_SIZE" >> "$GITHUB_ENV"
+          else
+            echo "[ERROR] Expected APK not found at $APK_PATH" | tee -a "$BUILD_LOG"
+          fi
+
+      - name: Upload full build log
+        if: always()
+        run: |
+          curl -s -X POST "$SUPABASE_URL/storage/v1/object/build-logs/${{ inputs.build_id }}.log" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
-            -H "Content-Type: application/vnd.android.package-archive" \
-            --data-binary "@$APK_PATH"
+            -H "Content-Type: text/plain" \
+            --data-binary "@$BUILD_LOG"
 
+      - name: Report success
+        if: success()
+        run: |
           curl -s -X POST "${{ inputs.supabase_callback_url }}" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
@@ -131,7 +174,8 @@ jobs:
       - name: Report failure
         if: failure()
         run: |
+          TAIL_LOG=$(tail -c 1500 "$BUILD_LOG" | sed 's/"/\\"/g' | tr '\n' ' ')
           curl -s -X POST "${{ inputs.supabase_callback_url }}" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: application/json" \
-            -d '{"build_id":"${{ inputs.build_id }}","status":"failed","error_logs":"Build failed - check Actions run logs"}'
+            -d "{\"build_id\":\"${{ inputs.build_id }}\",\"status\":\"failed\",\"error_logs\":\"$TAIL_LOG\"}"
