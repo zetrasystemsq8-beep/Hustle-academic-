@@ -175,6 +175,9 @@ def main():
     joblib.dump(model, "model.joblib")
     print("Saved model.joblib")
 
+    with open("metrics.json", "w") as f:
+        json.dump({"accuracy": accuracy}, f)
+    print("Saved metrics.json")
 
 if __name__ == "__main__":
     main()
