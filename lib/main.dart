@@ -14,6 +14,7 @@ import 'web_lab/web_lab_registry.dart';
 import 'web_lab/screens/home_screen.dart' as web_lab;
 import 'web_lab/screens/innovation_engine_screen.dart';
 import 'mobile_lab/screens/mobile_editor_screen.dart';
+import 'ai_lab/screens/ai_dataset_lab.dart';
 import 'auth/zetramail_auth.dart';
 
 void main() async {
@@ -146,24 +147,24 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
         final hasSession = authService.isLoggedIn;
-final fullyVerified = authService.isFullyVerified;
+        final fullyVerified = authService.isFullyVerified;
 
-Navigator.of(context).pushReplacement(
-  MaterialPageRoute(
-    builder: (_) {
-      if (fullyVerified) return const MainScreen();
-      if (hasSession) {
-        // Session exists but OTP was never completed — force it,
-        // don't let them into the app.
-        return OtpScreen(
-          internalEmail: authService.lastInternalEmail!,
-          onVerified: () => const MainScreen(),
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) {
+              if (fullyVerified) return const MainScreen();
+              if (hasSession) {
+                // Session exists but OTP was never completed — force it,
+                // don't let them into the app.
+                return OtpScreen(
+                  internalEmail: authService.lastInternalEmail!,
+                  onVerified: () => const MainScreen(),
+                );
+              }
+              return LoginScreen(onLoggedIn: () => const MainScreen());
+            },
+          ),
         );
-      }
-      return LoginScreen(onLoggedIn: () => const MainScreen());
-    },
-  ),
-);
       }
     });
   }
@@ -290,6 +291,8 @@ class HomeTab extends StatelessWidget {
         _InnovationEngineBanner(),
         const SizedBox(height: 12),
         _MobileLabBanner(),
+        const SizedBox(height: 12),
+        _AiLabBanner(),
         const SizedBox(height: 24),
         _SectionTitle('Categories'),
         const SizedBox(height: 12),
@@ -473,6 +476,58 @@ class _MobileLabBanner extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right, color: Colors.teal),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point into AI Lab from the Home dashboard — create AI
+/// projects, upload/prepare datasets, write Python training code,
+/// and run real training jobs via the cloud training pipeline.
+class _AiLabBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AiLabHomeScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.deepPurple.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.deepPurple.shade100),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.smart_toy, color: Colors.white),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('AI Lab', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Build, train, and test your own AI models',
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.deepPurple),
           ],
         ),
       ),
