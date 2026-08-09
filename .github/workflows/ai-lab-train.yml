@@ -1,8 +1,19 @@
-name: AI Lab Training Job
-
 on:
-  repository_dispatch:
-    types: [ai_lab_train]
+  workflow_dispatch:
+    inputs:
+      job_id:
+        required: true
+        type: string
+      workspace_path:
+        required: true
+        type: string
+      dataset_path:
+        required: false
+        type: string
+      entry_script:
+        required: false
+        type: string
+        default: 'src/train.py'
 
 jobs:
   train:
@@ -11,10 +22,10 @@ jobs:
     steps:
       - name: Set job variables
         run: |
-          echo "JOB_ID=${{ github.event.client_payload.jobId }}" >> $GITHUB_ENV
-          echo "WORKSPACE_PATH=${{ github.event.client_payload.workspacePath }}" >> $GITHUB_ENV
-          echo "DATASET_PATH=${{ github.event.client_payload.datasetPath }}" >> $GITHUB_ENV
-          echo "ENTRY_SCRIPT=${{ github.event.client_payload.entryScript }}" >> $GITHUB_ENV
+          echo "JOB_ID=${{ github.event.inputs.job_id }}" >> $GITHUB_ENV
+          echo "WORKSPACE_PATH=${{ github.event.inputs.workspace_path }}" >> $GITHUB_ENV
+          echo "DATASET_PATH=${{ github.event.inputs.dataset_path }}" >> $GITHUB_ENV
+          echo "ENTRY_SCRIPT=${{ github.event.inputs.entry_script }}" >> $GITHUB_ENVevent.client_payload.entryScript }}" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v5
