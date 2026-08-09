@@ -29,23 +29,17 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // screen exists yet, so we resolve a stable id the same way)
 // ------------------------------------------------------------
 
+import 'package:shared_preferences/shared_preferences.dart';
+// ...
 class AiDeviceIdentity {
   static const String _key = 'ai_lab.device_user_id';
-
   static Future<String> getOrCreateUserId() async {
     final existingAuthUser = Supabase.instance.client.auth.currentUser;
     if (existingAuthUser != null) return existingAuthUser.id;
-
-    // NOTE: reuses the same SharedPreferences key convention as
-    // MobileDeviceIdentity. If Mobile Lab's fix is already in the
-    // app, both labs will resolve to the SAME device id, which is
-    // what you want (one learner, one identity, across labs).
-    final prefs = await SharedPreferencesLike.instance();
+    final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString(_key);
     if (stored != null && stored.isNotEmpty) return stored;
-
-    final generated =
-        'device_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
+    final generated = 'device_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
     await prefs.setString(_key, generated);
     return generated;
   }
