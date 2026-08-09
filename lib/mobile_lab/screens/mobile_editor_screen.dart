@@ -757,10 +757,9 @@ class MobileProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Creates a new project. By default it seeds the blank counter
-  /// starter tree — pass [treeBuilder] (e.g. from
-  /// MobileAppTemplates.buildProjectTree) to seed from a template
-  /// instead.
+  /// Creates a new project. Pass [treeBuilder] to seed it from a
+  /// template (see mobile_templates_screen.dart); otherwise falls
+  /// back to the plain counter starter.
   Future<MobileProject> createProject(
     String name, {
     MobileFileNode Function(String projectName)? treeBuilder,
@@ -1697,31 +1696,13 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     super.dispose();
   }
 
-  Future<void> _createNewProject() async {
-    final nameController = TextEditingController(text: 'My Flutter App');
-    final name = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('New Flutter Project'),
-        content: TextField(controller: nameController, autofocus: true),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, nameController.text), child: const Text('Create')),
-        ],
-      ),
-    );
-    if (name == null || name.trim().isEmpty) return;
-    await _projectController.createProject(name.trim());
-    if (!mounted) return;
-    Navigator.push(context, MaterialPageRoute(builder: (_) => MobileProjectExplorerScreen(projectController: _projectController)));
-  }
-
-  void _openTemplatePicker() {
+  /// Opens the template picker instead of creating a blank project
+  /// directly — see mobile_templates_screen.dart for the 10
+  /// available starter apps.
+  void _createNewProject() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => MobileTemplatePickerScreen(projectController: _projectController),
-      ),
+      MaterialPageRoute(builder: (_) => MobileTemplatePickerScreen(projectController: _projectController)),
     );
   }
 
@@ -1747,11 +1728,6 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
         title: const Text('Mobile Lab'),
         actions: [
           IconButton(
-            tooltip: 'Templates',
-            icon: const Icon(Icons.dashboard_customize_outlined),
-            onPressed: _openTemplatePicker,
-          ),
-          IconButton(
             tooltip: 'My Builds',
             icon: const Icon(Icons.build_circle_outlined),
             onPressed: _openBuildHistory,
@@ -1768,18 +1744,7 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('No Flutter projects yet.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600)),
-                    const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                      onPressed: _openTemplatePicker,
-                      icon: const Icon(Icons.dashboard_customize_outlined),
-                      label: const Text('Browse Templates'),
-                    ),
-                  ],
-                ),
+                child: Text('No Flutter projects yet — create your first one above.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600)),
               ),
             );
           }
