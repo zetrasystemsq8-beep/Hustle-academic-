@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'ai_python_workspace.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -850,7 +851,15 @@ class AiProjectDashboardScreen extends StatelessWidget {
             ),
           ),
           _ActionTile(icon: Icons.architecture_outlined, title: 'Build Model', subtitle: 'Coming soon', enabled: false),
-          _ActionTile(icon: Icons.code, title: 'Python Workspace', subtitle: 'Coming soon', enabled: false),
+          _ActionTile(
+  icon: Icons.code,
+  title: 'Python Workspace',
+  subtitle: 'Edit your project source',
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => AiWorkspaceExplorerScreen(project: project)),
+  ),
+),
           _ActionTile(icon: Icons.play_circle_outline, title: 'Train', subtitle: 'Coming soon', enabled: false),
           _ActionTile(icon: Icons.science_outlined, title: 'Experiments', subtitle: 'Coming soon', enabled: false),
           _ActionTile(icon: Icons.fact_check_outlined, title: 'Evaluate', subtitle: 'Coming soon', enabled: false),
