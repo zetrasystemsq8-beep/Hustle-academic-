@@ -28,9 +28,20 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   late TabController _tabController;
   late BuildService _buildService;
   bool _isBuilding = false;
-  String? _activeBuildId;
   StreamSubscription<String>? _logSubscription;
+  StreamSubscription<BuildJob>? _buildJobSubscription;
   final List<String> _logs = [];
+
+  // The single build this screen is actually tracking. Previously this
+  // screen listened to buildJobStream raw (unfiltered) via StreamBuilder,
+  // which carries updates for EVERY build job under this user — not just
+  // this one. That let unrelated/stale build rows flash through here,
+  // which is what caused the "stuck, then suddenly jumps to success"
+  // behavior: it wasn't simulating anything, it was briefly showing a
+  // different build's real state. Now we pin to one build explicitly and
+  // ignore every other job's events entirely.
+  BuildJob? _pinnedBuild;
+  String? _pinnedBuildId;
 
   @override
   void initState() {
@@ -40,8 +51,33 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
     // on — do NOT construct a second one here, or this screen will be
     // watching a different service instance than the one running the build.
     _buildService = widget.buildService;
+
     _logSubscription = _buildService.logStream.listen((log) {
       if (mounted) setState(() => _logs.add(log));
+    });
+
+    // Seed with the last known build for this project, if any — covers
+    // the moment this screen first mounts before the live subscription
+    // below has received its first event.
+    final latest = _buildService.latestBuildJob;
+    if (latest != null && latest.projectId == widget.projectId) {
+      _pinnedBuild = latest;
+      _pinnedBuildId = latest.id;
+    }
+
+    _buildJobSubscription = _buildService.buildJobStream.listen((job) {
+      if (!mounted) return;
+      if (job.projectId != widget.projectId) return;
+
+      // Once pinned to a specific build, only accept updates for that
+      // exact build — ignore any other job's events completely.
+      if (_pinnedBuildId != null && job.id != _pinnedBuildId) return;
+
+      // Not yet pinned: lock onto whichever build we see first for this
+      // project (normally the one just created by "Generate APK").
+      _pinnedBuildId ??= job.id;
+
+      setState(() => _pinnedBuild = job);
     });
   }
 
@@ -49,6 +85,7 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   void dispose() {
     _tabController.dispose();
     _logSubscription?.cancel();
+    _buildJobSubscription?.cancel();
     // Don't dispose _buildService here — its owner (MobileEditorScreen)
     // is responsible for disposing it.
     super.dispose();
@@ -67,6 +104,18 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
         ),
       );
     }
+  }
+
+  /// Called when the user taps a build in the History tab — explicitly
+  /// switches the Active Build tab to show that exact build, and pins
+  /// future stream events to it (any further real updates for that
+  /// build will still keep updating this view live).
+  void _viewBuildInActiveTab(BuildJob build) {
+    setState(() {
+      _pinnedBuild = build;
+      _pinnedBuildId = build.id;
+    });
+    _tabController.animateTo(0);
   }
 
   @override
@@ -105,39 +154,30 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   }
 
   Widget _buildActiveBuildTab() {
-    return StreamBuilder<BuildJob>(
-      stream: _buildService.buildJobStream,
-      // Seeds the StreamBuilder with the last known build so switching
-      // tabs and coming back doesn't show "No active builds" — without
-      // this, the StreamBuilder has nothing to show until a NEW event
-      // fires after the widget rebuilds.
-      initialData: _buildService.latestBuildJob,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.build, size: 64, color: Colors.grey[400]),
-                const SizedBox(height: 16),
-                Text(
-                  'No active builds',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Start a new build to see progress here',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          );
-        }
+    final build = _pinnedBuild;
 
-        final build = snapshot.data!;
-        return _buildActiveBuildWidget(build);
-      },
-    );
+    if (build == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.build, size: 64, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            Text(
+              'No active builds',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Start a new build to see progress here',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      );
+    }
+
+    return _buildActiveBuildWidget(build);
   }
 
   Widget _buildActiveBuildWidget(BuildJob build) {
@@ -470,57 +510,48 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
           backgroundColor: _getStatusColor(build.status),
           labelStyle: const TextStyle(color: Colors.white),
         ),
-        onTap: () {
-          setState(() => _activeBuildId = build.id);
-          _tabController.animateTo(0);
-        },
+        onTap: () => _viewBuildInActiveTab(build),
       ),
     );
   }
 
   Widget _buildLogsTab() {
-    return StreamBuilder<BuildJob>(
-      stream: _buildService.buildJobStream,
-      initialData: _buildService.latestBuildJob,
-      builder: (context, snapshot) {
-        final liveLogs = snapshot.data?.buildLogs;
-        final displayText = (liveLogs != null && liveLogs.isNotEmpty)
-            ? liveLogs
-            : _logs.join('\n');
+    final liveLogs = _pinnedBuild?.buildLogs;
+    final displayText = (liveLogs != null && liveLogs.isNotEmpty)
+        ? liveLogs
+        : _logs.join('\n');
 
-        return Container(
-          color: Colors.black,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Build Console',
-                style: TextStyle(color: Colors.green[400], fontWeight: FontWeight.bold, fontSize: 16),
+    return Container(
+      color: Colors.black,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Build Console',
+            style: TextStyle(color: Colors.green[400], fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[700]!),
+                borderRadius: BorderRadius.circular(4),
               ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[700]!),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: SingleChildScrollView(
-                    reverse: true,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Text(
-                        displayText,
-                        style: TextStyle(color: Colors.green[400], fontFamily: 'monospace', fontSize: 12),
-                      ),
-                    ),
+              child: SingleChildScrollView(
+                reverse: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    displayText,
+                    style: TextStyle(color: Colors.green[400], fontFamily: 'monospace', fontSize: 12),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
