@@ -31,6 +31,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 // ------------------------------------------------------------
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'ai_training_pipeline.dart';
+import 'ai_python_workspace.dart' show AiWorkspaceRepository;
 // ...
 class AiDeviceIdentity {
   static const String _key = 'ai_lab.device_user_id';
@@ -859,8 +861,20 @@ class AiProjectDashboardScreen extends StatelessWidget {
     context,
     MaterialPageRoute(builder: (_) => AiWorkspaceExplorerScreen(project: project)),
   ),
+),_ActionTile(
+  icon: Icons.play_circle_outline,
+  title: 'Train',
+  subtitle: 'Run a real training job',
+  onTap: () async {
+    final workspace = await AiWorkspaceRepository(Supabase.instance.client).loadOrCreate(project);
+    if (!context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AiTrainingLaunchScreen(project: project, workspace: workspace)),
+    );
+  },
 ),
-          _ActionTile(icon: Icons.play_circle_outline, title: 'Train', subtitle: 'Coming soon', enabled: false),
+          
           _ActionTile(icon: Icons.science_outlined, title: 'Experiments', subtitle: 'Coming soon', enabled: false),
           _ActionTile(icon: Icons.fact_check_outlined, title: 'Evaluate', subtitle: 'Coming soon', enabled: false),
           _ActionTile(icon: Icons.bolt_outlined, title: 'Test / Inference', subtitle: 'Coming soon', enabled: false),
