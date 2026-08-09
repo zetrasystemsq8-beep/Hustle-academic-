@@ -257,7 +257,15 @@ flutter:
 class MobileProjectZipper {
   static List<int> zip(MobileProject project) {
     final archive = Archive();
-    _addNode(archive, project.root, '');
+    // Zip each of the project's top-level children directly at the
+    // archive root — NOT the project.root folder itself. Wrapping
+    // everything inside a folder named after the project would put
+    // pubspec.yaml at "ProjectName/pubspec.yaml" instead of the zip
+    // root, which breaks `flutter pub get` on the GitHub Actions
+    // runner (it expects pubspec.yaml right where it unzips).
+    for (final child in project.root.children) {
+      _addNode(archive, child, '');
+    }
     final zipData = ZipEncoder().encode(archive);
     return zipData;
   }
