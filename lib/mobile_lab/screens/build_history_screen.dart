@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'build_service.dart';
 
 // ============================================================
@@ -375,19 +376,68 @@ class _BuildHistoryScreenState extends ConsumerState<BuildHistoryScreen> {
     );
   }
 
+  /// Opens the APK's signed download URL in the system browser/download
+  /// manager. This is a real download — Android handles it and shows
+  /// progress in its notification shade, unlike the previous stub
+  /// which only displayed a SnackBar and did nothing else.
   Future<void> _downloadApk(BuildJob build) async {
     final url = await widget.buildService.downloadApk(build.id);
-    if (url != null && mounted) {
+    if (url == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No download URL available for this build')),
+        );
+      }
+      return;
+    }
+
+    final uri = Uri.parse(url);
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Downloading APK from $url')),
+        SnackBar(
+          content: Text(
+            launched
+                ? 'Downloading APK — check your notifications or Downloads folder'
+                : 'Could not open the download link',
+          ),
+        ),
       );
     }
   }
 
+  /// There is no true one-tap in-app APK installer without a native
+  /// platform channel or a plugin like open_filex + a configured
+  /// FileProvider. This hands the signed URL to the system, which
+  /// downloads the file and lets the user tap it (or the download
+  /// notification) to install — Android will prompt for the
+  /// "install unknown apps" permission the first time.
   Future<void> _installApk(BuildJob build) async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening APK installer...')),
-    );
+    final url = await widget.buildService.downloadApk(build.id);
+    if (url == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No APK available for this build')),
+        );
+      }
+      return;
+    }
+
+    final uri = Uri.parse(url);
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            launched
+                ? 'Downloading — Android will prompt to install once the file is ready. You may need to allow "install unknown apps" for this browser.'
+                : 'Could not start the install',
+          ),
+        ),
+      );
+    }
   }
 
   void _viewLogs(BuildJob build) {
