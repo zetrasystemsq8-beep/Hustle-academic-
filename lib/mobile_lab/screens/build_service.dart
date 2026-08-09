@@ -1,12 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-// ============================================================
-// BUILD SERVICE — Complete Cloud Build System
-// ============================================================
+import 'edge_function_client.dart';
 
 enum BuildStatus {
   uploading,
@@ -44,10 +39,10 @@ class BuildStageInfo {
   final BuildStage stage;
   final String displayName;
   final String icon;
-  bool isCompleted;
-  bool isActive;
-  DateTime? completedAt;
-  String? errorMessage;
+  final bool isCompleted;
+  final bool isActive;
+  final DateTime? completedAt;
+  final String? errorMessage;
 
   BuildStageInfo({
     required this.stage,
@@ -59,22 +54,29 @@ class BuildStageInfo {
     this.errorMessage,
   });
 
-  BuildStageInfo copyWith({
-    bool? isCompleted,
-    bool? isActive,
-    DateTime? completedAt,
-    String? errorMessage,
-  }) {
+  factory BuildStageInfo.fromJson(Map<String, dynamic> json) {
     return BuildStageInfo(
-      stage: stage,
-      displayName: displayName,
-      icon: icon,
-      isCompleted: isCompleted ?? this.isCompleted,
-      isActive: isActive ?? this.isActive,
-      completedAt: completedAt ?? this.completedAt,
-      errorMessage: errorMessage ?? this.errorMessage,
+      stage: BuildStage.values.byName(json['stage'] as String),
+      displayName: json['displayName'] as String,
+      icon: json['icon'] as String,
+      isCompleted: json['isCompleted'] as bool? ?? false,
+      isActive: json['isActive'] as bool? ?? false,
+      completedAt: json['completedAt'] != null
+          ? DateTime.tryParse(json['completedAt'] as String)
+          : null,
+      errorMessage: json['errorMessage'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'stage': stage.name,
+        'displayName': displayName,
+        'icon': icon,
+        'isCompleted': isCompleted,
+        'isActive': isActive,
+        'completedAt': completedAt?.toIso8601String(),
+        'errorMessage': errorMessage,
+      };
 }
 
 class BuildJob {
@@ -83,22 +85,22 @@ class BuildJob {
   final String projectName;
   final String userId;
 
-  BuildStatus status;
-  List<BuildStageInfo> stages;
+  final BuildStatus status;
+  final List<BuildStageInfo> stages;
 
-  DateTime createdAt;
-  DateTime? startedAt;
-  DateTime? completedAt;
+  final DateTime createdAt;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
 
-  String? apkUrl;
-  String? apkSize;
-  String? flutterVersion;
-  String? buildLogs;
-  String? errorLogs;
+  final String? apkUrl;
+  final String? apkSize;
+  final String? flutterVersion;
+  final String? buildLogs;
+  final String? errorLogs;
 
-  int buildTimeSeconds;
-  double progressPercentage;
-  String currentMessage;
+  final int buildTimeSeconds;
+  final double progressPercentage;
+  final String currentMessage;
 
   BuildJob({
     required this.id,
@@ -123,103 +125,19 @@ class BuildJob {
 
   static List<BuildStageInfo> _initializeStages() {
     return [
-      BuildStageInfo(
-        stage: BuildStage.uploadingProject,
-        displayName: 'Uploading Project',
-        icon: '📤',
-        isActive: true,
-      ),
-      BuildStageInfo(
-        stage: BuildStage.queued,
-        displayName: 'Queued',
-        icon: '⏳',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.preparingEnvironment,
-        displayName: 'Preparing Environment',
-        icon: '🔧',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.installingFlutter,
-        displayName: 'Installing Flutter',
-        icon: '📦',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.installingDependencies,
-        displayName: 'Installing Dependencies',
-        icon: '📚',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.runningPubGet,
-        displayName: 'Running flutter pub get',
-        icon: '🔍',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.analyzingProject,
-        displayName: 'Analyzing Project',
-        icon: '🔎',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.compilingReleaseApk,
-        displayName: 'Compiling Release APK',
-        icon: '⚙️',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.optimizingApk,
-        displayName: 'Optimizing APK',
-        icon: '✨',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.signingApk,
-        displayName: 'Signing APK',
-        icon: '🔐',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.uploadingApk,
-        displayName: 'Uploading APK',
-        icon: '☁️',
-      ),
-      BuildStageInfo(
-        stage: BuildStage.buildComplete,
-        displayName: 'Build Complete',
-        icon: '✅',
-      ),
+      BuildStageInfo(stage: BuildStage.uploadingProject, displayName: 'Uploading Project', icon: '📤', isActive: true),
+      BuildStageInfo(stage: BuildStage.queued, displayName: 'Queued', icon: '⏳'),
+      BuildStageInfo(stage: BuildStage.preparingEnvironment, displayName: 'Preparing Environment', icon: '🔧'),
+      BuildStageInfo(stage: BuildStage.installingFlutter, displayName: 'Installing Flutter', icon: '📦'),
+      BuildStageInfo(stage: BuildStage.installingDependencies, displayName: 'Installing Dependencies', icon: '📚'),
+      BuildStageInfo(stage: BuildStage.runningPubGet, displayName: 'Running flutter pub get', icon: '🔍'),
+      BuildStageInfo(stage: BuildStage.analyzingProject, displayName: 'Analyzing Project', icon: '🔎'),
+      BuildStageInfo(stage: BuildStage.compilingReleaseApk, displayName: 'Compiling Release APK', icon: '⚙️'),
+      BuildStageInfo(stage: BuildStage.optimizingApk, displayName: 'Optimizing APK', icon: '✨'),
+      BuildStageInfo(stage: BuildStage.signingApk, displayName: 'Signing APK', icon: '🔐'),
+      BuildStageInfo(stage: BuildStage.uploadingApk, displayName: 'Uploading APK', icon: '☁️'),
+      BuildStageInfo(stage: BuildStage.buildComplete, displayName: 'Build Complete', icon: '✅'),
     ];
-  }
-
-  BuildJob copyWith({
-    BuildStatus? status,
-    List<BuildStageInfo>? stages,
-    DateTime? startedAt,
-    DateTime? completedAt,
-    String? apkUrl,
-    String? apkSize,
-    String? flutterVersion,
-    String? buildLogs,
-    String? errorLogs,
-    int? buildTimeSeconds,
-    double? progressPercentage,
-    String? currentMessage,
-  }) {
-    return BuildJob(
-      id: id,
-      projectId: projectId,
-      projectName: projectName,
-      userId: userId,
-      status: status ?? this.status,
-      stages: stages ?? this.stages,
-      createdAt: createdAt,
-      startedAt: startedAt ?? this.startedAt,
-      completedAt: completedAt ?? this.completedAt,
-      apkUrl: apkUrl ?? this.apkUrl,
-      apkSize: apkSize ?? this.apkSize,
-      flutterVersion: flutterVersion ?? this.flutterVersion,
-      buildLogs: buildLogs ?? this.buildLogs,
-      errorLogs: errorLogs ?? this.errorLogs,
-      buildTimeSeconds: buildTimeSeconds ?? this.buildTimeSeconds,
-      progressPercentage: progressPercentage ?? this.progressPercentage,
-      currentMessage: currentMessage ?? this.currentMessage,
-    );
   }
 
   Map<String, dynamic> toJson() => {
@@ -228,17 +146,7 @@ class BuildJob {
         'project_name': projectName,
         'user_id': userId,
         'status': status.name,
-        'stages': stages
-            .map((s) => {
-                  'stage': s.stage.name,
-                  'displayName': s.displayName,
-                  'icon': s.icon,
-                  'isCompleted': s.isCompleted,
-                  'isActive': s.isActive,
-                  'completedAt': s.completedAt?.toIso8601String(),
-                  'errorMessage': s.errorMessage,
-                })
-            .toList(),
+        'stages': stages.map((s) => s.toJson()).toList(),
         'created_at': createdAt.toIso8601String(),
         'started_at': startedAt?.toIso8601String(),
         'completed_at': completedAt?.toIso8601String(),
@@ -259,27 +167,12 @@ class BuildJob {
       projectName: json['project_name'] as String,
       userId: json['user_id'] as String,
       status: BuildStatus.values.byName(json['status'] as String? ?? 'uploading'),
-      stages: (json['stages'] as List<dynamic>? ?? []).map((s) {
-        final stage = s as Map<String, dynamic>;
-        return BuildStageInfo(
-          stage: BuildStage.values.byName(stage['stage'] as String),
-          displayName: stage['displayName'] as String,
-          icon: stage['icon'] as String,
-          isCompleted: stage['isCompleted'] as bool? ?? false,
-          isActive: stage['isActive'] as bool? ?? false,
-          completedAt: stage['completedAt'] != null
-              ? DateTime.tryParse(stage['completedAt'] as String)
-              : null,
-          errorMessage: stage['errorMessage'] as String?,
-        );
-      }).toList(),
+      stages: (json['stages'] as List<dynamic>? ?? [])
+          .map((s) => BuildStageInfo.fromJson(s as Map<String, dynamic>))
+          .toList(),
       createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
-      startedAt: json['started_at'] != null
-          ? DateTime.tryParse(json['started_at'] as String)
-          : null,
-      completedAt: json['completed_at'] != null
-          ? DateTime.tryParse(json['completed_at'] as String)
-          : null,
+      startedAt: json['started_at'] != null ? DateTime.tryParse(json['started_at'] as String) : null,
+      completedAt: json['completed_at'] != null ? DateTime.tryParse(json['completed_at'] as String) : null,
       apkUrl: json['apk_url'] as String?,
       apkSize: json['apk_size'] as String?,
       flutterVersion: json['flutter_version'] as String?,
@@ -295,30 +188,17 @@ class BuildJob {
 class BuildService {
   final SupabaseClient supabase;
   final String userId;
+  late final EdgeFunctionClient _edgeFunctionClient;
 
-  late final RealtimeChannel _buildChannel;
-  late final StreamController<BuildJob> _buildJobController;
-  late final StreamController<String> _logController;
-  late final StreamController<List<BuildJob>> _historyController;
+  RealtimeChannel? _buildChannel;
+  final StreamController<BuildJob> _buildJobController = StreamController<BuildJob>.broadcast();
+  final StreamController<String> _logController = StreamController<String>.broadcast();
+  final StreamController<List<BuildJob>> _historyController = StreamController<List<BuildJob>>.broadcast();
 
-  Map<String, BuildJob> _buildJobs = {};
-  Map<String, List<String>> _buildLogs = {};
-  bool _isListening = false;
+  final Map<String, BuildJob> _buildJobs = {};
 
-  // Tracks the most recent build job so screens can seed a
-  // StreamBuilder's initialData when they rebuild (e.g. switching
-  // tabs) instead of showing an empty "No active builds" state
-  // until a new event happens to fire.
-  BuildJob? _latestJob;
-  BuildJob? get latestBuildJob => _latestJob;
-
-  BuildService({
-    required this.supabase,
-    required this.userId,
-  }) {
-    _buildJobController = StreamController<BuildJob>.broadcast();
-    _logController = StreamController<String>.broadcast();
-    _historyController = StreamController<List<BuildJob>>.broadcast();
+  BuildService({required this.supabase, required this.userId}) {
+    _edgeFunctionClient = EdgeFunctionClient(supabase: supabase);
   }
 
   Stream<BuildJob> get buildJobStream => _buildJobController.stream;
@@ -338,13 +218,10 @@ class BuildService {
               column: 'user_id',
               value: userId,
             ),
-            callback: (payload) {
-              _handleBuildUpdate(payload);
-            },
+            callback: _handleBuildUpdate,
           )
           .subscribe();
 
-      _isListening = true;
       await loadBuildHistory();
     } catch (e) {
       debugPrint('BuildService initialization error: $e');
@@ -357,197 +234,60 @@ class BuildService {
     required String projectName,
     required List<int> projectZipBytes,
   }) async {
-    try {
-      final buildId = '${DateTime.now().microsecondsSinceEpoch}_$userId';
-      final buildJob = BuildJob(
-        id: buildId,
-        projectId: projectId,
-        projectName: projectName,
-        userId: userId,
-        status: BuildStatus.uploading,
-      );
-
-      // Create build record in database
-      await supabase.from('build_jobs').insert(buildJob.toJson());
-
-      _buildJobs[buildId] = buildJob;
-      _latestJob = buildJob;
-      _buildJobController.add(buildJob);
-
-      // Start upload process
-      await _uploadProjectZip(buildId, projectZipBytes);
-
-      return buildJob;
-    } catch (e) {
-      debugPrint('Error creating build: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> _uploadProjectZip(String buildId, List<int> projectZipBytes) async {
-    try {
-      _updateBuildStage(buildId, BuildStage.uploadingProject, isActive: true);
-      _addLog(buildId, '📤 Starting project upload...');
-
-      final storagePath = '$userId/$buildId.zip';
-      await supabase.storage.from('project-zips').uploadBinary(
-            storagePath,
-            Uint8List.fromList(projectZipBytes),
-          );
-
-      // Reflect upload progress in the UI (the actual upload above is
-      // one call; this loop just keeps the progress bar meaningful).
-      for (int i = 0; i <= 100; i += 10) {
-        await Future.delayed(const Duration(milliseconds: 100));
-        final job = _buildJobs[buildId];
-        if (job != null) {
-          final updatedJob = job.copyWith(
-            progressPercentage: i.toDouble(),
-            currentMessage: 'Uploading project: $i%',
-          );
-          _buildJobs[buildId] = updatedJob;
-          _latestJob = updatedJob;
-          _buildJobController.add(updatedJob);
-        }
-      }
-
-      _addLog(buildId, '✅ Project uploaded successfully');
-      _updateBuildStage(buildId, BuildStage.uploadingProject, isCompleted: true);
-
-      // Generate a signed, downloadable URL for the uploaded zip so the
-      // GitHub Actions runner (which has no Supabase auth context) can
-      // fetch it with a plain HTTP GET.
-      final signedUrl = await supabase.storage
-          .from('project-zips')
-          .createSignedUrl(storagePath, 3600); // valid for 1 hour
-
-      // Trigger Supabase Edge Function
-      await _triggerGitHubAction(buildId, signedUrl);
-    } catch (e) {
-      _addLog(buildId, '❌ Upload failed: $e');
-      _failBuild(buildId, 'Upload failed: $e');
-    }
-  }
-
-  Future<void> _triggerGitHubAction(String buildId, String projectZipUrl) async {
-    try {
-      _updateBuildStage(buildId, BuildStage.queued, isActive: true);
-      _addLog(buildId, '⏳ Queuing build on GitHub Actions...');
-
-      // Call Supabase Edge Function to trigger GitHub Actions.
-      // Field names must match the edge function's expected snake_case
-      // keys exactly: build_id, project_id, project_name, project_zip_url.
-      final response = await supabase.functions.invoke(
-        'trigger-flutter-build',
-        body: {
-          'build_id': buildId,
-          'project_id': _buildJobs[buildId]?.projectId,
-          'project_name': _buildJobs[buildId]?.projectName,
-          'project_zip_url': projectZipUrl,
-        },
-      );
-
-      if (response.status >= 200 && response.status < 300) {
-        _addLog(buildId, '✅ Build queued successfully');
-        _updateBuildStage(buildId, BuildStage.queued, isCompleted: true);
-
-        // NOTE: no fake local simulation here anymore. From this point
-        // on, every stage update MUST come from the real GitHub Actions
-        // workflow calling build-webhook (i.e. dynamic-handler), which
-        // writes to build_jobs, which fires _handleBuildUpdate via the
-        // realtime subscription below. If nothing updates after this,
-        // that means the webhook isn't being reached — check GitHub
-        // Actions logs, not this file.
-      } else {
-        throw Exception('Failed to queue build: ${response.data}');
-      }
-    } catch (e) {
-      _addLog(buildId, '❌ Failed to queue build: $e');
-      _failBuild(buildId, 'Queue failed: $e');
-    }
-  }
-
-  void _updateBuildStage(
-    String buildId,
-    BuildStage stage, {
-    bool? isActive,
-    bool? isCompleted,
-    String? errorMessage,
-  }) {
-    final job = _buildJobs[buildId];
-    if (job == null) return;
-
-    final stages = job.stages.map((s) {
-      if (s.stage == stage) {
-        return s.copyWith(
-          isActive: isActive ?? s.isActive,
-          isCompleted: isCompleted ?? s.isCompleted,
-          completedAt: (isCompleted == true) ? DateTime.now() : s.completedAt,
-          errorMessage: errorMessage ?? s.errorMessage,
-        );
-      }
-      return s;
-    }).toList();
-
-    final updatedJob = job.copyWith(stages: stages);
-    _buildJobs[buildId] = updatedJob;
-    _latestJob = updatedJob;
-    _buildJobController.add(updatedJob);
-
-    // Update in database
-    _updateBuildInDatabase(buildId, updatedJob);
-  }
-
-  void _addLog(String buildId, String message) {
-    final timestamp = DateTime.now().toString().split('.')[0];
-    final logEntry = '[$timestamp] $message';
-
-    if (!_buildLogs.containsKey(buildId)) {
-      _buildLogs[buildId] = [];
-    }
-    _buildLogs[buildId]!.add(logEntry);
-
-    final job = _buildJobs[buildId];
-    if (job != null) {
-      final updatedJob = job.copyWith(
-        buildLogs: _buildLogs[buildId]!.join('\n'),
-      );
-      _buildJobs[buildId] = updatedJob;
-      _latestJob = updatedJob;
-    }
-
-    _logController.add(logEntry);
-  }
-
-  void _failBuild(String buildId, String error) {
-    final job = _buildJobs[buildId];
-    if (job == null) return;
-
-    _addLog(buildId, '❌ Build failed: $error');
-    _addLog(buildId, '📋 Error logs saved for review');
-
-    final updatedJob = job.copyWith(
-      status: BuildStatus.failed,
-      completedAt: DateTime.now(),
-      errorLogs: error,
-      currentMessage: 'Build failed. Check logs for details.',
+    final buildId = '${DateTime.now().microsecondsSinceEpoch}_$userId';
+    final buildJob = BuildJob(
+      id: buildId,
+      projectId: projectId,
+      projectName: projectName,
+      userId: userId,
+      status: BuildStatus.uploading,
+      currentMessage: 'Uploading project...',
     );
 
-    _buildJobs[buildId] = updatedJob;
-    _latestJob = updatedJob;
-    _buildJobController.add(updatedJob);
-    _updateBuildInDatabase(buildId, updatedJob);
+    await supabase.from('build_jobs').insert(buildJob.toJson());
+    _buildJobs[buildId] = buildJob;
+    _buildJobController.add(buildJob);
+    _logController.add('📤 Uploading project archive...');
+
+    try {
+      await _edgeFunctionClient.uploadAndTrigger(
+        buildId: buildId,
+        userId: userId,
+        projectId: projectId,
+        projectName: projectName,
+        zipBytes: projectZipBytes,
+      );
+      _logController.add('✅ Project uploaded — build queued on the runner');
+    } catch (e) {
+      _logController.add('❌ Failed to start build: $e');
+      await supabase.from('build_jobs').update({
+        'status': 'failed',
+        'error_logs': 'Failed to start build: $e',
+        'completed_at': DateTime.now().toIso8601String(),
+      }).eq('id', buildId);
+    }
+
+    return buildJob;
   }
 
-  Future<void> _updateBuildInDatabase(String buildId, BuildJob job) async {
+  void _handleBuildUpdate(PostgresChangePayload payload) {
     try {
-      await supabase
-          .from('build_jobs')
-          .update(job.toJson())
-          .eq('id', buildId);
+      if (payload.newRecord.isNotEmpty) {
+        final buildJob = BuildJob.fromJson(payload.newRecord);
+        _buildJobs[buildJob.id] = buildJob;
+        _buildJobController.add(buildJob);
+        _logController.add(buildJob.currentMessage);
+        _refreshHistorySnapshot();
+      }
     } catch (e) {
-      debugPrint('Error updating build in database: $e');
+      debugPrint('Error handling build update: $e');
     }
+  }
+
+  void _refreshHistorySnapshot() {
+    final list = _buildJobs.values.toList()
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    _historyController.add(list);
   }
 
   Future<void> loadBuildHistory() async {
@@ -559,47 +299,24 @@ class BuildService {
           .order('created_at', ascending: false);
 
       final builds = (response as List).map((b) => BuildJob.fromJson(b)).toList();
-      _buildJobs.addAll({for (var b in builds) b.id: b});
+      for (final b in builds) {
+        _buildJobs[b.id] = b;
+      }
       _historyController.add(builds);
     } catch (e) {
       debugPrint('Error loading build history: $e');
     }
   }
 
-  // This is now the ONLY source of build progress after queuing.
-  // Supabase Realtime fires this every time a row in build_jobs
-  // changes — which only happens when your GitHub Actions workflow
-  // calls the webhook (dynamic-handler) with real progress, or when
-  // it finishes and writes the real apk_url via a signed URL.
-  void _handleBuildUpdate(PostgresChangePayload payload) {
-    try {
-      if (payload.newRecord.isNotEmpty) {
-        final buildJob = BuildJob.fromJson(payload.newRecord);
-        _buildJobs[buildJob.id] = buildJob;
-        _latestJob = buildJob;
-        _buildJobController.add(buildJob);
-      }
-    } catch (e) {
-      debugPrint('Error handling build update: $e');
-    }
-  }
-
   Future<void> cancelBuild(String buildId) async {
     try {
-      final job = _buildJobs[buildId];
-      if (job == null) return;
-
-      final updatedJob = job.copyWith(
-        status: BuildStatus.cancelled,
-        completedAt: DateTime.now(),
-        currentMessage: 'Build cancelled by user.',
-      );
-
-      _buildJobs[buildId] = updatedJob;
-      _latestJob = updatedJob;
-      _buildJobController.add(updatedJob);
-      await _updateBuildInDatabase(buildId, updatedJob);
-      _addLog(buildId, '⚠️ Build cancelled by user');
+      await _edgeFunctionClient.cancelBuild(buildId);
+      await supabase.from('build_jobs').update({
+        'status': 'cancelled',
+        'completed_at': DateTime.now().toIso8601String(),
+        'current_message': 'Build cancelled by user.',
+      }).eq('id', buildId);
+      _logController.add('⚠️ Build cancelled by user');
     } catch (e) {
       debugPrint('Error cancelling build: $e');
     }
@@ -607,18 +324,28 @@ class BuildService {
 
   Future<String?> downloadApk(String buildId) async {
     try {
-      final job = _buildJobs[buildId];
-      if (job?.apkUrl == null) return null;
-
-      return job?.apkUrl;
+      return await _edgeFunctionClient.getApkDownloadUrl(buildId);
     } catch (e) {
       debugPrint('Error getting APK download URL: $e');
-      return null;
+      return _buildJobs[buildId]?.apkUrl;
     }
   }
 
+  /// Fetches the exact raw log file produced by the GitHub Actions
+  /// runner for this build. Returns null while still building (log
+  /// isn't uploaded until the job finishes) or if genuinely missing.
+  Future<String?> fetchFullBuildLog(String buildId) {
+    return _edgeFunctionClient.fetchFullBuildLog(buildId);
+  }
+
+  Future<void> deleteBuild(String buildId) async {
+    await supabase.from('build_jobs').delete().eq('id', buildId);
+    _buildJobs.remove(buildId);
+    _refreshHistorySnapshot();
+  }
+
   void dispose() {
-    _buildChannel.unsubscribe();
+    _buildChannel?.unsubscribe();
     _buildJobController.close();
     _logController.close();
     _historyController.close();
