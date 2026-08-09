@@ -1,0 +1,129 @@
+name: Render Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        required: true
+      spec:
+        required: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Report start
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"downloading","progress_pct":5}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Parse spec and download assets
+        run: |
+          echo '${{ github.event.inputs.spec }}' > spec.json
+          mkdir -p clips
+          node - <<'EOF'
+          const spec = require('./spec.json');
+          const fs = require('fs');
+          fs.writeFileSync('clip_urls.txt', spec.clips.map(c => c.assets.storage_path).join('\n'));
+          EOF
+          while read -r path; do
+            curl -sL "$SUPABASE_STORAGE_URL/$path" -o "clips/$(basename "$path")"
+          done < clip_urls.txt
+        env:
+          SUPABASE_STORAGE_URL: ${{ secrets.SUPABASE_STORAGE_URL }}
+
+      - name: Report transcoding
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"transcoding","progress_pct":30}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Trim each clip
+        run: |
+          node - <<'EOF' > trim_commands.sh
+          const spec = require('./spec.json');
+          spec.clips.forEach((c, i) => {
+            const inFile = `clips/${c.assets.storage_path.split('/').pop()}`;
+            const start = c.source_start_ms / 1000;
+            const dur = (c.source_end_ms - c.source_start_ms) / 1000;
+            console.log(`ffmpeg -y -i "${inFile}" -ss ${start} -t ${dur} -c:v libx264 -c:a aac "trimmed_${i}.mp4"`);
+          });
+          EOF
+          bash trim_commands.sh
+
+      - name: Report compositing
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"compositing","progress_pct":55}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Concat clips with crossfade transitions
+        run: |
+          # simple sequential xfade chain across all trimmed_*.mp4 files
+          FILES=(trimmed_*.mp4)
+          cp "${FILES[0]}" concat_0.mp4
+          for i in "${!FILES[@]}"; do
+            if [ "$i" -eq 0 ]; then continue; fi
+            prev=$((i-1))
+            ffmpeg -y -i "concat_${prev}.mp4" -i "${FILES[$i]}" \
+              -filter_complex "xfade=transition=fade:duration=0.5:offset=2" \
+              -c:v libx264 -c:a aac "concat_${i}.mp4"
+          done
+          cp "concat_$((${#FILES[@]}-1)).mp4" composed.mp4
+
+      - name: Burn in text overlays
+        run: |
+          node - <<'EOF' > overlay_filter.txt
+          const spec = require('./spec.json');
+          const parts = spec.overlays.map(o =>
+            `drawtext=text='${o.text.replace(/'/g, "")}':enable='between(t,${o.start_ms/1000},${o.end_ms/1000})':fontsize=36:fontcolor=white:x=(w-text_w)/2:y=h-100`
+          );
+          console.log(parts.join(','));
+          EOF
+          FILTER=$(cat overlay_filter.txt)
+          if [ -n "$FILTER" ]; then
+            ffmpeg -y -i composed.mp4 -vf "$FILTER" -c:a copy final.mp4
+          else
+            cp composed.mp4 final.mp4
+          fi
+
+      - name: Report encoding/uploading
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"uploading","progress_pct":85}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload to Supabase Storage
+        run: |
+          OUT_PATH="renders/${{ github.event.inputs.job_id }}.mp4"
+          curl -s -X POST "$SUPABASE_STORAGE_URL/object/renders/$OUT_PATH" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: video/mp4" \
+            --data-binary @final.mp4
+          echo "OUTPUT_URL=$SUPABASE_PUBLIC_URL/renders/$OUT_PATH" >> "$GITHUB_ENV"
+        env:
+          SUPABASE_STORAGE_URL: ${{ secrets.SUPABASE_STORAGE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PUBLIC_URL: ${{ secrets.SUPABASE_PUBLIC_URL }}
+
+      - name: Report done
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d "{\"action\":\"progress_callback\",\"payload\":{\"job_id\":\"${{ github.event.inputs.job_id }}\",\"status\":\"done\",\"progress_pct\":100,\"output_url\":\"$OUTPUT_URL\"}}"
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
