@@ -479,45 +479,48 @@ class _BuildCenterScreenState extends ConsumerState<BuildCenterScreen>
   }
 
   Widget _buildLogsTab() {
-    return Container(
-      color: Colors.black,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Build Console',
-            style: TextStyle(
-              color: Colors.green[400],
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[700]!),
-                borderRadius: BorderRadius.circular(4),
+    return StreamBuilder<BuildJob>(
+      stream: _buildService.buildJobStream,
+      initialData: _buildService.latestBuildJob,
+      builder: (context, snapshot) {
+        final liveLogs = snapshot.data?.buildLogs;
+        final displayText = (liveLogs != null && liveLogs.isNotEmpty)
+            ? liveLogs
+            : _logs.join('\n');
+
+        return Container(
+          color: Colors.black,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Build Console',
+                style: TextStyle(color: Colors.green[400], fontWeight: FontWeight.bold, fontSize: 16),
               ),
-              child: SingleChildScrollView(
-                reverse: true,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Text(
-                    _logs.join('\n'),
-                    style: TextStyle(
-                      color: Colors.green[400],
-                      fontFamily: 'monospace',
-                      fontSize: 12,
+              const SizedBox(height: 12),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[700]!),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: SingleChildScrollView(
+                    reverse: true,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        displayText,
+                        style: TextStyle(color: Colors.green[400], fontFamily: 'monospace', fontSize: 12),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
