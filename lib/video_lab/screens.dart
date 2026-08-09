@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'models_and_state.dart';
 import 'service.dart';
 
-class VideoEditorScreen extends StatefulWidget {
+class VideoEditorScreen extends ConsumerStatefulWidget {
   const VideoEditorScreen({super.key});
   @override
-  State<VideoEditorScreen> createState() => _VideoEditorScreenState();
+  ConsumerState<VideoEditorScreen> createState() => _VideoEditorScreenState();
 }
 
-class _VideoEditorScreenState extends State<VideoEditorScreen> {
+class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
   final _service = VideoLabService();
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<VideoLabState>();
+    final data = ref.watch(videoLabProvider);
+    final notifier = ref.read(videoLabProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(state.project?.title ?? 'Video Lab'),
+        title: Text(data.project?.title ?? 'Video Lab'),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () async {
-              await _service.saveTimeline(state);
+              await _service.saveTimeline(data);
               if (context.mounted) {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const PreviewExportScreen()));
               }
@@ -35,16 +36,16 @@ class _VideoEditorScreenState extends State<VideoEditorScreen> {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: state.clips.length,
+              itemCount: data.clips.length,
               itemBuilder: (context, i) {
-                final clip = state.clips[i];
+                final clip = data.clips[i];
                 return ListTile(
                   leading: const Icon(Icons.movie),
                   title: Text('Clip ${i + 1}'),
                   subtitle: Text('${clip.sourceStartMs}ms – ${clip.sourceEndMs}ms'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
-                    onPressed: () => state.removeClip(clip.id),
+                    onPressed: () => notifier.removeClip(clip.id),
                   ),
                 );
               },
@@ -55,18 +56,17 @@ class _VideoEditorScreenState extends State<VideoEditorScreen> {
             children: [
               TextButton.icon(
                 onPressed: () {
-                  // hook up to a text input dialog in a real build
-                  state.addOverlay(TextOverlay(text: 'New text', startMs: 0, endMs: 2000));
+                  notifier.addOverlay(const TextOverlay(text: 'New text', startMs: 0, endMs: 2000));
                 },
                 icon: const Icon(Icons.text_fields),
                 label: const Text('Add text'),
               ),
               TextButton.icon(
                 onPressed: () {
-                  if (state.clips.length >= 2) {
-                    state.addTransition(TransitionSpec(
-                      fromClipId: state.clips[state.clips.length - 2].id,
-                      toClipId: state.clips.last.id,
+                  if (data.clips.length >= 2) {
+                    notifier.addTransition(TransitionSpec(
+                      fromClipId: data.clips[data.clips.length - 2].id,
+                      toClipId: data.clips.last.id,
                     ));
                   }
                 },
@@ -81,13 +81,13 @@ class _VideoEditorScreenState extends State<VideoEditorScreen> {
   }
 }
 
-class PreviewExportScreen extends StatefulWidget {
+class PreviewExportScreen extends ConsumerStatefulWidget {
   const PreviewExportScreen({super.key});
   @override
-  State<PreviewExportScreen> createState() => _PreviewExportScreenState();
+  ConsumerState<PreviewExportScreen> createState() => _PreviewExportScreenState();
 }
 
-class _PreviewExportScreenState extends State<PreviewExportScreen> {
+class _PreviewExportScreenState extends ConsumerState<PreviewExportScreen> {
   final _service = VideoLabService();
   String _destination = 'device';
   RenderJob? _job;
@@ -101,7 +101,7 @@ class _PreviewExportScreenState extends State<PreviewExportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = context.watch<VideoLabState>();
+    final data = ref.watch(videoLabProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Export')),
@@ -120,7 +120,7 @@ class _PreviewExportScreenState extends State<PreviewExportScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: state.project == null ? null : () => _export(state.project!.id),
+              onPressed: data.project == null ? null : () => _export(data.project!.id),
               child: const Text('Export'),
             ),
             const SizedBox(height: 24),
