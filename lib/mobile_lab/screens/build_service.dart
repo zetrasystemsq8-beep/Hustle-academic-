@@ -451,8 +451,13 @@ class BuildService {
         _addLog(buildId, '✅ Build queued successfully');
         _updateBuildStage(buildId, BuildStage.queued, isCompleted: true);
 
-        // Start monitoring the build
-        _monitorBuildProgress(buildId);
+        // NOTE: no fake local simulation here anymore. From this point
+        // on, every stage update MUST come from the real GitHub Actions
+        // workflow calling build-webhook (i.e. dynamic-handler), which
+        // writes to build_jobs, which fires _handleBuildUpdate via the
+        // realtime subscription below. If nothing updates after this,
+        // that means the webhook isn't being reached — check GitHub
+        // Actions logs, not this file.
       } else {
         throw Exception('Failed to queue build: ${response.data}');
       }
@@ -460,54 +465,6 @@ class BuildService {
       _addLog(buildId, '❌ Failed to queue build: $e');
       _failBuild(buildId, 'Queue failed: $e');
     }
-  }
-
-  void _monitorBuildProgress(String buildId) {
-    // Simulate build progress with realistic stages
-    final stages = [
-      (BuildStage.preparingEnvironment, '🔧 Setting up build environment'),
-      (BuildStage.installingFlutter, '📦 Installing Flutter SDK'),
-      (BuildStage.installingDependencies, '📚 Installing project dependencies'),
-      (BuildStage.runningPubGet, '🔍 Running flutter pub get'),
-      (BuildStage.analyzingProject, '🔎 Analyzing project'),
-      (BuildStage.compilingReleaseApk, '⚙️ Compiling release APK'),
-      (BuildStage.optimizingApk, '✨ Optimizing APK'),
-      (BuildStage.signingApk, '🔐 Signing APK'),
-      (BuildStage.uploadingApk, '☁️ Uploading APK to storage'),
-    ];
-
-    int stageIndex = 0;
-    Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (stageIndex < stages.length) {
-        final (stage, message) = stages[stageIndex];
-        _updateBuildStage(buildId, stage, isActive: true);
-        _addLog(buildId, message);
-
-        // Mark previous stage as completed
-        if (stageIndex > 0) {
-          _updateBuildStage(buildId, stages[stageIndex - 1].$1, isCompleted: true);
-        }
-
-        // Update progress
-        final job = _buildJobs[buildId];
-        if (job != null) {
-          final progress = ((stageIndex + 1) / stages.length * 100).toDouble();
-          final updatedJob = job.copyWith(
-            progressPercentage: progress,
-            currentMessage: message,
-          );
-          _buildJobs[buildId] = updatedJob;
-          _latestJob = updatedJob;
-          _buildJobController.add(updatedJob);
-        }
-
-        stageIndex++;
-      } else {
-        // Build complete
-        _completeBuild(buildId);
-        timer.cancel();
-      }
-    });
   }
 
   void _updateBuildStage(
@@ -562,31 +519,6 @@ class BuildService {
     _logController.add(logEntry);
   }
 
-  void _completeBuild(String buildId) {
-    final job = _buildJobs[buildId];
-    if (job == null) return;
-
-    _updateBuildStage(buildId, BuildStage.buildComplete, isActive: true, isCompleted: true);
-    _addLog(buildId, '✅ Build completed successfully!');
-
-    final buildTime = DateTime.now().difference(job.createdAt).inSeconds;
-    final updatedJob = job.copyWith(
-      status: BuildStatus.complete,
-      completedAt: DateTime.now(),
-      buildTimeSeconds: buildTime,
-      apkUrl: 'https://storage.supabase.co/apk/$buildId.apk',
-      apkSize: '45.2 MB',
-      flutterVersion: '3.13.0',
-      progressPercentage: 100.0,
-      currentMessage: 'Build complete! Ready to download.',
-    );
-
-    _buildJobs[buildId] = updatedJob;
-    _latestJob = updatedJob;
-    _buildJobController.add(updatedJob);
-    _updateBuildInDatabase(buildId, updatedJob);
-  }
-
   void _failBuild(String buildId, String error) {
     final job = _buildJobs[buildId];
     if (job == null) return;
@@ -634,6 +566,11 @@ class BuildService {
     }
   }
 
+  // This is now the ONLY source of build progress after queuing.
+  // Supabase Realtime fires this every time a row in build_jobs
+  // changes — which only happens when your GitHub Actions workflow
+  // calls the webhook (dynamic-handler) with real progress, or when
+  // it finishes and writes the real apk_url via a signed URL.
   void _handleBuildUpdate(PostgresChangePayload payload) {
     try {
       if (payload.newRecord.isNotEmpty) {
