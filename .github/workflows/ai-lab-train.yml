@@ -1,0 +1,106 @@
+name: AI Lab Training Job
+
+on:
+  repository_dispatch:
+    types: [ai_lab_train]
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Set job variables
+        run: |
+          echo "JOB_ID=${{ github.event.client_payload.jobId }}" >> $GITHUB_ENV
+          echo "WORKSPACE_PATH=${{ github.event.client_payload.workspacePath }}" >> $GITHUB_ENV
+          echo "DATASET_PATH=${{ github.event.client_payload.datasetPath }}" >> $GITHUB_ENV
+          echo "ENTRY_SCRIPT=${{ github.event.client_payload.entryScript }}" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Download workspace zip from Supabase Storage
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -sf -o workspace.zip \
+            "$SUPABASE_URL/storage/v1/object/ai-workspace-zips/$WORKSPACE_PATH" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY"
+          mkdir -p project
+          unzip -q workspace.zip -d project
+
+      - name: Download dataset from Supabase Storage
+        if: env.DATASET_PATH != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -sf -o project/dataset.csv \
+            "$SUPABASE_URL/storage/v1/object/ai-datasets/$DATASET_PATH" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY"
+
+      - name: Mark job as running
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -sf -X PATCH \
+            "$SUPABASE_URL/rest/v1/ai_training_jobs?id=eq.$JOB_ID" \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"status\":\"running\",\"started_at\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
+
+      - name: Install dependencies
+        working-directory: project
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run training script
+        id: train
+        working-directory: project
+        continue-on-error: true
+        run: |
+          mkdir -p /tmp/output
+          python "$ENTRY_SCRIPT" 2>&1 | tee /tmp/output/train.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload model artifact (if produced)
+        if: steps.train.outputs.exit_code == '0'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -f project/model.joblib ]; then
+            curl -sf -X POST \
+              "$SUPABASE_URL/storage/v1/object/ai-model-artifacts/$JOB_ID/model.joblib" \
+              -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Content-Type: application/octet-stream" \
+              --data-binary @project/model.joblib
+          fi
+
+      - name: Report completion
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          LOGS=$(cat /tmp/output/train.log 2>/dev/null | tail -c 20000 | python3 -c "import sys,json; print(json.dumps(sys.stdin.read()))")
+          METRICS=$(cat project/metrics.json 2>/dev/null || echo '{}')
+          if [ "${{ steps.train.outputs.exit_code }}" = "0" ]; then
+            STATUS="complete"
+          else
+            STATUS="failed"
+          fi
+          ARTIFACT_PATH=""
+          if [ -f project/model.joblib ]; then ARTIFACT_PATH="$JOB_ID/model.joblib"; fi
+
+          curl -sf -X PATCH \
+            "$SUPABASE_URL/rest/v1/ai_training_jobs?id=eq.$JOB_ID" \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"status\":\"$STATUS\",\"logs\":$LOGS,\"metrics\":$METRICS,\"model_artifact_path\":\"$ARTIFACT_PATH\",\"completed_at\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
