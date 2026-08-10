@@ -529,11 +529,11 @@ class _VideoLabBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const VideoEditorScreen()),
-        );
-      },
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const VideoLabHomeScreen()),
+  );
+},
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
