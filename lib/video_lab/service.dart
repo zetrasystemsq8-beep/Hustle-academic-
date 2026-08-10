@@ -25,8 +25,6 @@ class VideoLabService {
     return (rows as List).map((r) => VideoProject.fromJson(r)).toList();
   }
 
-  /// Loads a project's previously saved clips, overlays, and transitions —
-  /// used when reopening an existing project so its timeline isn't lost.
   Future<({List<TimelineClip> clips, List<TextOverlay> overlays, List<TransitionSpec> transitions})>
       loadTimeline(String projectId) async {
     final clipsRows = await _client
@@ -66,6 +64,9 @@ class VideoLabService {
       'action': 'create_job',
       'payload': {'project_id': projectId, 'destination': destination},
     });
+    if (res.status != 200) {
+      throw Exception('Export failed (${res.status}): ${res.data}');
+    }
     return res.data['job_id'] as String;
   }
 
@@ -89,14 +90,16 @@ class VideoLabService {
     return controller.stream;
   }
 
-  String publicUrl(String bucket, String path) {
-    return _client.storage.from(bucket).getPublicUrl(path);
+  /// Signed URL — required because the 'assets' bucket is private.
+  /// getPublicUrl() would return a link that 403s.
+  Future<String> signedUrl(String bucket, String path, {int expiresInSeconds = 3600}) async {
+    return await _client.storage.from(bucket).createSignedUrl(path, expiresInSeconds);
   }
 
   Future<Map<String, dynamic>> uploadAndRegisterAsset({
     required String projectId,
     required String storagePath,
-    required dynamic file, // io.File
+    required dynamic file,
     required int durationMs,
   }) async {
     await _client.storage.from('assets').upload(storagePath, file);
