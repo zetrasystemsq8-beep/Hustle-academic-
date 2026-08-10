@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 import 'package:video_player/video_player.dart';
 
 import 'clip_preview_screen.dart';
+import 'filters.dart';
 import 'models_and_state.dart';
 import 'service.dart';
 import 'trim_clip_screen.dart';
@@ -133,12 +134,83 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     );
   }
 
+  Future<void> _pickFilter() async {
+    final data = ref.read(videoLabProvider);
+    if (data.project == null) return;
+
+    final chosen = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: _kSurface,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: Text('Filter', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(
+                height: 110,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: kFilterPresets.length,
+                  itemBuilder: (context, i) {
+                    final preset = kFilterPresets[i];
+                    final selected = data.project!.filterPreset == preset.id;
+                    return GestureDetector(
+                      onTap: () => Navigator.pop(context, preset.id),
+                      child: Container(
+                        width: 76,
+                        margin: const EdgeInsets.only(right: 10),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: selected ? _kAccent : Colors.transparent, width: 2),
+                              ),
+                              child: ColorFiltered(
+                                colorFilter: preset.colorFilter,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: _kSurfaceLight,
+                                  ),
+                                  child: const Icon(Icons.image, color: Colors.white38),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(preset.label, style: TextStyle(color: selected ? _kAccent : Colors.white70, fontSize: 11)),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (chosen == null) return;
+    ref.read(videoLabProvider.notifier).setFilterPreset(chosen);
+    await _service.updateFilterPreset(data.project!.id, chosen);
+  }
+
   Widget _bottomAction({required IconData icon, required String label, required VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -155,6 +227,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
   Widget build(BuildContext context) {
     final data = ref.watch(videoLabProvider);
     final notifier = ref.read(videoLabProvider.notifier);
+    final activeFilter = filterPresetFor(data.project?.filterPreset ?? 'none');
 
     return Scaffold(
       backgroundColor: _kBg,
@@ -176,7 +249,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
       ),
       body: Column(
         children: [
-          // Big preview area — CapCut/TikTok style
           Expanded(
             child: Container(
               width: double.infinity,
@@ -189,9 +261,12 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                               ? _previewController!.pause()
                               : _previewController!.play();
                         }),
-                        child: AspectRatio(
-                          aspectRatio: _previewController!.value.aspectRatio,
-                          child: VideoPlayer(_previewController!),
+                        child: ColorFiltered(
+                          colorFilter: activeFilter.colorFilter,
+                          child: AspectRatio(
+                            aspectRatio: _previewController!.value.aspectRatio,
+                            child: VideoPlayer(_previewController!),
+                          ),
                         ),
                       )
                     : Column(
@@ -208,8 +283,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
               ),
             ),
           ),
-
-          // Horizontal clip timeline strip
           Container(
             height: 92,
             color: _kSurface,
@@ -276,29 +349,15 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                     },
                   ),
           ),
-
-          // Bottom toolbar — icon + label, CapCut style
           Container(
             color: _kSurface,
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _bottomAction(
-                  icon: Icons.add_box_outlined,
-                  label: 'Add clip',
-                  onTap: _busy ? null : _addClip,
-                ),
-                _bottomAction(
-                  icon: Icons.content_cut,
-                  label: 'Trim',
-                  onTap: _selectedIndex == null ? null : _reTrimSelected,
-                ),
-                _bottomAction(
-                  icon: Icons.text_fields,
-                  label: 'Text',
-                  onTap: () => notifier.addOverlay(const TextOverlay(text: 'New text', startMs: 0, endMs: 2000)),
-                ),
+                _bottomAction(icon: Icons.add_box_outlined, label: 'Add clip', onTap: _busy ? null : _addClip),
+                _bottomAction(icon: Icons.content_cut, label: 'Trim', onTap: _selectedIndex == null ? null : _reTrimSelected),
+                _bottomAction(icon: Icons.text_fields, label: 'Text', onTap: () => notifier.addOverlay(const TextOverlay(text: 'New text', startMs: 0, endMs: 2000))),
                 _bottomAction(
                   icon: Icons.compare_arrows,
                   label: 'Transition',
@@ -309,6 +368,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                           ))
                       : null,
                 ),
+                _bottomAction(icon: Icons.filter_vintage, label: 'Filters', onTap: data.project == null ? null : _pickFilter),
               ],
             ),
           ),
@@ -422,8 +482,7 @@ class _PreviewExportScreenState extends ConsumerState<PreviewExportScreen> {
               ),
               const SizedBox(height: 8),
               Text('${_job!.status} — ${_job!.progressPct}%', style: const TextStyle(color: Colors.white70)),
-              if (_job!.error != null)
-                Text(_job!.error!, style: const TextStyle(color: Colors.redAccent)),
+              if (_job!.error != null) Text(_job!.error!, style: const TextStyle(color: Colors.redAccent)),
               if (_job!.status == 'done' && _job!.outputUrl != null)
                 Text('Ready: ${_job!.outputUrl}', style: const TextStyle(color: Colors.greenAccent)),
             ],
