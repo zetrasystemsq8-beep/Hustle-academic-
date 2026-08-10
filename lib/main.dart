@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'courses/web_development_courses.dart';
@@ -30,7 +31,7 @@ void main() async {
 
   await webLab.initialize();
 
-  runApp(const HustleAcademyApp());
+  runApp(const ProviderScope(child: HustleAcademyApp()));
 }
 
 // ============================================================
@@ -155,8 +156,6 @@ class _SplashScreenState extends State<SplashScreen> {
             builder: (_) {
               if (fullyVerified) return const MainScreen();
               if (hasSession) {
-                // Session exists but OTP was never completed — force it,
-                // don't let them into the app.
                 return OtpScreen(
                   internalEmail: authService.lastInternalEmail!,
                   onVerified: () => const MainScreen(),
@@ -327,9 +326,6 @@ class HomeTab extends StatelessWidget {
   }
 }
 
-/// Entry point into the Web Lab module from the Home dashboard. Opens
-/// Web Lab's own Home screen, backed by the app-wide [webLab] registry
-/// so its project data persists across visits.
 class _WebLabBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -383,10 +379,6 @@ class _WebLabBanner extends StatelessWidget {
   }
 }
 
-/// Entry point into the Innovation Engine — the research layer that
-/// sits alongside Web Lab, organizing both existing and new systems
-/// under one identity, without altering anything Web Lab already
-/// does on its own.
 class _InnovationEngineBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -433,10 +425,6 @@ class _InnovationEngineBanner extends StatelessWidget {
   }
 }
 
-/// Entry point into Mobile Lab from the Home dashboard — build real
-/// Flutter apps and generate an installable APK via the cloud build
-/// pipeline (Supabase Edge Functions + GitHub Actions, invisible to
-/// the user).
 class _MobileLabBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -486,9 +474,6 @@ class _MobileLabBanner extends StatelessWidget {
   }
 }
 
-/// Entry point into AI Lab from the Home dashboard — create AI
-/// projects, upload/prepare datasets, write Python training code,
-/// and run real training jobs via the cloud training pipeline.
 class _AiLabBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -538,9 +523,6 @@ class _AiLabBanner extends StatelessWidget {
   }
 }
 
-/// Entry point into Video Lab from the Home dashboard — build real
-/// video projects with a timeline editor and export via the cloud
-/// render pipeline (Supabase Edge Functions + GitHub Actions).
 class _VideoLabBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -760,7 +742,7 @@ class _CourseListTile extends StatelessWidget {
 }
 
 // ============================================================
-// COURSES TAB (Categories grid + full list)
+// COURSES TAB
 // ============================================================
 class CoursesTab extends StatefulWidget {
   const CoursesTab({super.key});
@@ -934,7 +916,7 @@ class _SearchTabState extends State<SearchTab> {
 }
 
 // ============================================================
-// PROFILE TAB (Offline / Local Stats)
+// PROFILE TAB
 // ============================================================
 class ProfileTab extends StatefulWidget {
   const ProfileTab({super.key});
