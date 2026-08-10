@@ -83,6 +83,31 @@ jobs:
           done
           cp "concat_$((${#FILES[@]}-1)).mp4" composed.mp4
 
+      - name: Report filtering
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"filtering","progress_pct":70}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Apply filter preset
+        run: |
+          FILTER_PRESET=$(node -e "console.log(require('./spec.json').filter_preset || 'none')")
+          case "$FILTER_PRESET" in
+            warm) VF="colorbalance=rs=.3:gs=.1:bs=-.2" ;;
+            cool) VF="colorbalance=rs=-.2:gs=.1:bs=.3" ;;
+            bw) VF="hue=s=0" ;;
+            vintage) VF="curves=preset=vintage" ;;
+            vivid) VF="eq=saturation=1.6:contrast=1.1" ;;
+            *) VF="" ;;
+          esac
+          if [ -n "$VF" ]; then
+            ffmpeg -y -i composed.mp4 -vf "$VF" -c:a copy filtered.mp4
+          else
+            cp composed.mp4 filtered.mp4
+          fi
+
       - name: Burn in text overlays
         run: |
           node - <<'EOF' > overlay_filter.txt
@@ -94,9 +119,9 @@ jobs:
           EOF
           FILTER=$(cat overlay_filter.txt)
           if [ -n "$FILTER" ]; then
-            ffmpeg -y -i composed.mp4 -vf "$FILTER" -c:a copy final.mp4
+            ffmpeg -y -i filtered.mp4 -vf "$FILTER" -c:a copy final.mp4
           else
-            cp composed.mp4 final.mp4
+            cp filtered.mp4 final.mp4
           fi
 
       - name: Report encoding/uploading
@@ -109,7 +134,7 @@ jobs:
 
       - name: Upload to Supabase Storage
         run: |
-          OUT_PATH="renders/${{ github.event.inputs.job_id }}.mp4"
+          OUT_PATH="${{ github.event.inputs.job_id }}.mp4"
           curl -s -X POST "$SUPABASE_STORAGE_URL/object/renders/$OUT_PATH" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
             -H "Content-Type: video/mp4" \
