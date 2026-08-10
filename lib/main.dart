@@ -17,6 +17,7 @@ import 'web_lab/screens/innovation_engine_screen.dart';
 import 'mobile_lab/screens/mobile_editor_screen.dart';
 import 'ai_lab/screens/ai_dataset_lab.dart';
 import 'video_lab/screens.dart';
+import 'cyber_lab/cyber_lab_home_screen.dart';
 import 'auth/zetramail_auth.dart';
 import 'video_lab/project_list_screen.dart';
 
@@ -296,6 +297,8 @@ class HomeTab extends StatelessWidget {
         _AiLabBanner(),
         const SizedBox(height: 12),
         _VideoLabBanner(),
+        const SizedBox(height: 12),
+        _CyberLabBanner(),
         const SizedBox(height: 24),
         _SectionTitle('Categories'),
         const SizedBox(height: 12),
@@ -566,6 +569,55 @@ class _VideoLabBanner extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right, color: Colors.red),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CyberLabBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CyberLabHomeScreen()),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.deepOrange.shade50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.deepOrange.shade100),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.deepOrange,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.shield_outlined, color: Colors.white),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Cybersecurity Lab', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Practice real attacks safely — CTF, sandbox, packet analysis',
+                    style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: Colors.deepOrange),
           ],
         ),
       ),
