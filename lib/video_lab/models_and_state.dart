@@ -6,6 +6,7 @@ class VideoProject {
   final String title;
   final String contentType;
   final String status;
+  final String filterPreset;
 
   const VideoProject({
     required this.id,
@@ -13,6 +14,7 @@ class VideoProject {
     required this.title,
     required this.contentType,
     required this.status,
+    this.filterPreset = 'none',
   });
 
   factory VideoProject.fromJson(Map<String, dynamic> j) => VideoProject(
@@ -21,6 +23,16 @@ class VideoProject {
         title: j['title'],
         contentType: j['content_type'],
         status: j['status'],
+        filterPreset: j['filter_preset'] ?? 'none',
+      );
+
+  VideoProject copyWith({String? filterPreset}) => VideoProject(
+        id: id,
+        userId: userId,
+        title: title,
+        contentType: contentType,
+        status: status,
+        filterPreset: filterPreset ?? this.filterPreset,
       );
 }
 
@@ -238,6 +250,12 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
 
   void updateJob(RenderJob job) {
     state = state.copyWith(currentJob: job);
+  }
+
+  void setFilterPreset(String preset) {
+    final p = state.project;
+    if (p == null) return;
+    state = state.copyWith(project: p.copyWith(filterPreset: preset));
   }
 }
 
