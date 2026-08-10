@@ -412,13 +412,14 @@ class _PreviewExportScreenState extends ConsumerState<PreviewExportScreen> {
             const SizedBox(height: 24),
             if (_job != null) ...[
               ClipRRect(
-                child: LinearProgressIndicator(
-                  value: _job!.progressPct / 100,
-                  backgroundColor: _kSurface,
-                  color: _kAccent,
-                  minHeight: 8,
-                ),
-              ),
+  borderRadius: BorderRadius.circular(8),
+  child: LinearProgressIndicator(
+    value: _job!.progressPct / 100,
+    backgroundColor: _kSurface,
+    color: _kAccent,
+    minHeight: 8,
+  ),
+),
               const SizedBox(height: 8),
               Text('${_job!.status} — ${_job!.progressPct}%', style: const TextStyle(color: Colors.white70)),
               if (_job!.error != null)
