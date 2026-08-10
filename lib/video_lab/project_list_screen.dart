@@ -4,6 +4,10 @@ import 'models_and_state.dart';
 import 'service.dart';
 import 'screens.dart';
 
+const _kBg = Color(0xFF0F0F0F);
+const _kAccent = Color(0xFFFF6B00);
+const _kSurface = Color(0xFF1C1C1E);
+
 class VideoLabHomeScreen extends ConsumerStatefulWidget {
   const VideoLabHomeScreen({super.key});
   @override
@@ -53,19 +57,31 @@ class _VideoLabHomeScreenState extends ConsumerState<VideoLabHomeScreen> {
       context: context,
       builder: (dialogContext) => StatefulBuilder(
         builder: (dialogContext, setDialogState) => AlertDialog(
-          title: const Text('New video project'),
+          backgroundColor: _kSurface,
+          title: const Text('New video project', style: TextStyle(color: Colors.white)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 autofocus: true,
-                decoration: const InputDecoration(labelText: 'Title'),
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  labelStyle: TextStyle(color: Colors.white70),
+                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: _kAccent)),
+                ),
                 onChanged: (v) => title = v,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 initialValue: contentType,
-                decoration: const InputDecoration(labelText: 'Content type'),
+                dropdownColor: _kSurface,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  labelText: 'Content type',
+                  labelStyle: TextStyle(color: Colors.white70),
+                ),
                 items: const [
                   DropdownMenuItem(value: 'project_video', child: Text('Project video')),
                   DropdownMenuItem(value: 'screenshot_trim', child: Text('Screenshot trim')),
@@ -77,8 +93,12 @@ class _VideoLabHomeScreenState extends ConsumerState<VideoLabHomeScreen> {
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+            ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: _kAccent, foregroundColor: Colors.white),
               onPressed: () => Navigator.pop(dialogContext, true),
               child: const Text('Create'),
             ),
@@ -96,42 +116,61 @@ class _VideoLabHomeScreenState extends ConsumerState<VideoLabHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Video Lab')),
+      backgroundColor: _kBg,
+      appBar: AppBar(
+        backgroundColor: _kBg,
+        foregroundColor: Colors.white,
+        title: const Text('Video Lab'),
+      ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: _kAccent,
         onPressed: _createProject,
         icon: const Icon(Icons.add),
         label: const Text('New project'),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: _kAccent))
           : _projects.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.movie_creation_outlined, size: 48, color: Colors.grey.shade400),
+                      Icon(Icons.movie_creation_outlined, size: 56, color: Colors.white24),
                       const SizedBox(height: 12),
-                      Text('No video projects yet', style: TextStyle(color: Colors.grey.shade600)),
+                      const Text('No video projects yet', style: TextStyle(color: Colors.white70)),
                       const SizedBox(height: 4),
-                      Text(
+                      const Text(
                         'Tap "New project" to get started',
-                        style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                        style: TextStyle(color: Colors.white38, fontSize: 12),
                       ),
                     ],
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
                   itemCount: _projects.length,
                   itemBuilder: (context, i) {
                     final p = _projects[i];
-                    return Card(
+                    return Container(
                       margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: _kSurface,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                       child: ListTile(
-                        leading: const Icon(Icons.movie),
-                        title: Text(p.title),
-                        subtitle: Text('${p.contentType} · ${p.status}'),
-                        trailing: const Icon(Icons.chevron_right),
+                        contentPadding: const EdgeInsets.all(12),
+                        leading: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: _kAccent.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.movie, color: _kAccent),
+                        ),
+                        title: Text(p.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        subtitle: Text('${p.contentType} · ${p.status}', style: const TextStyle(color: Colors.white54)),
+                        trailing: const Icon(Icons.chevron_right, color: Colors.white38),
                         onTap: () => _openProject(p),
                       ),
                     );
