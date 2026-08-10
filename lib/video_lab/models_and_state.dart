@@ -31,7 +31,7 @@ class TimelineClip {
   final int track;
   final int sourceStartMs;
   final int sourceEndMs;
-  final int durationMs; // full real duration of the source file
+  final int durationMs;
   final int timelinePositionMs;
   final int sortOrder;
 
@@ -199,14 +199,10 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
   @override
   VideoLabData build() => const VideoLabData();
 
-  /// Opens a project fresh — clears any previously loaded timeline so
-  /// switching between projects never leaks one project's clips into another.
   void setProject(VideoProject p) {
     state = VideoLabData(project: p);
   }
 
-  /// Hydrates the editor with a project's previously saved timeline
-  /// (called after loading an existing project from the database).
   void hydrate({
     required List<TimelineClip> clips,
     required List<TextOverlay> overlays,
