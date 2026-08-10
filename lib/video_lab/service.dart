@@ -15,6 +15,35 @@ class VideoLabService {
     return VideoProject.fromJson(row);
   }
 
+  Future<List<VideoProject>> listProjects() async {
+    final userId = _client.auth.currentUser!.id;
+    final rows = await _client
+        .from('video_projects')
+        .select()
+        .eq('user_id', userId)
+        .order('created_at', ascending: false);
+    return (rows as List).map((r) => VideoProject.fromJson(r)).toList();
+  }
+
+  /// Loads a project's previously saved clips, overlays, and transitions —
+  /// used when reopening an existing project so its timeline isn't lost.
+  Future<({List<TimelineClip> clips, List<TextOverlay> overlays, List<TransitionSpec> transitions})>
+      loadTimeline(String projectId) async {
+    final clipsRows = await _client
+        .from('timeline_clips')
+        .select('*, assets(storage_path, duration_ms)')
+        .eq('project_id', projectId)
+        .order('sort_order');
+    final overlaysRows = await _client.from('text_overlays').select().eq('project_id', projectId);
+    final transitionsRows = await _client.from('transitions').select().eq('project_id', projectId);
+
+    return (
+      clips: (clipsRows as List).map((r) => TimelineClip.fromJson(r)).toList(),
+      overlays: (overlaysRows as List).map((r) => TextOverlay.fromJson(r)).toList(),
+      transitions: (transitionsRows as List).map((r) => TransitionSpec.fromJson(r)).toList(),
+    );
+  }
+
   Future<void> saveTimeline(VideoLabData data) async {
     final projectId = data.project!.id;
 
@@ -58,5 +87,29 @@ class VideoLabService {
 
     controller.onCancel = () => _client.removeChannel(channel);
     return controller.stream;
+  }
+
+  String publicUrl(String bucket, String path) {
+    return _client.storage.from(bucket).getPublicUrl(path);
+  }
+
+  Future<Map<String, dynamic>> uploadAndRegisterAsset({
+    required String projectId,
+    required String storagePath,
+    required dynamic file, // io.File
+    required int durationMs,
+  }) async {
+    await _client.storage.from('assets').upload(storagePath, file);
+    final row = await _client
+        .from('assets')
+        .insert({
+          'project_id': projectId,
+          'storage_path': storagePath,
+          'duration_ms': durationMs,
+          'kind': 'clip',
+        })
+        .select()
+        .single();
+    return row;
   }
 }
