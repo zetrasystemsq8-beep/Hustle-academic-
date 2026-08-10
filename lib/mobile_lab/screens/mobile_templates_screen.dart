@@ -40,6 +40,36 @@ class MobileAppTemplates {
         chatUi,
       ];
 
+  static String _pubspecFor(String packageName) => '''name: $packageName
+description: A new Flutter project built in Mobile Lab.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icon.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+''';
+
   static MobileFileNode buildProjectTree(MobileAppTemplate template, String projectName) {
     final fileSystem = MobileFileSystemService();
     final packageName = projectName.trim().toLowerCase().replaceAll(RegExp(r'[^a-z0-9_]'), '_');
@@ -69,27 +99,7 @@ class MobileAppTemplates {
       id: fileSystem.generateId(),
       name: 'pubspec.yaml',
       type: MobileFileNodeType.file,
-      content: '''name: $packageName
-description: A new Flutter project built in Mobile Lab.
-publish_to: 'none'
-version: 1.0.0+1
-
-environment:
-  sdk: '>=3.0.0 <4.0.0'
-
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: ^1.0.6
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
-
-flutter:
-  uses-material-design: true
-''',
+      content: _pubspecFor(packageName),
     ));
 
     return root;
@@ -956,7 +966,7 @@ class _MobileTemplatePickerScreenState extends State<MobileTemplatePickerScreen>
     );
     if (name == null || name.trim().isEmpty) return;
 
-    final project = await widget.projectController.createProject(
+    await widget.projectController.createProject(
       name.trim(),
       treeBuilder: (projectName) => MobileAppTemplates.buildProjectTree(template, projectName),
     );
