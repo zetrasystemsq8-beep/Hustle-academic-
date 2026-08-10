@@ -18,6 +18,7 @@ import 'mobile_lab/screens/mobile_editor_screen.dart';
 import 'ai_lab/screens/ai_dataset_lab.dart';
 import 'video_lab/screens.dart';
 import 'auth/zetramail_auth.dart';
+import 'video_lab/project_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
