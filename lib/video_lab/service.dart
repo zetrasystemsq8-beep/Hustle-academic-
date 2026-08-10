@@ -59,6 +59,10 @@ class VideoLabService {
     }
   }
 
+  Future<void> updateFilterPreset(String projectId, String preset) async {
+    await _client.from('video_projects').update({'filter_preset': preset}).eq('id', projectId);
+  }
+
   Future<String> startExport({required String projectId, required String destination}) async {
     final res = await _client.functions.invoke('video-lab', body: {
       'action': 'create_job',
@@ -90,8 +94,6 @@ class VideoLabService {
     return controller.stream;
   }
 
-  /// Signed URL — required because the 'assets' bucket is private.
-  /// getPublicUrl() would return a link that 403s.
   Future<String> signedUrl(String bucket, String path, {int expiresInSeconds = 3600}) async {
     return await _client.storage.from(bucket).createSignedUrl(path, expiresInSeconds);
   }
