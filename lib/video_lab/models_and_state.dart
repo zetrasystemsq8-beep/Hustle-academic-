@@ -31,6 +31,7 @@ class TimelineClip {
   final int track;
   final int sourceStartMs;
   final int sourceEndMs;
+  final int durationMs; // full real duration of the source file
   final int timelinePositionMs;
   final int sortOrder;
 
@@ -41,6 +42,7 @@ class TimelineClip {
     this.track = 0,
     required this.sourceStartMs,
     required this.sourceEndMs,
+    required this.durationMs,
     required this.timelinePositionMs,
     this.sortOrder = 0,
   });
@@ -52,6 +54,7 @@ class TimelineClip {
         track: j['track'] ?? 0,
         sourceStartMs: j['source_start_ms'],
         sourceEndMs: j['source_end_ms'],
+        durationMs: j['assets']?['duration_ms'] ?? (j['source_end_ms'] as int),
         timelinePositionMs: j['timeline_position_ms'],
         sortOrder: j['sort_order'] ?? 0,
       );
@@ -63,6 +66,7 @@ class TimelineClip {
         track: track,
         sourceStartMs: sourceStartMs ?? this.sourceStartMs,
         sourceEndMs: sourceEndMs ?? this.sourceEndMs,
+        durationMs: durationMs,
         timelinePositionMs: timelinePositionMs,
         sortOrder: sortOrder,
       );
@@ -91,6 +95,13 @@ class TextOverlay {
     this.position = 'bottom',
   });
 
+  factory TextOverlay.fromJson(Map<String, dynamic> j) => TextOverlay(
+        text: j['text'],
+        startMs: j['start_ms'],
+        endMs: j['end_ms'],
+        position: j['position'] ?? 'bottom',
+      );
+
   Map<String, dynamic> toInsertJson(String projectId) => {
         'project_id': projectId,
         'text': text,
@@ -112,6 +123,13 @@ class TransitionSpec {
     this.type = 'crossfade',
     this.durationMs = 500,
   });
+
+  factory TransitionSpec.fromJson(Map<String, dynamic> j) => TransitionSpec(
+        fromClipId: j['from_clip_id'],
+        toClipId: j['to_clip_id'],
+        type: j['type'] ?? 'crossfade',
+        durationMs: j['duration_ms'] ?? 500,
+      );
 
   Map<String, dynamic> toInsertJson(String projectId) => {
         'project_id': projectId,
@@ -181,7 +199,21 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
   @override
   VideoLabData build() => const VideoLabData();
 
-  void setProject(VideoProject p) => state = state.copyWith(project: p);
+  /// Opens a project fresh — clears any previously loaded timeline so
+  /// switching between projects never leaks one project's clips into another.
+  void setProject(VideoProject p) {
+    state = VideoLabData(project: p);
+  }
+
+  /// Hydrates the editor with a project's previously saved timeline
+  /// (called after loading an existing project from the database).
+  void hydrate({
+    required List<TimelineClip> clips,
+    required List<TextOverlay> overlays,
+    required List<TransitionSpec> transitions,
+  }) {
+    state = state.copyWith(clips: clips, overlays: overlays, transitions: transitions);
+  }
 
   void addClip(TimelineClip clip) {
     final updated = [...state.clips, clip]
