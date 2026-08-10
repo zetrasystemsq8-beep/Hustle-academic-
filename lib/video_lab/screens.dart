@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import 'clip_preview_screen.dart';
 import 'models_and_state.dart';
 import 'service.dart';
+import 'trim_clip_screen.dart';
 
 class VideoEditorScreen extends ConsumerStatefulWidget {
   const VideoEditorScreen({super.key});
@@ -26,27 +27,28 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     final result = await FilePicker.platform.pickFiles(type: FileType.video);
     if (result == null || result.files.single.path == null) return;
 
+    final file = File(result.files.single.path!);
+
+    if (!mounted) return;
+    final trim = await Navigator.push<TrimResult>(
+      context,
+      MaterialPageRoute(builder: (_) => TrimClipScreen(file: file)),
+    );
+    if (trim == null) return;
+
     setState(() => _addingClip = true);
 
     try {
-      final file = File(result.files.single.path!);
-      final client = Supabase.instance.client;
       final projectId = data.project!.id;
-
       final storagePath =
           'source/${DateTime.now().millisecondsSinceEpoch}_${result.files.single.name}';
 
-      await client.storage.from('assets').upload(storagePath, file);
-
-      final assetRow = await client
-          .from('assets')
-          .insert({
-            'project_id': projectId,
-            'storage_path': storagePath,
-            'kind': 'clip',
-          })
-          .select()
-          .single();
+      final assetRow = await _service.uploadAndRegisterAsset(
+        projectId: projectId,
+        storagePath: storagePath,
+        file: file,
+        durationMs: trim.totalDurationMs,
+      );
 
       final notifier = ref.read(videoLabProvider.notifier);
       final currentClipCount = ref.read(videoLabProvider).clips.length;
@@ -55,9 +57,10 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
         id: const Uuid().v4(),
         assetId: assetRow['id'],
         storagePath: storagePath,
-        sourceStartMs: 0,
-        sourceEndMs: 5000, // placeholder until real duration is read
-        timelinePositionMs: currentClipCount * 5000,
+        sourceStartMs: trim.startMs,
+        sourceEndMs: trim.endMs,
+        durationMs: trim.totalDurationMs,
+        timelinePositionMs: currentClipCount * (trim.endMs - trim.startMs),
         sortOrder: currentClipCount,
       ));
     } catch (e) {
@@ -69,6 +72,16 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     } finally {
       if (mounted) setState(() => _addingClip = false);
     }
+  }
+
+  void _previewClip(TimelineClip clip) {
+    final url = _service.publicUrl('assets', clip.storagePath);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ClipPreviewScreen(videoUrl: url, startMs: clip.sourceStartMs, endMs: clip.sourceEndMs),
+      ),
+    );
   }
 
   @override
@@ -117,10 +130,23 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                       return ListTile(
                         leading: const Icon(Icons.movie),
                         title: Text('Clip ${i + 1}'),
-                        subtitle: Text('${clip.sourceStartMs}ms – ${clip.sourceEndMs}ms'),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () => notifier.removeClip(clip.id),
+                        subtitle: Text(
+                          '${(clip.sourceStartMs / 1000).toStringAsFixed(1)}s – '
+                          '${(clip.sourceEndMs / 1000).toStringAsFixed(1)}s '
+                          '(of ${(clip.durationMs / 1000).toStringAsFixed(1)}s)',
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.play_circle_outline),
+                              onPressed: () => _previewClip(clip),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () => notifier.removeClip(clip.id),
+                            ),
+                          ],
                         ),
                       );
                     },
