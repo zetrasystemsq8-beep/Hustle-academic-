@@ -15,19 +15,19 @@ class VideoLabService {
     return VideoProject.fromJson(row);
   }
 
-  Future<void> saveTimeline(VideoLabState state) async {
-    final projectId = state.project!.id;
+  Future<void> saveTimeline(VideoLabData data) async {
+    final projectId = data.project!.id;
 
-    for (final clip in state.clips) {
+    for (final clip in data.clips) {
       await _client.from('timeline_clips').upsert({
         'id': clip.id,
         ...clip.toInsertJson(projectId),
       });
     }
-    for (final overlay in state.overlays) {
+    for (final overlay in data.overlays) {
       await _client.from('text_overlays').insert(overlay.toInsertJson(projectId));
     }
-    for (final t in state.transitions) {
+    for (final t in data.transitions) {
       await _client.from('transitions').insert(t.toInsertJson(projectId));
     }
   }
