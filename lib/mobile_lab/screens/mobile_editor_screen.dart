@@ -10,6 +10,8 @@ import 'build_center_screen.dart';
 import 'build_history_screen.dart';
 import 'project_secrets_screen.dart';
 import 'mobile_templates_screen.dart';
+import 'mobile_icon_picker_service.dart';
+import 'mobile_package_picker_screen.dart';
 
 // ============================================================
 // MODELS — a Flutter project's editable file tree
@@ -102,6 +104,12 @@ class MobileProject {
   String? githubRepoUrl;
   String? lastBuildApkUrl;
 
+  /// Base64-encoded PNG bytes of the student's custom app icon. When
+  /// null, MobileProjectZipper embeds Hustle Academy's bundled default
+  /// icon instead — so no generated app ever ships with the plain
+  /// Flutter logo.
+  String? customIconBase64;
+
   MobileProject({
     required this.id,
     required this.name,
@@ -110,6 +118,7 @@ class MobileProject {
     DateTime? lastOpenedAt,
     this.githubRepoUrl,
     this.lastBuildApkUrl,
+    this.customIconBase64,
   })  : createdAt = createdAt ?? DateTime.now(),
         lastOpenedAt = lastOpenedAt ?? DateTime.now();
 
@@ -135,6 +144,7 @@ class MobileProject {
         'lastOpenedAt': lastOpenedAt.toIso8601String(),
         'githubRepoUrl': githubRepoUrl,
         'lastBuildApkUrl': lastBuildApkUrl,
+        'customIconBase64': customIconBase64,
       };
 
   factory MobileProject.fromJson(Map<String, dynamic> json) {
@@ -146,6 +156,7 @@ class MobileProject {
       lastOpenedAt: DateTime.tryParse(json['lastOpenedAt'] as String? ?? '') ?? DateTime.now(),
       githubRepoUrl: json['githubRepoUrl'] as String?,
       lastBuildApkUrl: json['lastBuildApkUrl'] as String?,
+      customIconBase64: json['customIconBase64'] as String?,
     );
   }
 
@@ -239,9 +250,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/icon.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
 ''',
     );
     root.children.add(pubspecFile);
@@ -251,21 +270,20 @@ flutter:
 }
 
 // ============================================================
-// PROJECT ZIPPER
+// PROJECT ZIPPER — packs a MobileProject's file tree into a
+// Flutter-shaped zip, plus assets/icon.png (the student's custom
+// icon if set, otherwise Hustle Academy's bundled default — so no
+// generated app ever ships with the plain Flutter logo).
 // ============================================================
 
 class MobileProjectZipper {
-  static List<int> zip(MobileProject project) {
+  static Future<List<int>> zip(MobileProject project) async {
     final archive = Archive();
-    // Zip each of the project's top-level children directly at the
-    // archive root — NOT the project.root folder itself. Wrapping
-    // everything inside a folder named after the project would put
-    // pubspec.yaml at "ProjectName/pubspec.yaml" instead of the zip
-    // root, which breaks `flutter pub get` on the GitHub Actions
-    // runner (it expects pubspec.yaml right where it unzips).
-    for (final child in project.root.children) {
-      _addNode(archive, child, '');
-    }
+    _addNode(archive, project.root, '');
+
+    final iconBytes = await MobileIconPickerService.resolveIconBytes(project.customIconBase64);
+    archive.addFile(ArchiveFile('assets/icon.png', iconBytes.length, iconBytes));
+
     final zipData = ZipEncoder().encode(archive);
     return zipData;
   }
@@ -1563,7 +1581,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     );
 
     try {
-      final zipBytes = MobileProjectZipper.zip(project);
+      final zipBytes = await MobileProjectZipper.zip(project);
       await _buildService.createBuild(
         projectId: project.id,
         projectName: project.name,
@@ -1578,6 +1596,32 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     } finally {
       if (mounted) setState(() => _isStartingBuild = false);
     }
+  }
+
+  Future<void> _pickIcon(MobileProject project) async {
+    final base64Icon = await MobileIconPickerService.pickIcon();
+    if (base64Icon == null) return;
+    setState(() => project.customIconBase64 = base64Icon);
+    await widget.projectController.saveCurrentProject();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('App icon updated')));
+  }
+
+  void _openPackagePicker(MobileProject project) {
+    final pubspec = project.pubspecYaml;
+    if (pubspec == null) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MobilePackagePickerScreen(
+          currentPubspecContent: pubspec.content,
+          onPubspecChanged: (newContent) {
+            _editorController.updateContent(pubspec, newContent);
+            widget.projectController.saveCurrentProject();
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -1602,6 +1646,16 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
                 ),
               ),
             ),
+          ),
+          IconButton(
+            tooltip: 'App Icon',
+            icon: const Icon(Icons.image_outlined),
+            onPressed: () => _pickIcon(project),
+          ),
+          IconButton(
+            tooltip: 'Add Package',
+            icon: const Icon(Icons.extension_outlined),
+            onPressed: () => _openPackagePicker(project),
           ),
           IconButton(
             tooltip: 'Generate APK',
