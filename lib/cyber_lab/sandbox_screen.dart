@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'cyber_models.dart';
 import 'cyber_service.dart';
+import 'terminal_panel.dart';
 
 // ============================================================
-// SANDBOX SCREEN — 3 tabs: live sandbox session, HTTP attack
-// tool, and packet capture viewer. One file, one TabController,
-// same pattern as BuildCenterScreen's Active Build/History/Logs.
+// SANDBOX SCREEN — 4 tabs: live sandbox session, HTTP attack
+// tool, terminal (curl/nmap/nikto), and packet capture viewer.
 // ============================================================
 
 class SandboxScreen extends StatefulWidget {
@@ -34,7 +34,7 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialTabIndex);
+    _tabController = TabController(length: 4, vsync: this, initialIndex: widget.initialTabIndex);
   }
 
   @override
@@ -117,9 +117,11 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
+          isScrollable: true,
           tabs: const [
             Tab(text: 'Sandbox', icon: Icon(Icons.dns_outlined)),
-            Tab(text: 'Attack Tool', icon: Icon(Icons.terminal)),
+            Tab(text: 'Attack Tool', icon: Icon(Icons.send)),
+            Tab(text: 'Terminal', icon: Icon(Icons.terminal)),
             Tab(text: 'Packet Analysis', icon: Icon(Icons.router_outlined)),
           ],
         ),
@@ -129,6 +131,7 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
         children: [
           _buildSandboxTab(),
           _buildAttackToolTab(),
+          _buildTerminalTab(),
           _buildPacketAnalysisTab(),
         ],
       ),
@@ -156,7 +159,7 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
                   const Text('No active sandbox', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Text(
-                    'Starts a real, isolated vulnerable web app just for you. It automatically expires after 30 minutes.',
+                    'Starts a real, isolated vulnerable web app just for you. It automatically expires after 15 minutes.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
@@ -233,7 +236,7 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Use the Attack Tool tab to send requests to this sandbox. It only accepts requests to this URL — nothing else.',
+                        'Use the Attack Tool or Terminal tabs to interact with this sandbox. Both are locked to this URL only.',
                         style: TextStyle(fontSize: 12, color: Colors.blue.shade900),
                       ),
                     ),
@@ -353,6 +356,12 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
         ],
       ),
     );
+  }
+
+  // ---------------- TERMINAL TAB ----------------
+
+  Widget _buildTerminalTab() {
+    return TerminalPanel(cyberService: widget.cyberService);
   }
 
   // ---------------- PACKET ANALYSIS TAB ----------------
