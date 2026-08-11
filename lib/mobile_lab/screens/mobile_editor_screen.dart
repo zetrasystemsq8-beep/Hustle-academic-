@@ -320,11 +320,23 @@ class MobileProjectRepository {
     await prefs.setString(_indexKey, jsonEncode(index));
   }
 
+  /// Loads a saved project from disk. Returns null both when the
+  /// project doesn't exist AND when it exists but fails to decode —
+  /// previously a decode failure threw uncaught, which silently
+  /// killed the async tap handler before it ever reached
+  /// Navigator.push(), making the project tile look "unclickable"
+  /// with zero feedback. Now it fails safely and the caller can
+  /// tell the user what happened.
   Future<MobileProject?> loadProject(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString('$_projectPrefix$id');
     if (raw == null) return null;
-    return MobileProject.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    try {
+      return MobileProject.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Failed to load project $id: $e');
+      return null;
+    }
   }
 
   Future<List<Map<String, dynamic>>> _loadIndex() async {
@@ -799,7 +811,11 @@ class MobileProjectController extends ChangeNotifier {
     return project;
   }
 
-  Future<void> openProject(String id) async {
+  /// Loads a saved project by id. Returns true on success, false if
+  /// the project couldn't be found or failed to decode — callers
+  /// should show the user something when this comes back false,
+  /// rather than silently doing nothing.
+  Future<bool> openProject(String id) async {
     _isLoading = true;
     notifyListeners();
     final project = await _repository.loadProject(id);
@@ -810,6 +826,7 @@ class MobileProjectController extends ChangeNotifier {
     }
     _isLoading = false;
     notifyListeners();
+    return project != null;
   }
 
   Future<void> saveCurrentProject() async {
@@ -1624,12 +1641,182 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     );
   }
 
+  // ---------------------------------------------------------
+  // FILE DRAWER — full project file tree reachable from inside
+  // the editor itself, so a student can add/rename/delete files
+  // and folders (e.g. expanding a template with new screens)
+  // without leaving the editor to a separate Explorer screen.
+  // ---------------------------------------------------------
+
+  Future<String?> _promptForName(String title, {String initial = ''}) {
+    final controller = TextEditingController(text: initial);
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: TextField(controller: controller, autofocus: true),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, controller.text), child: const Text('OK')),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _confirmDeleteInDrawer(String name) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete "$name"?'),
+        content: const Text('This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(style: FilledButton.styleFrom(backgroundColor: Colors.red), onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  void _showDrawerError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _createFileInDrawer(MobileFileNode parent) async {
+    final name = await _promptForName('New File');
+    if (name == null || name.trim().isEmpty) return;
+    try {
+      widget.projectController.fileSystemService.createFile(parent, name.trim());
+      widget.projectController.notifyProjectChanged();
+      await widget.projectController.saveCurrentProject();
+    } catch (e) {
+      _showDrawerError(e.toString());
+    }
+  }
+
+  Future<void> _createFolderInDrawer(MobileFileNode parent) async {
+    final name = await _promptForName('New Folder');
+    if (name == null || name.trim().isEmpty) return;
+    try {
+      widget.projectController.fileSystemService.createFolder(parent, name.trim());
+      widget.projectController.notifyProjectChanged();
+      await widget.projectController.saveCurrentProject();
+    } catch (e) {
+      _showDrawerError(e.toString());
+    }
+  }
+
+  Future<void> _renameInDrawer(MobileFileNode parent, MobileFileNode node) async {
+    final name = await _promptForName('Rename', initial: node.name);
+    if (name == null || name.trim().isEmpty) return;
+    try {
+      widget.projectController.fileSystemService.renameNode(parent, node, name.trim());
+      widget.projectController.notifyProjectChanged();
+      await widget.projectController.saveCurrentProject();
+    } catch (e) {
+      _showDrawerError(e.toString());
+    }
+  }
+
+  Future<void> _deleteInDrawer(MobileFileNode parent, MobileFileNode node) async {
+    final confirmed = await _confirmDeleteInDrawer(node.name);
+    if (!confirmed) return;
+    if (node.isFile) {
+      // Close its tab if it's currently open, so the editor doesn't
+      // keep showing a file that no longer exists in the tree.
+      _editorController.closeFile(node);
+    }
+    widget.projectController.fileSystemService.deleteNode(parent, node);
+    widget.projectController.notifyProjectChanged();
+    await widget.projectController.saveCurrentProject();
+  }
+
+  Future<void> _duplicateInDrawer(MobileFileNode parent, MobileFileNode node) async {
+    widget.projectController.fileSystemService.duplicateNode(parent, node);
+    widget.projectController.notifyProjectChanged();
+    await widget.projectController.saveCurrentProject();
+  }
+
+  void _toggleFolderInDrawer(MobileFileNode node) {
+    widget.projectController.fileSystemService.toggleExpanded(node);
+    widget.projectController.notifyProjectChanged();
+  }
+
+  void _openFileFromDrawer(MobileFileNode file) {
+    if (!file.isFile) {
+      _toggleFolderInDrawer(file);
+      return;
+    }
+    _editorController.openFile(file);
+    Navigator.pop(context); // close the drawer after opening the file
+  }
+
+  Widget _buildFileDrawer(MobileProject project) {
+    return Drawer(
+      child: SafeArea(
+        child: AnimatedBuilder(
+          animation: widget.projectController,
+          builder: (context, _) {
+            // project.root may have been mutated in place by the tree
+            // operations above; re-read the current project each time
+            // in case it changed identity (e.g. after a reload).
+            final current = widget.projectController.currentProject ?? project;
+            return Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          current.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'New File',
+                        icon: const Icon(Icons.note_add_outlined),
+                        onPressed: () => _createFileInDrawer(current.root),
+                      ),
+                      IconButton(
+                        tooltip: 'New Folder',
+                        icon: const Icon(Icons.create_new_folder_outlined),
+                        onPressed: () => _createFolderInDrawer(current.root),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: MobileFileTreeWidget(
+                    root: current.root,
+                    activeFileId: _editorController.activeFileId,
+                    onFileTap: _openFileFromDrawer,
+                    onToggleFolder: _toggleFolderInDrawer,
+                    onRename: _renameInDrawer,
+                    onDelete: _deleteInDrawer,
+                    onDuplicate: _duplicateInDrawer,
+                    onCreateFile: _createFileInDrawer,
+                    onCreateFolder: _createFolderInDrawer,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final project = widget.projectController.currentProject;
     if (project == null) return const Scaffold(body: Center(child: Text('No project open.')));
 
     return Scaffold(
+      drawer: _buildFileDrawer(project),
       appBar: AppBar(
         title: Text(project.name),
         actions: [
@@ -1679,7 +1866,23 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
               _buildTabBar(),
               Expanded(
                 child: activeFile == null
-                    ? const Center(child: Text('Select a file from the Project Explorer to start editing.', style: TextStyle(color: Colors.white54)))
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'No file open.',
+                              style: TextStyle(color: Colors.white54),
+                            ),
+                            const SizedBox(height: 8),
+                            TextButton.icon(
+                              onPressed: () => Scaffold.of(context).openDrawer(),
+                              icon: const Icon(Icons.folder_open, color: Colors.white70),
+                              label: const Text('Open the file tree', style: TextStyle(color: Colors.white70)),
+                            ),
+                          ],
+                        ),
+                      )
                     : MobileCodeEditorWidget(
                         key: ValueKey(activeFile.id),
                         file: activeFile,
@@ -1821,8 +2024,14 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
                   leading: const Icon(Icons.smartphone),
                   title: Text(summary['name'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
                   onTap: () async {
-                    await _projectController.openProject(summary['id'] as String);
+                    final success = await _projectController.openProject(summary['id'] as String);
                     if (!mounted) return;
+                    if (!success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('This project could not be loaded. It may be corrupted or from an incompatible version.')),
+                      );
+                      return;
+                    }
                     Navigator.push(context, MaterialPageRoute(builder: (_) => MobileProjectExplorerScreen(projectController: _projectController)));
                   },
                 ),
