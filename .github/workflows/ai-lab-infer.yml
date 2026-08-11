@@ -1,0 +1,74 @@
+name: AI Lab Inference Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      infer_job_id:
+        required: true
+        type: string
+      model_path:
+        required: true
+        type: string
+      input_json:
+        required: true
+        type: string
+
+jobs:
+  infer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install scikit-learn joblib pandas
+
+      - name: Download model
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -sf -o model.joblib \
+            "$SUPABASE_URL/storage/v1/object/ai-model-artifacts/${{ github.event.inputs.model_path }}" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY"
+
+      - name: Run inference
+        env:
+          INPUT_JSON: ${{ github.event.inputs.input_json }}
+        run: |
+          python3 -c "
+import joblib, json, os, pandas as pd
+model = joblib.load('model.joblib')
+row = json.loads(os.environ['INPUT_JSON'])
+X = pd.DataFrame([row])
+pred = model.predict(X)[0]
+result = {'prediction': str(pred)}
+if hasattr(model, 'predict_proba'):
+    proba = model.predict_proba(X)[0].tolist()
+    result['probabilities'] = proba
+with open('result.json', 'w') as f:
+    json.dump(result, f)
+"
+
+      - name: Report result
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -f result.json ]; then
+            RESULT=$(cat result.json)
+            STATUS="complete"
+          else
+            RESULT='{}'
+            STATUS="failed"
+          fi
+          curl -sf -X PATCH \
+            "$SUPABASE_URL/rest/v1/ai_inference_jobs?id=eq.${{ github.event.inputs.infer_job_id }}" \
+            -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"status\":\"$STATUS\",\"output_json\":$RESULT,\"completed_at\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
