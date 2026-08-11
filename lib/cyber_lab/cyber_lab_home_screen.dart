@@ -70,7 +70,6 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
         builder: (_) => CtfListScreen(cyberService: _cyberService),
       ),
     );
-    // Score may have changed while the student was solving challenges.
     await _refreshScore();
   }
 
@@ -110,7 +109,7 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
               icon: Icons.dns_outlined,
               iconColor: Colors.indigo,
               title: 'Vulnerable App Sandbox',
-              subtitle: 'Practice real attack techniques against a safe, isolated target — SQL injection, XSS, and more',
+              subtitle: 'Real attacks against a safe, isolated target — HTTP tooling, curl, nmap, and nikto',
               onTap: _openSandbox,
             ),
             const SizedBox(height: 12),
@@ -125,7 +124,7 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
                   MaterialPageRoute(
                     builder: (_) => SandboxScreen(
                       cyberService: _cyberService,
-                      initialTabIndex: 2,
+                      initialTabIndex: 3,
                     ),
                   ),
                 );
