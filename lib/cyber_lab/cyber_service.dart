@@ -148,7 +148,7 @@ class CyberService {
         }
       }
 
-      return bestPerChallenge.values.fold(0, (sum, points) => sum + points);
+      return bestPerChallenge.values.fold<int>(0, (sum, points) => sum + points);
     } catch (e) {
       return 0;
     }
