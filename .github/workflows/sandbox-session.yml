@@ -1,0 +1,73 @@
+name: Cyber Lab Sandbox Session
+
+on:
+  workflow_dispatch:
+    inputs:
+      session_id:
+        description: 'Sandbox session ID'
+        required: true
+      user_id:
+        description: 'Student user ID'
+        required: true
+      duration_minutes:
+        description: 'How long to keep the sandbox alive'
+        required: true
+        default: '15'
+      supabase_callback_url:
+        description: 'Webhook to report the sandbox URL back to Supabase'
+        required: true
+
+jobs:
+  sandbox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Start Juice Shop
+        run: |
+          docker run -d -p 3000:3000 --name juiceshop bkimminich/juice-shop
+
+      - name: Wait for Juice Shop to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000 > /dev/null; then
+              echo "Juice Shop is up"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Install cloudflared
+        run: |
+          curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared.deb
+
+      - name: Start tunnel and capture public URL
+        run: |
+          nohup cloudflared tunnel --url http://localhost:3000 > tunnel.log 2>&1 &
+          for i in $(seq 1 30); do
+            URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.trycloudflare\.com' tunnel.log | head -n1)
+            if [ -n "$URL" ]; then
+              echo "TUNNEL_URL=$URL" >> $GITHUB_ENV
+              echo "Tunnel ready: $URL"
+              break
+            fi
+            sleep 2
+          done
+
+      - name: Report sandbox URL to Supabase
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"session_id\":\"${{ inputs.session_id }}\",\"status\":\"running\",\"target_url\":\"$TUNNEL_URL\"}"
+
+      - name: Keep sandbox alive for session duration
+        run: |
+          sleep $(( ${{ inputs.duration_minutes }} * 60 ))
+
+      - name: Report session expired
+        if: always()
+        run: |
+          curl -s -X POST "${{ inputs.supabase_callback_url }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"session_id\":\"${{ inputs.session_id }}\",\"status\":\"expired\"}"
