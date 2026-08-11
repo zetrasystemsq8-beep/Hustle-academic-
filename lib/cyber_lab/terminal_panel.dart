@@ -4,8 +4,9 @@ import 'cyber_service.dart';
 
 // ============================================================
 // TERMINAL PANEL — real command submission (curl, nmap, nikto)
-// against the active sandbox only, with live status/output via
-// realtime subscription to sandbox_commands.
+// against the active sandbox only. Students supply flags/paths
+// only — the server always appends the real sandbox target
+// itself, so no host can ever be typed in by the student.
 // ============================================================
 
 class TerminalPanel extends StatefulWidget {
@@ -38,17 +39,29 @@ class _TerminalPanelState extends State<TerminalPanel> {
     super.dispose();
   }
 
-  String _defaultArgsFor(String tool, String targetUrl) {
-    final host = Uri.tryParse(targetUrl)?.host ?? '';
+  String _defaultArgsFor(String tool) {
     switch (tool) {
       case 'nmap':
-        return '-sV $host';
+        return '-sV -p 1-1000';
       case 'nikto':
-        return '-h $targetUrl';
+        return '-Tuning 1,2,3';
       case 'curl':
-        return '-I $targetUrl';
+        return '-I';
       default:
         return '';
+    }
+  }
+
+  String _hintFor(String tool) {
+    switch (tool) {
+      case 'nmap':
+        return 'Flags only, e.g. -sV -p 1-1000 (target is added automatically)';
+      case 'nikto':
+        return 'Flags only, e.g. -Tuning 1,2,3 (target is added automatically)';
+      case 'curl':
+        return 'Flags/path only, e.g. -I or /rest/products (target is added automatically)';
+      default:
+        return 'Flags only — no host needed';
     }
   }
 
@@ -61,7 +74,7 @@ class _TerminalPanelState extends State<TerminalPanel> {
 
     var args = _argsController.text.trim();
     if (args.isEmpty) {
-      args = _defaultArgsFor(_tool, session.targetUrl);
+      args = _defaultArgsFor(_tool);
     }
 
     setState(() {
@@ -77,8 +90,10 @@ class _TerminalPanelState extends State<TerminalPanel> {
       if (mounted) {
         setState(() {
           final msg = e.toString().replaceFirst('Exception: ', '');
-          if (msg.contains('may only target')) {
-            _error = 'That command targets something other than your sandbox. Only your sandbox\'s own address is allowed.';
+          if (msg.contains("automatically for your sandbox")) {
+            _error = 'No need to type a target — it\'s always your sandbox automatically. Just enter flags.';
+          } else if (msg.contains('redirect the request')) {
+            _error = 'That flag isn\'t allowed — it could send the request somewhere other than your sandbox.';
           } else if (msg.contains('disallowed characters')) {
             _error = 'That command contains characters that aren\'t allowed for safety reasons.';
           } else {
@@ -118,9 +133,7 @@ class _TerminalPanelState extends State<TerminalPanel> {
                       controller: _argsController,
                       style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
                       decoration: InputDecoration(
-                        hintText: session != null
-                            ? _defaultArgsFor(_tool, session.targetUrl)
-                            : 'Start a sandbox first',
+                        hintText: _defaultArgsFor(_tool),
                         border: const OutlineInputBorder(),
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -128,6 +141,13 @@ class _TerminalPanelState extends State<TerminalPanel> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                session != null && session.isActive
+                    ? _hintFor(_tool)
+                    : 'Start a sandbox first — target is added for you automatically',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
               ),
               const SizedBox(height: 8),
               SizedBox(
@@ -216,9 +236,11 @@ class _TerminalPanelState extends State<TerminalPanel> {
             children: [
               Icon(statusIcon, color: statusColor, size: 16),
               const SizedBox(width: 6),
-              Text(
-                '${cmd.tool} ${cmd.args}',
-                style: const TextStyle(color: Colors.white, fontFamily: 'monospace', fontSize: 12, fontWeight: FontWeight.bold),
+              Expanded(
+                child: Text(
+                  '${cmd.tool} ${cmd.args}',
+                  style: const TextStyle(color: Colors.white, fontFamily: 'monospace', fontSize: 12, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
