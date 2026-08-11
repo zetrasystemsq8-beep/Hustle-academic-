@@ -444,4 +444,38 @@ class CyberChallenges {
           CapturedPacket(number: 8, sourceIp: '10.0.0.5', destIp: '198.51.100.7', protocol: 'TCP', length: 60, info: 'SYN-ACK from port 80'),
         ],
       );
+}enum CommandStatus { pending, running, complete, failed, rejected }
+
+class TerminalCommand {
+  final String id;
+  final String sessionId;
+  final String tool;
+  final String args;
+  final CommandStatus status;
+  final String? output;
+  final DateTime createdAt;
+
+  const TerminalCommand({
+    required this.id,
+    required this.sessionId,
+    required this.tool,
+    required this.args,
+    required this.status,
+    this.output,
+    required this.createdAt,
+  });
+
+  factory TerminalCommand.fromJson(Map<String, dynamic> json) {
+    return TerminalCommand(
+      id: json['id'] as String,
+      sessionId: json['session_id'] as String,
+      tool: json['tool'] as String,
+      args: json['args'] as String,
+      status: CommandStatus.values.byName(json['status'] as String? ?? 'pending'),
+      output: json['output'] as String?,
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+    );
+  }
 }
+
+const List<String> kAllowedTerminalTools = ['curl', 'nmap', 'nikto'];
