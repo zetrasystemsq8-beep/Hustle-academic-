@@ -17,12 +17,21 @@ on:
         description: 'Webhook to report the sandbox URL back to Supabase'
         required: true
 
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
 jobs:
   sandbox:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
+      - name: Install security tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq nmap nikto curl
+
       - name: Start Juice Shop
         run: |
           docker run -d -p 3000:3000 --name juiceshop bkimminich/juice-shop
@@ -61,9 +70,54 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"session_id\":\"${{ inputs.session_id }}\",\"status\":\"running\",\"target_url\":\"$TUNNEL_URL\"}"
 
-      - name: Keep sandbox alive for session duration
+      - name: Poll for and execute terminal commands
         run: |
-          sleep $(( ${{ inputs.duration_minutes }} * 60 ))
+          END_TIME=$(( $(date +%s) + ${{ inputs.duration_minutes }} * 60 ))
+
+          while [ "$(date +%s)" -lt "$END_TIME" ]; do
+            RESPONSE=$(curl -s -X GET \
+              "$SUPABASE_URL/rest/v1/sandbox_commands?session_id=eq.${{ inputs.session_id }}&status=eq.pending&order=created_at.asc&limit=1" \
+              -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY")
+
+            COMMAND_ID=$(echo "$RESPONSE" | grep -oE '"id":"[^"]*"' | head -n1 | cut -d'"' -f4)
+
+            if [ -n "$COMMAND_ID" ]; then
+              TOOL=$(echo "$RESPONSE" | grep -oE '"tool":"[^"]*"' | head -n1 | cut -d'"' -f4)
+              ARGS=$(echo "$RESPONSE" | grep -oE '"args":"[^"]*"' | head -n1 | cut -d'"' -f4)
+
+              curl -s -X PATCH "$SUPABASE_URL/rest/v1/sandbox_commands?id=eq.$COMMAND_ID" \
+                -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+                -H "Content-Type: application/json" \
+                -d '{"status":"running"}'
+
+              case "$TOOL" in
+                curl)
+                  OUTPUT=$(timeout 30 curl -s $ARGS 2>&1 | head -c 4000)
+                  ;;
+                nmap)
+                  OUTPUT=$(timeout 60 nmap $ARGS 2>&1 | head -c 4000)
+                  ;;
+                nikto)
+                  OUTPUT=$(timeout 90 nikto $ARGS 2>&1 | head -c 4000)
+                  ;;
+                *)
+                  OUTPUT="Tool not permitted on this runner."
+                  ;;
+              esac
+
+              ESCAPED_OUTPUT=$(echo "$OUTPUT" | python3 -c "import json,sys; print(json.dumps(sys.stdin.read()))")
+
+              curl -s -X PATCH "$SUPABASE_URL/rest/v1/sandbox_commands?id=eq.$COMMAND_ID" \
+                -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+                -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+                -H "Content-Type: application/json" \
+                -d "{\"status\":\"complete\",\"output\":$ESCAPED_OUTPUT,\"completed_at\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}"
+            fi
+
+            sleep 3
+          done
 
       - name: Report session expired
         if: always()
