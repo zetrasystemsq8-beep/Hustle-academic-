@@ -7,8 +7,9 @@ import 'cyber_models.dart';
 
 // ============================================================
 // CYBER SERVICE — CTF scoring, sandbox provisioning, the attack
-// tool, and packet analysis all in one service, same pattern as
-// BuildService carrying the whole Mobile Lab pipeline.
+// tool, terminal commands, and packet analysis all in one
+// service, same pattern as BuildService carrying the whole
+// Mobile Lab pipeline.
 // ============================================================
 
 class CyberService {
@@ -18,14 +19,17 @@ class CyberService {
   late final RealtimeChannel _sandboxChannel;
   final StreamController<SandboxSession> _sandboxController = StreamController<SandboxSession>.broadcast();
   final StreamController<List<CtfSubmission>> _submissionsController = StreamController<List<CtfSubmission>>.broadcast();
+  final StreamController<List<TerminalCommand>> _commandsController = StreamController<List<TerminalCommand>>.broadcast();
 
   final Map<String, int> _attemptsByChallenge = {};
   SandboxSession? _currentSandbox;
+  RealtimeChannel? _commandsChannel;
 
   CyberService({required this.supabase, required this.userId});
 
   Stream<SandboxSession> get sandboxStream => _sandboxController.stream;
   Stream<List<CtfSubmission>> get submissionsStream => _submissionsController.stream;
+  Stream<List<TerminalCommand>> get commandsStream => _commandsController.stream;
   SandboxSession? get currentSandbox => _currentSandbox;
 
   Future<void> initialize() async {
@@ -54,11 +58,7 @@ class CyberService {
   }
 
   // ==========================================================
-  // CTF FLAG SUBMISSION — real SHA-256 comparison, never trusts
-  // the client for scoring; the correctness check happens here
-  // but points are only ever awarded via the write below, and a
-  // student can inspect this code and still gain nothing without
-  // knowing the actual flag text, since only its hash ships.
+  // CTF FLAG SUBMISSION
   // ==========================================================
 
   Future<bool> submitFlag({
@@ -136,7 +136,7 @@ class CyberService {
         }
       }
 
-      return bestPerChallenge.values.fold<int>(0, (sum, points) => sum + points);
+      return bestPerChallenge.values.fold(0, (sum, points) => sum + points);
     } catch (e) {
       return 0;
     }
@@ -158,9 +158,7 @@ class CyberService {
   }
 
   // ==========================================================
-  // SANDBOX PROVISIONING — talks to the single 'cyber-sandbox'
-  // Edge Function, which handles start, stop, AND receives
-  // GitHub Actions' status reports, all in one place.
+  // SANDBOX PROVISIONING
   // ==========================================================
 
   Future<SandboxSession> provisionSandbox() async {
@@ -196,9 +194,7 @@ class CyberService {
   }
 
   // ==========================================================
-  // HTTP ATTACK TOOL — the guardrail lives here: every request
-  // is built from the ACTIVE SANDBOX'S OWN targetUrl only. There
-  // is no code path that accepts an arbitrary host from the UI.
+  // HTTP ATTACK TOOL
   // ==========================================================
 
   Future<HttpToolResponse> sendSandboxRequest(HttpToolRequest request) async {
@@ -245,14 +241,84 @@ class CyberService {
   }
 
   // ==========================================================
-  // PACKET ANALYSIS — always a fixed, bundled dataset.
+  // TERMINAL COMMANDS — curl, nmap, nikto against the sandbox
+  // only. Client-side checks here are a first filter; the real
+  // enforcement happens in the cyber-sandbox edge function.
+  // ==========================================================
+
+  void subscribeToCommands(String sessionId) {
+    _commandsChannel?.unsubscribe();
+    _commandsChannel = supabase
+        .channel('sandbox_commands:session_id=eq.$sessionId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: 'sandbox_commands',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'session_id',
+            value: sessionId,
+          ),
+          callback: (_) => _refreshCommands(sessionId),
+        )
+        .subscribe();
+    _refreshCommands(sessionId);
+  }
+
+  Future<void> _refreshCommands(String sessionId) async {
+    try {
+      final response = await supabase
+          .from('sandbox_commands')
+          .select()
+          .eq('session_id', sessionId)
+          .order('created_at', ascending: true);
+      final commands = (response as List)
+          .map((c) => TerminalCommand.fromJson(c as Map<String, dynamic>))
+          .toList();
+      _commandsController.add(commands);
+    } catch (e) {
+      // leave stream as-is on failure
+    }
+  }
+
+  Future<void> submitTerminalCommand({required String tool, required String args}) async {
+    final session = _currentSandbox;
+    if (session == null || !session.isActive) {
+      throw Exception('No active sandbox session. Provision one first.');
+    }
+    if (!kAllowedTerminalTools.contains(tool)) {
+      throw Exception('Tool "$tool" is not allowed.');
+    }
+
+    final response = await supabase.functions.invoke(
+      'cyber-sandbox',
+      body: {
+        'user_id': userId,
+        'action': 'submit_command',
+        'session_id': session.id,
+        'tool': tool,
+        'args': args,
+      },
+    );
+
+    if (response.status < 200 || response.status >= 300) {
+      final data = response.data;
+      final message = (data is Map && data['error'] != null) ? data['error'] : 'Command rejected';
+      throw Exception(message);
+    }
+  }
+
+  // ==========================================================
+  // PACKET ANALYSIS
   // ==========================================================
 
   PacketCapture getPracticeCapture() => CyberChallenges.sampleCapture;
 
   void dispose() {
     _sandboxChannel.unsubscribe();
+    _commandsChannel?.unsubscribe();
     _sandboxController.close();
     _submissionsController.close();
+    _commandsController.close();
   }
 }
