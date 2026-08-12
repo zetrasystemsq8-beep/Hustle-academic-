@@ -95,12 +95,14 @@ class TimelineClip {
 }
 
 class TextOverlay {
+  final String id;
   final String text;
   final int startMs;
   final int endMs;
   final String position;
 
   const TextOverlay({
+    required this.id,
     required this.text,
     required this.startMs,
     required this.endMs,
@@ -108,6 +110,7 @@ class TextOverlay {
   });
 
   factory TextOverlay.fromJson(Map<String, dynamic> j) => TextOverlay(
+        id: j['id'],
         text: j['text'],
         startMs: j['start_ms'],
         endMs: j['end_ms'],
@@ -154,9 +157,9 @@ class TransitionSpec {
 
 class StickerOverlay {
   final String id;
-  final String kind; // 'emoji' | 'image'
-  final String content; // emoji char, or storage_path for image
-  final double posX; // 0.0–1.0, normalized
+  final String kind;
+  final String content;
+  final double posX;
   final double posY;
   final double scale;
   final int startMs;
@@ -209,7 +212,7 @@ class StickerOverlay {
 
 class AudioTrack {
   final String id;
-  final String kind; // 'voiceover' | 'music'
+  final String kind;
   final String storagePath;
   final int startMs;
   final double volume;
@@ -349,6 +352,10 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
 
   void addOverlay(TextOverlay overlay) {
     state = state.copyWith(overlays: [...state.overlays, overlay]);
+  }
+
+  void removeOverlay(String id) {
+    state = state.copyWith(overlays: state.overlays.where((o) => o.id != id).toList());
   }
 
   void addTransition(TransitionSpec t) {
