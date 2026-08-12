@@ -105,6 +105,12 @@ jobs:
           sed -i "s/android:label=\"[^\"]*\"/android:label=\"${{ inputs.project_name }}\"/" \
             android/app/src/main/AndroidManifest.xml || true
 
+      - name: Generate app icon
+        working-directory: project
+        run: |
+          echo "[Generating app icon]" | tee -a "$BUILD_LOG"
+          dart run flutter_launcher_icons 2>&1 | tee -a "$BUILD_LOG" || true
+
       - name: Analyze project
         working-directory: project
         run: |
