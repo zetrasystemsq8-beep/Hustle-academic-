@@ -11,6 +11,7 @@ import 'ai_model_versions.dart';
 import 'ai_experiments.dart';
 import 'ai_evaluate.dart';
 import 'ai_build_model.dart';
+import 'ai_deploy.dart';
 
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
@@ -845,7 +846,15 @@ class AiProjectDashboardScreen extends StatelessWidget {
               MaterialPageRoute(builder: (_) => AiModelVersionsScreen(project: project)),
             ),
           ),
-          _ActionTile(icon: Icons.cloud_upload_outlined, title: 'Deploy', subtitle: 'Coming soon', enabled: false),
+          _ActionTile(
+  icon: Icons.cloud_upload_outlined,
+  title: 'Deploy',
+  subtitle: 'Pin a model version and get a callable trigger',
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => AiDeployScreen(project: project)),
+  ),
+),
         ],
       ),
     );
