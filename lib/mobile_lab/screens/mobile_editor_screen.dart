@@ -321,12 +321,7 @@ class MobileProjectRepository {
   }
 
   /// Loads a saved project from disk. Returns null both when the
-  /// project doesn't exist AND when it exists but fails to decode —
-  /// previously a decode failure threw uncaught, which silently
-  /// killed the async tap handler before it ever reached
-  /// Navigator.push(), making the project tile look "unclickable"
-  /// with zero feedback. Now it fails safely and the caller can
-  /// tell the user what happened.
+  /// project doesn't exist AND when it exists but fails to decode.
   Future<MobileProject?> loadProject(String id) async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString('$_projectPrefix$id');
@@ -812,20 +807,26 @@ class MobileProjectController extends ChangeNotifier {
   }
 
   /// Loads a saved project by id. Returns true on success, false if
-  /// the project couldn't be found or failed to decode — callers
-  /// should show the user something when this comes back false,
-  /// rather than silently doing nothing.
+  /// the project couldn't be found or failed to decode.
+  ///
+  /// IMPORTANT: this deliberately does NOT toggle the global
+  /// isLoading flag. Opening a single project is a fast, local
+  /// SharedPreferences read — it doesn't need a full-screen spinner.
+  /// Toggling isLoading here previously swapped the ENTIRE home
+  /// screen body (the whole project list) out for a spinner and
+  /// back, which destroyed and recreated the very ListTile the user
+  /// just tapped. That invalidated the BuildContext the tap handler
+  /// was using for navigation/snackbars after the await, causing
+  /// taps to silently do nothing. Keeping this operation "quiet"
+  /// avoids that class of bug entirely.
   Future<bool> openProject(String id) async {
-    _isLoading = true;
-    notifyListeners();
     final project = await _repository.loadProject(id);
     if (project != null) {
       project.lastOpenedAt = DateTime.now();
       await _repository.saveProject(project);
       _currentProject = project;
+      notifyListeners();
     }
-    _isLoading = false;
-    notifyListeners();
     return project != null;
   }
 
@@ -1643,9 +1644,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
 
   // ---------------------------------------------------------
   // FILE DRAWER — full project file tree reachable from inside
-  // the editor itself, so a student can add/rename/delete files
-  // and folders (e.g. expanding a template with new screens)
-  // without leaving the editor to a separate Explorer screen.
+  // the editor itself.
   // ---------------------------------------------------------
 
   Future<String?> _promptForName(String title, {String initial = ''}) {
@@ -1722,8 +1721,6 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     final confirmed = await _confirmDeleteInDrawer(node.name);
     if (!confirmed) return;
     if (node.isFile) {
-      // Close its tab if it's currently open, so the editor doesn't
-      // keep showing a file that no longer exists in the tree.
       _editorController.closeFile(node);
     }
     widget.projectController.fileSystemService.deleteNode(parent, node);
@@ -1748,7 +1745,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
       return;
     }
     _editorController.openFile(file);
-    Navigator.pop(context); // close the drawer after opening the file
+    Navigator.pop(context);
   }
 
   Widget _buildFileDrawer(MobileProject project) {
@@ -1757,9 +1754,6 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
         child: AnimatedBuilder(
           animation: widget.projectController,
           builder: (context, _) {
-            // project.root may have been mutated in place by the tree
-            // operations above; re-read the current project each time
-            // in case it changed identity (e.g. after a reload).
             final current = widget.projectController.currentProject ?? project;
             return Column(
               children: [
@@ -1986,6 +1980,31 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     );
   }
 
+  /// Opens a saved project. Captures the Navigator and
+  /// ScaffoldMessenger BEFORE the await — these State objects stay
+  /// valid even if the tapped ListTile's own BuildContext gets
+  /// rebuilt or disposed while the project loads, which is what
+  /// was silently swallowing both navigation and error messages
+  /// before.
+  Future<void> _openProjectTile(Map<String, dynamic> summary) async {
+    final navigator = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      final success = await _projectController.openProject(summary['id'] as String);
+      if (!success) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('This project could not be loaded. It may be corrupted or from an incompatible version.')),
+        );
+        return;
+      }
+      navigator.push(MaterialPageRoute(builder: (_) => MobileProjectExplorerScreen(projectController: _projectController)));
+    } catch (e, st) {
+      debugPrint('Unexpected error opening project: $e\n$st');
+      messenger.showSnackBar(SnackBar(content: Text('Unexpected error: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2023,17 +2042,7 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
                 child: ListTile(
                   leading: const Icon(Icons.smartphone),
                   title: Text(summary['name'] as String, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  onTap: () async {
-                    final success = await _projectController.openProject(summary['id'] as String);
-                    if (!mounted) return;
-                    if (!success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('This project could not be loaded. It may be corrupted or from an incompatible version.')),
-                      );
-                      return;
-                    }
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => MobileProjectExplorerScreen(projectController: _projectController)));
-                  },
+                  onTap: () => _openProjectTile(summary),
                 ),
               );
             },
