@@ -39,19 +39,20 @@ jobs:
         env:
           INPUT_JSON: ${{ github.event.inputs.input_json }}
         run: |
-          python3 -c "
-import joblib, json, os, pandas as pd
-model = joblib.load('model.joblib')
-row = json.loads(os.environ['INPUT_JSON'])
-X = pd.DataFrame([row])
-pred = model.predict(X)[0]
-result = {'prediction': str(pred)}
-if hasattr(model, 'predict_proba'):
-    proba = model.predict_proba(X)[0].tolist()
-    result['probabilities'] = proba
-with open('result.json', 'w') as f:
-    json.dump(result, f)
-"
+          cat > infer.py << 'PYEOF'
+          import joblib, json, os, pandas as pd
+          model = joblib.load('model.joblib')
+          row = json.loads(os.environ['INPUT_JSON'])
+          X = pd.DataFrame([row])
+          pred = model.predict(X)[0]
+          result = {'prediction': str(pred)}
+          if hasattr(model, 'predict_proba'):
+              proba = model.predict_proba(X)[0].tolist()
+              result['probabilities'] = proba
+          with open('result.json', 'w') as f:
+              json.dump(result, f)
+          PYEOF
+          python3 infer.py
 
       - name: Report result
         if: always()
