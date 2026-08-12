@@ -10,6 +10,7 @@ import 'ai_training_pipeline.dart';
 import 'ai_model_versions.dart';
 import 'ai_experiments.dart';
 import 'ai_evaluate.dart';
+import 'ai_build_model.dart';
 
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
@@ -780,7 +781,15 @@ class AiProjectDashboardScreen extends StatelessWidget {
               MaterialPageRoute(builder: (_) => AiDatasetManagerScreen(project: project)),
             ),
           ),
-          _ActionTile(icon: Icons.architecture_outlined, title: 'Build Model', subtitle: 'Coming soon', enabled: false),
+          _ActionTile(
+  icon: Icons.architecture_outlined,
+  title: 'Build Model',
+  subtitle: 'Choose an algorithm and hyperparameters',
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => AiBuildModelScreen(project: project)),
+  ),
+),
           _ActionTile(
             icon: Icons.code,
             title: 'Python Workspace',
