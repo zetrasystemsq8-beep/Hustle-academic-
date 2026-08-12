@@ -58,50 +58,57 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     old?.dispose();
   }
 
+  /// Adds one or more clips. Each picked file still goes through its own
+  /// trim screen (so duration/in-out points stay accurate per file) — the
+  /// picker itself now allows selecting multiple videos at once.
   Future<void> _addClip() async {
     final data = ref.read(videoLabProvider);
     if (data.project == null) return;
 
-    final result = await FilePicker.platform.pickFiles(type: FileType.video);
-    if (result == null || result.files.single.path == null) return;
+    final result = await FilePicker.platform.pickFiles(type: FileType.video, allowMultiple: true);
+    if (result == null || result.files.isEmpty) return;
 
-    final file = File(result.files.single.path!);
-    if (!mounted) return;
-    final trim = await Navigator.push<TrimResult>(
-      context,
-      MaterialPageRoute(builder: (_) => TrimClipScreen(file: file)),
-    );
-    if (trim == null) return;
+    for (final pickedFile in result.files) {
+      if (pickedFile.path == null) continue;
+      final file = File(pickedFile.path!);
+      if (!mounted) return;
 
-    setState(() => _busy = true);
-    try {
-      final projectId = data.project!.id;
-      final storagePath = 'source/${DateTime.now().millisecondsSinceEpoch}_${result.files.single.name}';
-
-      final assetRow = await _service.uploadAndRegisterAsset(
-        projectId: projectId,
-        storagePath: storagePath,
-        file: file,
-        durationMs: trim.totalDurationMs,
+      final trim = await Navigator.push<TrimResult>(
+        context,
+        MaterialPageRoute(builder: (_) => TrimClipScreen(file: file)),
       );
+      if (trim == null) continue; // user skipped this one, move to next
 
-      final notifier = ref.read(videoLabProvider.notifier);
-      final currentClipCount = ref.read(videoLabProvider).clips.length;
+      setState(() => _busy = true);
+      try {
+        final projectId = data.project!.id;
+        final storagePath = 'source/${DateTime.now().millisecondsSinceEpoch}_${pickedFile.name}';
 
-      notifier.addClip(TimelineClip(
-        id: const Uuid().v4(),
-        assetId: assetRow['id'],
-        storagePath: storagePath,
-        sourceStartMs: trim.startMs,
-        sourceEndMs: trim.endMs,
-        durationMs: trim.totalDurationMs,
-        timelinePositionMs: currentClipCount * (trim.endMs - trim.startMs),
-        sortOrder: currentClipCount,
-      ));
-    } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add clip: $e')));
-    } finally {
-      if (mounted) setState(() => _busy = false);
+        final assetRow = await _service.uploadAndRegisterAsset(
+          projectId: projectId,
+          storagePath: storagePath,
+          file: file,
+          durationMs: trim.totalDurationMs,
+        );
+
+        final notifier = ref.read(videoLabProvider.notifier);
+        final currentClipCount = ref.read(videoLabProvider).clips.length;
+
+        notifier.addClip(TimelineClip(
+          id: const Uuid().v4(),
+          assetId: assetRow['id'],
+          storagePath: storagePath,
+          sourceStartMs: trim.startMs,
+          sourceEndMs: trim.endMs,
+          durationMs: trim.totalDurationMs,
+          timelinePositionMs: currentClipCount * (trim.endMs - trim.startMs),
+          sortOrder: currentClipCount,
+        ));
+      } catch (e) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add ${pickedFile.name}: $e')));
+      } finally {
+        if (mounted) setState(() => _busy = false);
+      }
     }
   }
 
@@ -264,6 +271,44 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     return url;
   }
 
+  /// Opens a real text-entry dialog — this is the fix for "Text doesn't
+  /// work": before, this just silently added a hardcoded "New text" that
+  /// was never even shown in the preview.
+  Future<void> _addTextOverlay() async {
+    final controller = TextEditingController();
+    final entered = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: _kSurface,
+        title: const Text('Add text', style: TextStyle(color: Colors.white)),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          style: const TextStyle(color: Colors.white),
+          decoration: const InputDecoration(
+            hintText: 'Type your text…',
+            hintStyle: TextStyle(color: Colors.white38),
+            enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: _kAccent)),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Cancel', style: TextStyle(color: Colors.white70))),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: _kAccent, foregroundColor: Colors.white),
+            onPressed: () => Navigator.pop(dialogContext, controller.text.trim()),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+
+    if (entered == null || entered.isEmpty) return;
+    ref.read(videoLabProvider.notifier).addOverlay(
+          TextOverlay(id: const Uuid().v4(), text: entered, startMs: 0, endMs: 3000),
+        );
+  }
+
   Future<void> _pickAudio() async {
     final data = ref.read(videoLabProvider);
     if (data.project == null) return;
@@ -303,6 +348,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
         final file = File(result.files.single.path!);
         final storagePath = await _service.uploadAudioFile(projectId: data.project!.id, file: file, filename: result.files.single.name);
         ref.read(videoLabProvider.notifier).addAudioTrack(AudioTrack(id: const Uuid().v4(), kind: 'music', storagePath: storagePath));
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Music track added')));
       } catch (e) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add music: $e')));
       } finally {
@@ -319,7 +365,16 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
   Future<void> _recordVoiceover() async {
     final status = await Permission.microphone.request();
     if (!status.isGranted) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Microphone permission is required to record a voiceover')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Microphone permission denied — enable it in system settings to record a voiceover'),
+        ));
+      }
+      return;
+    }
+
+    if (!await _recorder.hasPermission()) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Recorder reports no microphone permission')));
       return;
     }
 
@@ -344,17 +399,17 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Stop', style: TextStyle(color: _kAccent)),
-          ),
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Stop', style: TextStyle(color: _kAccent))),
         ],
       ),
     );
 
     final recordedPath = await _recorder.stop();
     setState(() => _recording = false);
-    if (recordedPath == null) return;
+    if (recordedPath == null) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Recording failed — no file was produced')));
+      return;
+    }
 
     final data = ref.read(videoLabProvider);
     if (data.project == null) return;
@@ -368,6 +423,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
         filename: 'voiceover_${DateTime.now().millisecondsSinceEpoch}.m4a',
       );
       ref.read(videoLabProvider.notifier).addAudioTrack(AudioTrack(id: const Uuid().v4(), kind: 'voiceover', storagePath: storagePath));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Voiceover added')));
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save voiceover: $e')));
     } finally {
@@ -419,6 +475,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
       ),
       body: Column(
         children: [
+          // Preview area — now shows text overlays and stickers together
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) => Container(
@@ -446,7 +503,21 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                               ],
                             ),
                     ),
-                    // Draggable sticker/emoji overlays
+                    // Text overlays — real fix: these are now actually rendered
+                    ...data.overlays.map((overlay) {
+                      final isBottom = overlay.position == 'bottom';
+                      final isTop = overlay.position == 'top';
+                      return Positioned(
+                        left: 12,
+                        right: 12,
+                        top: isTop ? 24 : null,
+                        bottom: isBottom ? 24 : null,
+                        child: isTop || isBottom
+                            ? _TextOverlayChip(overlay: overlay, onRemove: () => notifier.removeOverlay(overlay.id))
+                            : Center(child: _TextOverlayChip(overlay: overlay, onRemove: () => notifier.removeOverlay(overlay.id))),
+                      );
+                    }),
+                    // Draggable stickers/emoji
                     ...data.stickers.map((sticker) {
                       return Positioned(
                         left: sticker.posX * constraints.maxWidth - 24,
@@ -462,9 +533,8 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                               ? Text(sticker.content, style: const TextStyle(fontSize: 40))
                               : FutureBuilder<String>(
                                   future: _stickerImageUrl(sticker),
-                                  builder: (context, snapshot) => snapshot.hasData
-                                      ? Image.network(snapshot.data!, width: 48, height: 48)
-                                      : const SizedBox(width: 48, height: 48),
+                                  builder: (context, snapshot) =>
+                                      snapshot.hasData ? Image.network(snapshot.data!, width: 48, height: 48) : const SizedBox(width: 48, height: 48),
                                 ),
                         ),
                       );
@@ -474,6 +544,41 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
               ),
             ),
           ),
+
+          // Audio track list — real fix: previously added tracks were invisible
+          if (data.audioTracks.isNotEmpty)
+            Container(
+              height: 44,
+              color: _kSurface,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: data.audioTracks.length,
+                itemBuilder: (context, i) {
+                  final track = data.audioTracks[i];
+                  return Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(color: _kSurfaceLight, borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(track.kind == 'voiceover' ? Icons.mic : Icons.music_note, color: _kAccent, size: 16),
+                        const SizedBox(width: 6),
+                        Text(track.kind == 'voiceover' ? 'Voiceover' : 'Music', style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                        const SizedBox(width: 6),
+                        GestureDetector(
+                          onTap: () => notifier.removeAudioTrack(track.id),
+                          child: const Icon(Icons.close, color: Colors.white38, size: 16),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+
+          // Clip strip
           Container(
             height: 92,
             color: _kSurface,
@@ -531,6 +636,8 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                     },
                   ),
           ),
+
+          // Bottom toolbar
           Container(
             color: _kSurface,
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -540,7 +647,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                 children: [
                   _bottomAction(icon: Icons.add_box_outlined, label: 'Add clip', onTap: _busy ? null : _addClip),
                   _bottomAction(icon: Icons.content_cut, label: 'Trim', onTap: _selectedIndex == null ? null : _reTrimSelected),
-                  _bottomAction(icon: Icons.text_fields, label: 'Text', onTap: () => notifier.addOverlay(const TextOverlay(text: 'New text', startMs: 0, endMs: 2000))),
+                  _bottomAction(icon: Icons.text_fields, label: 'Text', onTap: data.project == null ? null : _addTextOverlay),
                   _bottomAction(
                     icon: Icons.compare_arrows,
                     label: 'Transition',
@@ -556,6 +663,28 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TextOverlayChip extends StatelessWidget {
+  final TextOverlay overlay;
+  final VoidCallback onRemove;
+  const _TextOverlayChip({required this.overlay, required this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: onRemove,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(8)),
+        child: Text(
+          overlay.text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
