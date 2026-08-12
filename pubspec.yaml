@@ -105,6 +105,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/translations/
+    - assets/mobile_lab/
     - .env
 
 flutter_launcher_icons:
