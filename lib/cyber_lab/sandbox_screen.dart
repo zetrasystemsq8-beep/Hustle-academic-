@@ -45,7 +45,7 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
     super.dispose();
   }
 
-  Future<void> _provisionSandbox() async {
+Future<void> _provisionSandbox() async {
     setState(() {
       _isProvisioning = true;
       _provisionError = null;
@@ -54,7 +54,12 @@ class _SandboxScreenState extends State<SandboxScreen> with SingleTickerProvider
       await widget.cyberService.provisionSandbox();
     } catch (e) {
       if (mounted) {
-        setState(() => _provisionError = 'Could not start the sandbox. Please try again in a moment.');
+        final msg = e.toString();
+        setState(() {
+          _provisionError = msg.contains('already have an active sandbox')
+              ? 'You already have a sandbox running. Check back in a few minutes, or it will expire on its own.'
+              : 'Could not start the sandbox. Please try again in a moment.';
+        });
       }
     } finally {
       if (mounted) setState(() => _isProvisioning = false);
