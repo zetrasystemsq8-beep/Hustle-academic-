@@ -42,6 +42,8 @@ class _VideoLabHomeScreenState extends ConsumerState<VideoLabHomeScreen> {
           clips: timeline.clips,
           overlays: timeline.overlays,
           transitions: timeline.transitions,
+          stickers: timeline.stickers,
+          audioTracks: timeline.audioTracks,
         );
     if (mounted) {
       await Navigator.push(context, MaterialPageRoute(builder: (_) => const VideoEditorScreen()));
