@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 // ============================================================
 // ICON PICKER SERVICE — lets a student pick a custom app icon,
-// or falls back to Hustle Academy's bundled default icon so
+// or falls back to Hustle Academy's bundled Zetra logo so
 // generated apps NEVER ship with the plain Flutter logo.
 // ============================================================
 
@@ -27,9 +27,11 @@ class MobileIconPickerService {
     return base64Encode(bytes);
   }
 
-  /// Loads Hustle Academy's own bundled default icon — used whenever
-  /// a project has no customIconBase64 set. This is what guarantees
-  /// no generated app ever ships with Flutter's stock logo.
+  /// Loads Hustle Academy's own bundled Zetra logo — used whenever a
+  /// project has no customIconBase64 set. Requires
+  /// assets/mobile_lab/ to be listed under flutter: assets: in
+  /// pubspec.yaml, since Flutter does not pull in subfolders of a
+  /// listed parent directory automatically.
   static Future<Uint8List> loadDefaultIconBytes() async {
     final data = await rootBundle.load(defaultIconAssetPath);
     return data.buffer.asUint8List();
@@ -37,11 +39,33 @@ class MobileIconPickerService {
 
   /// Resolves the actual bytes to embed in a project's zip — the
   /// student's custom icon if they set one, otherwise the default.
+  /// Never throws: any failure loading either source falls back to
+  /// a minimal generated placeholder rather than failing the build.
   static Future<Uint8List> resolveIconBytes(String? customIconBase64) async {
     if (customIconBase64 != null && customIconBase64.isNotEmpty) {
-      return base64Decode(customIconBase64);
+      try {
+        return base64Decode(customIconBase64);
+      } catch (e) {
+        debugPrint('Custom icon failed to decode, falling back: $e');
+      }
     }
-    return loadDefaultIconBytes();
+    try {
+      return await loadDefaultIconBytes();
+    } catch (e) {
+      debugPrint('Default icon asset failed to load, using generated placeholder: $e');
+      return _generateFallbackIconBytes();
+    }
+  }
+
+  /// Last-resort in-memory icon if even the bundled default asset
+  /// fails to load for some reason — guarantees Generate APK never
+  /// crashes outright because of a missing/misconfigured icon.
+  static Future<Uint8List> _generateFallbackIconBytes() async {
+    // A tiny valid 1x1 orange PNG, base64-encoded, used only if both
+    // the custom icon and the bundled default icon are unavailable.
+    const fallbackPngBase64 =
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+    return base64Decode(fallbackPngBase64);
   }
 }
 
