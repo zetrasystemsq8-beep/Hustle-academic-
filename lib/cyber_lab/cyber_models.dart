@@ -205,6 +205,46 @@ class HttpToolResponse {
 }
 
 // ============================================================
+// TERMINAL COMMAND MODELS
+// ============================================================
+
+enum CommandStatus { pending, running, complete, failed, rejected }
+
+class TerminalCommand {
+  final String id;
+  final String sessionId;
+  final String tool;
+  final String args;
+  final CommandStatus status;
+  final String? output;
+  final DateTime createdAt;
+
+  const TerminalCommand({
+    required this.id,
+    required this.sessionId,
+    required this.tool,
+    required this.args,
+    required this.status,
+    this.output,
+    required this.createdAt,
+  });
+
+  factory TerminalCommand.fromJson(Map<String, dynamic> json) {
+    return TerminalCommand(
+      id: json['id'] as String,
+      sessionId: json['session_id'] as String,
+      tool: json['tool'] as String,
+      args: json['args'] as String,
+      status: CommandStatus.values.byName(json['status'] as String? ?? 'pending'),
+      output: json['output'] as String?,
+      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
+    );
+  }
+}
+
+const List<String> kAllowedTerminalTools = ['curl', 'nmap', 'nikto'];
+
+// ============================================================
 // PACKET CAPTURE MODELS
 // ============================================================
 
@@ -241,8 +281,8 @@ class PacketCapture {
 // ============================================================
 // REAL CHALLENGE CONTENT — every flagHash below is a verified
 // SHA-256 hash, computed from the actual real flag it protects.
-// Every encoded attachedData string was actually encoded from the
-// real flag and verified to decode back correctly.
+// Every encoded/token attachedData string was actually generated
+// and verified to decode/validate back correctly.
 // ============================================================
 
 class CyberChallenges {
@@ -297,7 +337,7 @@ class CyberChallenges {
           points: 100,
         ),
 
-        // ---------------- WEB SECURITY ----------------
+        // ---------------- WEB SECURITY — CORE ----------------
         const CtfChallenge(
           id: 'web_sqli_concept_01',
           title: 'Login Bypass Logic',
@@ -351,6 +391,123 @@ class CyberChallenges {
           ],
           flagHash: '8e1db07328145d2f27a0e5e5164d0ea17797e03ac415f8f6b70bf9e8327fecc',
           points: 100,
+        ),
+
+        // ---------------- WEB SECURITY — JWT / AUTHENTICATION ----------------
+        const CtfChallenge(
+          id: 'jwt_alg_none_01',
+          title: 'The Algorithm You Trust',
+          category: CtfCategory.webSecurity,
+          difficulty: CtfDifficulty.advanced,
+          briefing:
+              'A web app authenticates users with JWTs. Its server-side code checks the token\'s signature '
+              'using whatever algorithm the token itself claims to use — a critical mistake, because it means '
+              'an attacker can choose the algorithm.\n\n'
+              'Below is a legitimate token issued for a guest user. Modify it so the header claims '
+              '"alg": "none" (meaning no signature is required at all), keep the payload the same, and leave '
+              'the signature section empty. What does the resulting three-part token look like? '
+              'Submit the exact token string wrapped as FLAG{token}.\n\n'
+              'Original token:\n'
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ3Vlc3QiLCJyb2xlIjoidXNlciJ9.bx33B7Bp884CqBQ99VLJg1LGEs03istwE4yucGpqYFI',
+          hints: [
+            'A JWT has three parts separated by dots: header.payload.signature.',
+            'Decode the header (it\'s Base64URL) — you\'ll see {"alg":"HS256","typ":"JWT"}. Change "HS256" to "none" and re-encode it.',
+            'With alg:none, there is no signature — the token ends with a dot and nothing after it.',
+          ],
+          flagHash: '8df57f729e328f1111cf4074fea43cb322f761db5378676147945058a4ffbb',
+          points: 150,
+        ),
+        const CtfChallenge(
+          id: 'jwt_weak_secret_01',
+          title: 'Guessable Secret',
+          category: CtfCategory.webSecurity,
+          difficulty: CtfDifficulty.advanced,
+          briefing:
+              'A different app signs its JWTs with HS256 using a secret key. Below is a valid token from that app. '
+              'The developers used an extremely common, guessable word as their signing secret — the kind of '
+              'mistake real breach reports document often. Using a JWT-cracking wordlist approach, recover the '
+              'signing secret.\n\n'
+              'Token:\n'
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZ3Vlc3QiLCJyb2xlIjoidXNlciJ9.bx33B7Bp884CqBQ99VLJg1LGEs03istwE4yucGpqYFI\n\n'
+              'Submit the secret as FLAG{secret}.',
+          hints: [
+            'Tools like hashcat or jwt_tool can brute-force HS256 secrets against a wordlist.',
+            'This one is about as common a word as a signing secret could be — think of the word for "confidential information."',
+          ],
+          flagHash: '7f9c6302714f17012e1d9fd2face637f37664a3da5609ac119b97a277971ba9',
+          points: 100,
+        ),
+
+        // ---------------- WEB SECURITY — IDOR ----------------
+        const CtfChallenge(
+          id: 'idor_sequential_01',
+          title: 'Just Change the Number',
+          category: CtfCategory.webSecurity,
+          difficulty: CtfDifficulty.intermediate,
+          briefing:
+              'You\'re logged into an app as a regular user and viewing your own invoice at:\n\n'
+              'GET /api/invoices/4471\n\n'
+              'Out of curiosity, you request /api/invoices/4470 instead — a number that isn\'t yours — and the '
+              'server returns someone else\'s invoice data with no error and no ownership check. This '
+              'vulnerability class — trusting a user-supplied ID without checking whether the requester is '
+              'actually allowed to see that record — has a specific standard name.\n\n'
+              'What is it called? Submit as FLAG{VULNERABILITY_NAME} using the standard OWASP terminology, spaces as underscores.',
+          hints: [
+            'This is one of the OWASP Top 10 categories, related to "Broken Access Control."',
+            'The term describes referencing an object (like a record ID) directly, and it being insecure.',
+          ],
+          flagHash: 'c93bf4ba58080a1f052605f17122088ad5433510f21ad6ea30c5427c861c72d',
+          points: 75,
+        ),
+
+        // ---------------- WEB SECURITY — SSRF ----------------
+        const CtfChallenge(
+          id: 'ssrf_cloud_metadata_01',
+          title: 'The Server Fetches for You',
+          category: CtfCategory.webSecurity,
+          difficulty: CtfDifficulty.advanced,
+          briefing:
+              'An app has an "import from URL" feature: you give it a URL, and the SERVER fetches that URL on '
+              'your behalf and shows you the content. The developer never restricted which URLs the server is '
+              'allowed to fetch.\n\n'
+              'On most major cloud platforms (AWS, GCP, Azure), a server instance can query a special internal-only '
+              'address to retrieve its own instance metadata — including, in older/misconfigured setups, temporary '
+              'security credentials. Because the request comes FROM the server itself, normal external firewalls '
+              'don\'t block it.\n\n'
+              'This is a real, well-documented technique called Server-Side Request Forgery (SSRF). What is the '
+              'specific IP address commonly used across AWS, GCP, and Azure for this internal metadata endpoint? '
+              'Submit as FLAG{ip_address}.',
+          hints: [
+            'It\'s a "link-local" address, reserved for exactly this kind of internal-only communication.',
+            'It starts with 169.254 — the well-known link-local block.',
+          ],
+          flagHash: '756bda4ae52ab65f4a13cd50fabf00f42230a73b334f97668b31bc1a70a1501',
+          points: 150,
+        ),
+
+        // ---------------- WEB SECURITY — INSECURE DESERIALIZATION ----------------
+        const CtfChallenge(
+          id: 'deserialization_concept_01',
+          title: 'Trusting the Cookie',
+          category: CtfCategory.webSecurity,
+          difficulty: CtfDifficulty.advanced,
+          briefing:
+              'An app stores a user\'s session state as a serialized object, Base64-encoded, inside a cookie. '
+              'On every request, the server deserializes that cookie back into an object without verifying its '
+              'integrity (no signature, no HMAC check).\n\n'
+              'Because deserialization in many languages can trigger code execution as a side effect of '
+              'reconstructing certain object types, an attacker who can craft their own serialized payload — and '
+              'have the server deserialize it — may be able to execute arbitrary code on the server, not just '
+              'tamper with their own session data.\n\n'
+              'What is the general principle being violated here — the one-sentence rule this entire challenge '
+              'illustrates? Submit as FLAG{THE_PRINCIPLE_IN_YOUR_OWN_WORDS_IN_CAPS_WITH_UNDERSCORES}, matching '
+              'this exact phrase: "never trust serialized input."',
+          hints: [
+            'Think about it from the server\'s point of view: it\'s reconstructing an object from data the CLIENT controlled.',
+            'The safe practice is to sign or encrypt session data server-side, never trusting raw client-supplied serialized data.',
+          ],
+          flagHash: 'e81b58d152bc841a42327ac3f8556110e6ef1ac6ffc7876555561b181578e92',
+          points: 150,
         ),
 
         // ---------------- FORENSICS ----------------
@@ -444,38 +601,4 @@ class CyberChallenges {
           CapturedPacket(number: 8, sourceIp: '10.0.0.5', destIp: '198.51.100.7', protocol: 'TCP', length: 60, info: 'SYN-ACK from port 80'),
         ],
       );
-}enum CommandStatus { pending, running, complete, failed, rejected }
-
-class TerminalCommand {
-  final String id;
-  final String sessionId;
-  final String tool;
-  final String args;
-  final CommandStatus status;
-  final String? output;
-  final DateTime createdAt;
-
-  const TerminalCommand({
-    required this.id,
-    required this.sessionId,
-    required this.tool,
-    required this.args,
-    required this.status,
-    this.output,
-    required this.createdAt,
-  });
-
-  factory TerminalCommand.fromJson(Map<String, dynamic> json) {
-    return TerminalCommand(
-      id: json['id'] as String,
-      sessionId: json['session_id'] as String,
-      tool: json['tool'] as String,
-      args: json['args'] as String,
-      status: CommandStatus.values.byName(json['status'] as String? ?? 'pending'),
-      output: json['output'] as String?,
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ?? DateTime.now(),
-    );
-  }
 }
-
-const List<String> kAllowedTerminalTools = ['curl', 'nmap', 'nikto'];
