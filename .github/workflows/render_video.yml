@@ -15,11 +15,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install emoji font
+        run: sudo apt-get update && sudo apt-get install -y fonts-noto-color-emoji
+
       - name: Report start
         run: |
-          curl -s -X POST "$SUPABASE_FN_URL" \
-            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            -H "Content-Type: application/json" \
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
             -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"downloading","progress_pct":5}}'
         env:
           SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
@@ -28,22 +29,24 @@ jobs:
       - name: Parse spec and download assets
         run: |
           echo '${{ github.event.inputs.spec }}' > spec.json
-          mkdir -p clips
+          mkdir -p clips stickers audio
           node - <<'EOF'
           const spec = require('./spec.json');
           const fs = require('fs');
           fs.writeFileSync('clip_urls.txt', spec.clips.map(c => c.assets.storage_path).join('\n'));
+          fs.writeFileSync('sticker_urls.txt', (spec.stickers || []).filter(s => s.kind === 'image').map(s => s.content).join('\n'));
+          fs.writeFileSync('audio_urls.txt', (spec.audio_tracks || []).map(a => a.storage_path).join('\n'));
           EOF
-          while read -r path; do
-            curl -sL "$SUPABASE_STORAGE_URL/$path" -o "clips/$(basename "$path")"
-          done < clip_urls.txt
+          while read -r path; do [ -n "$path" ] && curl -sL "$SUPABASE_STORAGE_URL/$path" -o "clips/$(basename "$path")"; done < clip_urls.txt
+          while read -r path; do [ -n "$path" ] && curl -sL "$SUPABASE_STORAGE_URL/$path" -o "stickers/$(basename "$path")"; done < sticker_urls.txt
+          while read -r path; do [ -n "$path" ] && curl -sL "$SUPABASE_STORAGE_URL/$path" -o "audio/$(basename "$path")"; done < audio_urls.txt
         env:
           SUPABASE_STORAGE_URL: ${{ secrets.SUPABASE_STORAGE_URL }}
 
       - name: Report transcoding
         run: |
           curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"transcoding","progress_pct":30}}'
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"transcoding","progress_pct":25}}'
         env:
           SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
@@ -64,14 +67,13 @@ jobs:
       - name: Report compositing
         run: |
           curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"compositing","progress_pct":55}}'
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"compositing","progress_pct":45}}'
         env:
           SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Concat clips with crossfade transitions
         run: |
-          # simple sequential xfade chain across all trimmed_*.mp4 files
           FILES=(trimmed_*.mp4)
           cp "${FILES[0]}" concat_0.mp4
           for i in "${!FILES[@]}"; do
@@ -82,14 +84,6 @@ jobs:
               -c:v libx264 -c:a aac "concat_${i}.mp4"
           done
           cp "concat_$((${#FILES[@]}-1)).mp4" composed.mp4
-
-      - name: Report filtering
-        run: |
-          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"filtering","progress_pct":70}}'
-        env:
-          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Apply filter preset
         run: |
@@ -108,6 +102,37 @@ jobs:
             cp composed.mp4 filtered.mp4
           fi
 
+      - name: Overlay stickers and emoji
+        run: |
+          node - <<'EOF' > sticker_filter.txt
+          const spec = require('./spec.json');
+          const stickers = spec.stickers || [];
+          const parts = [];
+          const inputs = [];
+          let imgIndex = 1;
+          stickers.forEach(s => {
+            const startS = s.start_ms / 1000;
+            const endS = s.end_ms / 1000;
+            if (s.kind === 'image') {
+              const fname = s.content.split('/').pop();
+              inputs.push(`-i stickers/${fname}`);
+              parts.push(`[0:v][${imgIndex}:v] overlay=W*${s.pos_x}-w/2:H*${s.pos_y}-h/2:enable='between(t,${startS},${endS})' [ov${imgIndex}]`);
+              imgIndex++;
+            } else {
+              parts.push(`drawtext=text='${s.content}':fontfile=/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf:fontsize=48:x=W*${s.pos_x}-24:y=H*${s.pos_y}-24:enable='between(t,${startS},${endS})'`);
+            }
+          });
+          require('fs').writeFileSync('sticker_inputs.txt', inputs.join(' '));
+          console.log(parts.join(','));
+          EOF
+          STICKER_FILTER=$(cat sticker_filter.txt)
+          STICKER_INPUTS=$(cat sticker_inputs.txt)
+          if [ -n "$STICKER_FILTER" ]; then
+            ffmpeg -y -i filtered.mp4 $STICKER_INPUTS -vf "$STICKER_FILTER" -c:a copy stickered.mp4 || cp filtered.mp4 stickered.mp4
+          else
+            cp filtered.mp4 stickered.mp4
+          fi
+
       - name: Burn in text overlays
         run: |
           node - <<'EOF' > overlay_filter.txt
@@ -119,9 +144,29 @@ jobs:
           EOF
           FILTER=$(cat overlay_filter.txt)
           if [ -n "$FILTER" ]; then
-            ffmpeg -y -i filtered.mp4 -vf "$FILTER" -c:a copy final.mp4
+            ffmpeg -y -i stickered.mp4 -vf "$FILTER" -c:a copy texted.mp4
           else
-            cp filtered.mp4 final.mp4
+            cp stickered.mp4 texted.mp4
+          fi
+
+      - name: Mix audio tracks
+        run: |
+          node - <<'EOF' > audio_inputs.txt
+          const spec = require('./spec.json');
+          const tracks = spec.audio_tracks || [];
+          const lines = tracks.map(a => `audio/${a.storage_path.split('/').pop()}`);
+          console.log(lines.join('\n'));
+          EOF
+          AUDIO_COUNT=$(grep -c . audio_inputs.txt || true)
+          if [ "$AUDIO_COUNT" -gt 0 ]; then
+            INPUTS="-i texted.mp4"
+            while read -r f; do INPUTS="$INPUTS -i $f"; done < audio_inputs.txt
+            AMIX_INPUTS="[0:a]"
+            for i in $(seq 1 "$AUDIO_COUNT"); do AMIX_INPUTS="${AMIX_INPUTS}[${i}:a]"; done
+            ffmpeg -y $INPUTS -filter_complex "${AMIX_INPUTS}amix=inputs=$((AUDIO_COUNT+1)):duration=first:dropout_transition=2[aout]" \
+              -map 0:v -map "[aout]" -c:v copy final.mp4
+          else
+            cp texted.mp4 final.mp4
           fi
 
       - name: Report encoding/uploading
