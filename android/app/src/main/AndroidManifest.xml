@@ -6,6 +6,14 @@
     <!-- Optional but recommended -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- Required for Video Lab: voiceover recording -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+    <!-- Required for Video Lab: picking video/image/audio files from device storage -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+
     <application
         android:label="Hustle Academy"
         android:name="${applicationName}"
