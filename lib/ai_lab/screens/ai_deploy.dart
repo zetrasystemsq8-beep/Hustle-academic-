@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'ai_dataset_lab.dart' show AiProject;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'ai_training_pipeline.dart' show AiTrainingJob, AiTrainingStatus, AiTrainingService;
 
 // ============================================================
@@ -153,7 +154,7 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
   @override
   Widget build(BuildContext context) {
     final active = _activeDeployment;
-    final supabaseUrl = Supabase.instance.client.supabaseUrl;
+    final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
 
     return Scaffold(
       appBar: AppBar(title: Text('Deploy — ${widget.project.name}')),
