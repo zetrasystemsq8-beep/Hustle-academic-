@@ -74,6 +74,7 @@ jobs:
 
       - name: Concat clips with crossfade transitions
         run: |
+          # simple sequential xfade chain across all trimmed_*.mp4 files
           FILES=(trimmed_*.mp4)
           cp "${FILES[0]}" concat_0.mp4
           for i in "${!FILES[@]}"; do
@@ -84,6 +85,14 @@ jobs:
               -c:v libx264 -c:a aac "concat_${i}.mp4"
           done
           cp "concat_$((${#FILES[@]}-1)).mp4" composed.mp4
+
+      - name: Report filtering
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"filtering","progress_pct":55}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Apply filter preset
         run: |
