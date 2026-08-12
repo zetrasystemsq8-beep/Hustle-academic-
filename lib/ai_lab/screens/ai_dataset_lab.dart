@@ -2,81 +2,38 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
-import 'ai_python_workspace.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'ai_python_workspace.dart';
+import 'ai_training_pipeline.dart';
+import 'ai_model_versions.dart';
 
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
-//
-// Scope (real, working):
-//   - AI project creation & dashboard
-//   - CSV / JSON dataset upload, parsing, and persistence
-//   - Real stats: row count, columns, missing values, class
-//     distribution (for the detected/chosen label column)
-//   - Dataset preview (paginated table)
-//   - Edit a cell, delete a row, re-save (creates a new version)
-//   - Train/val/test split configuration + application
-//
-// Explicitly NOT faked, marked "Coming soon" instead:
-//   - Image / audio dataset ingestion (needs real storage +
-//     thumbnailing work beyond this pass)
-//   - Model builder, training pipeline, evaluation, inference,
-//     versioning UI, deployment — separate deliverables per plan
 // ============================================================
 
 // ------------------------------------------------------------
-// DEVICE IDENTITY (reuse pattern from Mobile Lab — no login
-// screen exists yet, so we resolve a stable id the same way)
+// DEVICE IDENTITY (no login screen exists yet, so we resolve a
+// stable id the same way Mobile Lab does)
 // ------------------------------------------------------------
 
-import 'package:shared_preferences/shared_preferences.dart';
-import 'ai_training_pipeline.dart';
-import 'ai_python_workspace.dart' show AiWorkspaceRepository;
-// ...
 class AiDeviceIdentity {
   static const String _key = 'ai_lab.device_user_id';
+
   static Future<String> getOrCreateUserId() async {
     final existingAuthUser = Supabase.instance.client.auth.currentUser;
     if (existingAuthUser != null) return existingAuthUser.id;
+
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString(_key);
     if (stored != null && stored.isNotEmpty) return stored;
-    final generated = 'device_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
+
+    final generated =
+        'device_${DateTime.now().microsecondsSinceEpoch}_${identityHashCode(Object())}';
     await prefs.setString(_key, generated);
     return generated;
   }
-}
-
-/// Thin wrapper so this file has no hard dependency ordering issue
-/// with mobile_editor_screen.dart's own SharedPreferences usage —
-/// swap this for a direct `shared_preferences` import if you'd
-/// rather share the exact same package instance (recommended; see
-/// note at bottom of file).
-class SharedPreferencesLike {
-  static Future<_PrefsAdapter> instance() async {
-    // ignore: implementation detail — see bottom-of-file note.
-    return _PrefsAdapter(await _loadRealSharedPreferences());
-  }
-}
-
-class _PrefsAdapter {
-  final dynamic _prefs;
-  _PrefsAdapter(this._prefs);
-  String? getString(String key) => _prefs.getString(key) as String?;
-  Future<void> setString(String key, String value) => _prefs.setString(key, value);
-}
-
-Future<dynamic> _loadRealSharedPreferences() async {
-  // Deferred import avoided here for brevity in this single-file
-  // drop. Replace this whole SharedPreferencesLike/_PrefsAdapter
-  // pair with a direct:
-  //   import 'package:shared_preferences/shared_preferences.dart';
-  //   final prefs = await SharedPreferences.getInstance();
-  // at the top of the file — see note at the very end.
-  throw UnimplementedError(
-    'Wire this to SharedPreferences.getInstance() — see note at bottom of file.',
-  );
 }
 
 // ============================================================
@@ -220,11 +177,6 @@ class AiDatasetSplitConfig {
       );
 }
 
-/// A tabular dataset held in memory while the student works on it.
-/// `rows` is a list of ordered maps (column name -> raw string value).
-/// Kept as strings deliberately — type coercion happens at training
-/// time, not here; this mirrors how real dataset tools stay
-/// conservative about inferring types from CSV text.
 class AiDataset {
   final String id;
   final String projectId;
@@ -264,10 +216,6 @@ class AiDataset {
 
   int get rowCount => rows.length;
 
-  /// Persisted record does NOT include the row data itself — that
-  /// lives in Storage as the actual CSV/JSON file. This row keeps
-  /// metadata + stats only, same separation your spec calls for
-  /// (§26: don't store large artifacts in the relational DB).
   Map<String, dynamic> toMetadataJson() => {
         'id': id,
         'project_id': projectId,
@@ -308,14 +256,10 @@ class AiDataset {
 }
 
 // ============================================================
-// CSV / JSON PARSING — real RFC4180-ish CSV parser (handles
-// quoted fields, embedded commas, embedded newlines, escaped
-// quotes). No external package dependency required.
+// CSV / JSON PARSING
 // ============================================================
 
 class TabularParser {
-  /// Parses CSV text into (header, rows). Every row map uses the
-  /// header as keys; missing trailing fields become ''.
   static (List<String> header, List<Map<String, String>> rows) parseCsv(String source) {
     final records = _parseCsvRecords(source);
     if (records.isEmpty) return (<String>[], <Map<String, String>>[]);
@@ -324,7 +268,7 @@ class TabularParser {
     final rows = <Map<String, String>>[];
     for (var i = 1; i < records.length; i++) {
       final record = records[i];
-      if (record.length == 1 && record.first.trim().isEmpty) continue; // skip blank line
+      if (record.length == 1 && record.first.trim().isEmpty) continue;
       final row = <String, String>{};
       for (var col = 0; col < header.length; col++) {
         row[header[col]] = col < record.length ? record[col] : '';
@@ -389,7 +333,6 @@ class TabularParser {
       }
     }
 
-    // flush last field/record if the file didn't end with a newline
     if (field.isNotEmpty || record.isNotEmpty) {
       record.add(field.toString());
       records.add(record);
@@ -398,11 +341,6 @@ class TabularParser {
     return records;
   }
 
-  /// Parses a JSON array of flat objects into (header, rows). Column
-  /// order is the union of keys in first-seen order. Values are
-  /// stringified (numbers/bools become their string form; nested
-  /// objects/arrays become their compact JSON string — flagged to
-  /// the user rather than silently dropped).
   static (List<String> header, List<Map<String, String>> rows) parseJsonRecords(String source) {
     final decoded = jsonDecode(source);
     if (decoded is! List) {
@@ -427,7 +365,6 @@ class TabularParser {
       rows.add(row);
     }
 
-    // backfill missing keys per row so every row has every column
     for (final row in rows) {
       for (final key in header) {
         row.putIfAbsent(key, () => '');
@@ -441,19 +378,15 @@ class TabularParser {
     if (value == null) return '';
     if (value is String) return value;
     if (value is num || value is bool) return value.toString();
-    return jsonEncode(value); // nested object/array — kept visible, not dropped
+    return jsonEncode(value);
   }
 }
 
 // ============================================================
-// STATS ENGINE — real computation, no placeholders
+// STATS ENGINE
 // ============================================================
 
 class AiDatasetStatsEngine {
-  /// Detects a plausible label column: prefers a column literally
-  /// named label/class/target/category, else falls back to the
-  /// LAST column (common convention in tabular ML datasets). Always
-  /// overridable by the student in the UI.
   static String? detectLabelColumn(List<String> columns) {
     if (columns.isEmpty) return null;
     const candidates = ['label', 'class', 'target', 'category', 'y'];
@@ -497,16 +430,13 @@ class AiDatasetStatsEngine {
     return dist;
   }
 
-  /// Applies a train/val/test split deterministically (seeded shuffle
-  /// if a seed is given, otherwise stable input order — no fake
-  /// randomness pretending to be a real split).
   static Map<String, List<Map<String, String>>> applySplit(
     List<Map<String, String>> rows,
     AiDatasetSplitConfig config,
   ) {
     final indices = List<int>.generate(rows.length, (i) => i);
     if (config.seed != null) {
-      indices.shuffle(); // dart:math Random with seed could be wired in if determinism across runs is required
+      indices.shuffle();
     }
 
     final trainEnd = (rows.length * config.trainRatio).round();
@@ -525,7 +455,7 @@ class AiDatasetStatsEngine {
 }
 
 // ============================================================
-// REPOSITORIES — Supabase-backed (same pattern as BuildService)
+// REPOSITORIES
 // ============================================================
 
 class AiProjectRepository {
@@ -579,8 +509,6 @@ class AiDatasetRepository {
     return (response as List).map((d) => AiDataset.fromMetadataJson(d)).toList();
   }
 
-  /// Uploads the raw source text to Storage and inserts metadata.
-  /// The rows themselves are NOT stored in Postgres — only stats.
   Future<AiDataset> createDataset({
     required String projectId,
     required String userId,
@@ -618,8 +546,6 @@ class AiDatasetRepository {
     return dataset;
   }
 
-  /// Re-uploads edited rows as a NEW version (never overwrites the
-  /// original file in place — keeps a real audit trail, per §12).
   Future<AiDataset> saveNewVersion(AiDataset dataset) async {
     final nextVersion = dataset.version + 1;
     final newStoragePath =
@@ -854,31 +780,44 @@ class AiProjectDashboardScreen extends StatelessWidget {
           ),
           _ActionTile(icon: Icons.architecture_outlined, title: 'Build Model', subtitle: 'Coming soon', enabled: false),
           _ActionTile(
-  icon: Icons.code,
-  title: 'Python Workspace',
-  subtitle: 'Edit your project source',
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => AiWorkspaceExplorerScreen(project: project)),
-  ),
-),_ActionTile(
-  icon: Icons.play_circle_outline,
-  title: 'Train',
-  subtitle: 'Run a real training job',
-  onTap: () async {
-    final workspace = await AiWorkspaceRepository(Supabase.instance.client).loadOrCreate(project);
-    if (!context.mounted) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => AiTrainingLaunchScreen(project: project, workspace: workspace)),
-    );
-  },
-),
-          
+            icon: Icons.code,
+            title: 'Python Workspace',
+            subtitle: 'Edit your project source',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiWorkspaceExplorerScreen(project: project)),
+            ),
+          ),
+          _ActionTile(
+            icon: Icons.play_circle_outline,
+            title: 'Train',
+            subtitle: 'Run a real training job',
+            onTap: () async {
+              final workspace = await AiWorkspaceRepository(Supabase.instance.client).loadOrCreate(project);
+              if (!context.mounted) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => AiTrainingLaunchScreen(project: project, workspace: workspace)),
+              );
+            },
+          ),
           _ActionTile(icon: Icons.science_outlined, title: 'Experiments', subtitle: 'Coming soon', enabled: false),
           _ActionTile(icon: Icons.fact_check_outlined, title: 'Evaluate', subtitle: 'Coming soon', enabled: false),
-          _ActionTile(icon: Icons.bolt_outlined, title: 'Test / Inference', subtitle: 'Coming soon', enabled: false),
-          _ActionTile(icon: Icons.history, title: 'Versions', subtitle: 'Coming soon', enabled: false),
+          _ActionTile(
+            icon: Icons.bolt_outlined,
+            title: 'Test / Inference',
+            subtitle: 'Open a version below to run inference',
+            enabled: false,
+          ),
+          _ActionTile(
+            icon: Icons.history,
+            title: 'Versions',
+            subtitle: 'View trained model history',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiModelVersionsScreen(project: project)),
+            ),
+          ),
           _ActionTile(icon: Icons.cloud_upload_outlined, title: 'Deploy', subtitle: 'Coming soon', enabled: false),
         ],
       ),
