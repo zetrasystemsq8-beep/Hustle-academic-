@@ -152,6 +152,97 @@ class TransitionSpec {
       };
 }
 
+class StickerOverlay {
+  final String id;
+  final String kind; // 'emoji' | 'image'
+  final String content; // emoji char, or storage_path for image
+  final double posX; // 0.0–1.0, normalized
+  final double posY;
+  final double scale;
+  final int startMs;
+  final int endMs;
+
+  const StickerOverlay({
+    required this.id,
+    required this.kind,
+    required this.content,
+    this.posX = 0.5,
+    this.posY = 0.5,
+    this.scale = 1.0,
+    this.startMs = 0,
+    this.endMs = 3000,
+  });
+
+  factory StickerOverlay.fromJson(Map<String, dynamic> j) => StickerOverlay(
+        id: j['id'],
+        kind: j['kind'],
+        content: j['content'],
+        posX: (j['pos_x'] as num).toDouble(),
+        posY: (j['pos_y'] as num).toDouble(),
+        scale: (j['scale'] as num).toDouble(),
+        startMs: j['start_ms'],
+        endMs: j['end_ms'],
+      );
+
+  StickerOverlay copyWith({double? posX, double? posY}) => StickerOverlay(
+        id: id,
+        kind: kind,
+        content: content,
+        posX: posX ?? this.posX,
+        posY: posY ?? this.posY,
+        scale: scale,
+        startMs: startMs,
+        endMs: endMs,
+      );
+
+  Map<String, dynamic> toInsertJson(String projectId) => {
+        'project_id': projectId,
+        'kind': kind,
+        'content': content,
+        'pos_x': posX,
+        'pos_y': posY,
+        'scale': scale,
+        'start_ms': startMs,
+        'end_ms': endMs,
+      };
+}
+
+class AudioTrack {
+  final String id;
+  final String kind; // 'voiceover' | 'music'
+  final String storagePath;
+  final int startMs;
+  final double volume;
+  final int? durationMs;
+
+  const AudioTrack({
+    required this.id,
+    required this.kind,
+    required this.storagePath,
+    this.startMs = 0,
+    this.volume = 1.0,
+    this.durationMs,
+  });
+
+  factory AudioTrack.fromJson(Map<String, dynamic> j) => AudioTrack(
+        id: j['id'],
+        kind: j['kind'],
+        storagePath: j['storage_path'],
+        startMs: j['start_ms'] ?? 0,
+        volume: (j['volume'] as num?)?.toDouble() ?? 1.0,
+        durationMs: j['duration_ms'],
+      );
+
+  Map<String, dynamic> toInsertJson(String projectId) => {
+        'project_id': projectId,
+        'kind': kind,
+        'storage_path': storagePath,
+        'start_ms': startMs,
+        'volume': volume,
+        'duration_ms': durationMs,
+      };
+}
+
 class RenderJob {
   final String id;
   final String status;
@@ -181,6 +272,8 @@ class VideoLabData {
   final List<TimelineClip> clips;
   final List<TextOverlay> overlays;
   final List<TransitionSpec> transitions;
+  final List<StickerOverlay> stickers;
+  final List<AudioTrack> audioTracks;
   final RenderJob? currentJob;
 
   const VideoLabData({
@@ -188,6 +281,8 @@ class VideoLabData {
     this.clips = const [],
     this.overlays = const [],
     this.transitions = const [],
+    this.stickers = const [],
+    this.audioTracks = const [],
     this.currentJob,
   });
 
@@ -196,6 +291,8 @@ class VideoLabData {
     List<TimelineClip>? clips,
     List<TextOverlay>? overlays,
     List<TransitionSpec>? transitions,
+    List<StickerOverlay>? stickers,
+    List<AudioTrack>? audioTracks,
     RenderJob? currentJob,
   }) =>
       VideoLabData(
@@ -203,6 +300,8 @@ class VideoLabData {
         clips: clips ?? this.clips,
         overlays: overlays ?? this.overlays,
         transitions: transitions ?? this.transitions,
+        stickers: stickers ?? this.stickers,
+        audioTracks: audioTracks ?? this.audioTracks,
         currentJob: currentJob ?? this.currentJob,
       );
 }
@@ -219,8 +318,16 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
     required List<TimelineClip> clips,
     required List<TextOverlay> overlays,
     required List<TransitionSpec> transitions,
+    required List<StickerOverlay> stickers,
+    required List<AudioTrack> audioTracks,
   }) {
-    state = state.copyWith(clips: clips, overlays: overlays, transitions: transitions);
+    state = state.copyWith(
+      clips: clips,
+      overlays: overlays,
+      transitions: transitions,
+      stickers: stickers,
+      audioTracks: audioTracks,
+    );
   }
 
   void addClip(TimelineClip clip) {
@@ -246,6 +353,27 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
 
   void addTransition(TransitionSpec t) {
     state = state.copyWith(transitions: [...state.transitions, t]);
+  }
+
+  void addSticker(StickerOverlay sticker) {
+    state = state.copyWith(stickers: [...state.stickers, sticker]);
+  }
+
+  void updateStickerPosition(String id, double posX, double posY) {
+    final updated = state.stickers.map((s) => s.id == id ? s.copyWith(posX: posX, posY: posY) : s).toList();
+    state = state.copyWith(stickers: updated);
+  }
+
+  void removeSticker(String id) {
+    state = state.copyWith(stickers: state.stickers.where((s) => s.id != id).toList());
+  }
+
+  void addAudioTrack(AudioTrack track) {
+    state = state.copyWith(audioTracks: [...state.audioTracks, track]);
+  }
+
+  void removeAudioTrack(String id) {
+    state = state.copyWith(audioTracks: state.audioTracks.where((a) => a.id != id).toList());
   }
 
   void updateJob(RenderJob job) {
