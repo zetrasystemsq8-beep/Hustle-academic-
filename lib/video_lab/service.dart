@@ -58,7 +58,7 @@ class VideoLabService {
       await _client.from('timeline_clips').upsert({'id': clip.id, ...clip.toInsertJson(projectId)});
     }
     for (final overlay in data.overlays) {
-      await _client.from('text_overlays').insert(overlay.toInsertJson(projectId));
+      await _client.from('text_overlays').upsert({'id': overlay.id, ...overlay.toInsertJson(projectId)});
     }
     for (final t in data.transitions) {
       await _client.from('transitions').insert(t.toInsertJson(projectId));
