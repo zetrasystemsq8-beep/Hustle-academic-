@@ -9,6 +9,7 @@ import 'ai_python_workspace.dart';
 import 'ai_training_pipeline.dart';
 import 'ai_model_versions.dart';
 import 'ai_experiments.dart';
+import 'ai_evaluate.dart';
 
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
@@ -811,7 +812,15 @@ class AiProjectDashboardScreen extends StatelessWidget {
     MaterialPageRoute(builder: (_) => AiExperimentsScreen(project: project)),
   ),
 ),
-          _ActionTile(icon: Icons.fact_check_outlined, title: 'Evaluate', subtitle: 'Coming soon', enabled: false),
+          _ActionTile(
+  icon: Icons.fact_check_outlined,
+  title: 'Evaluate',
+  subtitle: 'Precision, recall, F1, confusion matrix',
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => AiEvaluateScreen(project: project)),
+  ),
+),
           _ActionTile(
             icon: Icons.bolt_outlined,
             title: 'Test / Inference',
