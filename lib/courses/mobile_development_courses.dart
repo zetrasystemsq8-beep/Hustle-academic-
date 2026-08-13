@@ -20,7 +20,7 @@ final List<AppCourse> mobileDevelopmentCourses = [
     description:
         'Core conceptual foundation for mobile developers: platforms, lifecycles, constraints, UX fundamentals, release processes and the operational realities of shipping mobile products.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Beginner',
     icon: Icons.smartphone,
     color: Colors.teal,
@@ -203,7 +203,7 @@ An app released without telemetry and a safe update pipeline is at high risk; pl
     description:
         'Comprehensive treatment of Dart language features and idioms used to build modern, robust Flutter apps: types, null safety, async, streams, isolates and package tooling.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Beginner',
     icon: Icons.code,
     color: Colors.indigo,
@@ -399,7 +399,7 @@ Combine strong typing, clear error models and automated tests to reduce runtime 
     description:
         'An in-depth exploration of how Flutter works: widgets, the rendering pipeline, layout, lifecycle, and practical idioms that support building well-structured Flutter apps.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Beginner',
     icon: Icons.flutter_dash,
     color: Colors.blue,
@@ -582,7 +582,7 @@ Centralize resource management—assets, themes and localizations—for consiste
     description:
         'Design patterns and practical techniques for building polished Flutter user interfaces: typography, spacing, responsive/adaptive layouts, states (loading/empty/error) and accessibility.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Intermediate',
     icon: Icons.palette,
     color: Colors.purple,
@@ -761,7 +761,7 @@ A robust theming strategy yields consistent visuals and eases brand updates; sup
     description:
         'Design navigation patterns and application architecture for maintainable, scalable mobile applications: routing models, nested navigation, auth guards, DI and feature modularization.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Intermediate',
     icon: Icons.swap_horiz,
     color: Colors.orange,
@@ -919,7 +919,7 @@ Design architecture that includes runtime observability and safe rollout pattern
     description:
         'Comprehensive coverage of state concepts: ephemeral vs application state, derived state, async flows, and modern libraries (Provider, Riverpod, Bloc). How to choose an approach and design testable state architectures.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Intermediate',
     icon: Icons.layers,
     color: Colors.deepPurple,
@@ -1086,7 +1086,7 @@ Model async flows explicitly and centralize caching/retry semantics at repositor
     description:
         'How to design data layers for mobile apps: local storage options, database schemas, caching strategies, synchronization and conflict resolution for offline-first environments.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Intermediate',
     icon: Icons.storage,
     color: Colors.brown,
@@ -1227,7 +1227,7 @@ Use repositories to encapsulate data access logic and keep higher layers agnosti
     description:
         'Designing robust API clients and backend contracts for mobile applications: REST/HTTP fundamentals, authentication flows, error handling, pagination, file uploads and offline synchronization.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Intermediate',
     icon: Icons.cloud,
     color: Colors.blueGrey,
@@ -1376,7 +1376,7 @@ Design media flows that minimize device and network costs while providing reliab
     description:
         'Defensive mobile security: secure credential storage, TLS, certificate handling, secure coding practices, threat modelling and mobile-specific attack vectors such as tampering and reverse engineering.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Advanced',
     icon: Icons.lock,
     color: Colors.deepOrange,
@@ -1522,7 +1522,7 @@ Plan for incidents: telemetry, revocation and communication are essential parts 
     description:
         'Advanced topics for production apps: performance profiling, background processing, notifications, media, platform channels, and integrating native APIs responsibly.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Advanced',
     icon: Icons.build,
     color: Colors.red,
@@ -1673,7 +1673,7 @@ Use platform channels judiciously and encapsulate native code to limit surface a
     description:
         'Testing disciplines and release engineering for mobile: unit/widget/integration testing, CI/CD pipelines, signing, packaging, app store distribution and monitoring in production.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Advanced',
     icon: Icons.verified,
     color: Colors.green,
@@ -1817,7 +1817,7 @@ Treat monitoring as part of the product; use telemetry to prioritize fixes and g
     description:
         'Practices and organization for production mobile teams: modular codebases, CI/CD, observability, versioning, security reviews, release management, and career patterns for mobile engineers.',
     instructor: 'Connect Baba',
-    category: 'mobile development',
+    category: 'Mobile Development',
     difficulty: 'Professional',
     icon: Icons.workspace_premium,
     color: Colors.blueAccent,
