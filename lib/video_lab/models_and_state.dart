@@ -46,6 +46,9 @@ class TimelineClip {
   final int durationMs;
   final int timelinePositionMs;
   final int sortOrder;
+  final int rotationDeg; // 0, 90, 180, 270
+  final double scale; // 0.5–2.0
+  final double speed; // 0.5–2.0
 
   const TimelineClip({
     required this.id,
@@ -57,6 +60,9 @@ class TimelineClip {
     required this.durationMs,
     required this.timelinePositionMs,
     this.sortOrder = 0,
+    this.rotationDeg = 0,
+    this.scale = 1.0,
+    this.speed = 1.0,
   });
 
   factory TimelineClip.fromJson(Map<String, dynamic> j) => TimelineClip(
@@ -69,9 +75,19 @@ class TimelineClip {
         durationMs: j['assets']?['duration_ms'] ?? (j['source_end_ms'] as int),
         timelinePositionMs: j['timeline_position_ms'],
         sortOrder: j['sort_order'] ?? 0,
+        rotationDeg: j['rotation_deg'] ?? 0,
+        scale: (j['scale'] as num?)?.toDouble() ?? 1.0,
+        speed: (j['speed'] as num?)?.toDouble() ?? 1.0,
       );
 
-  TimelineClip copyWith({int? sourceStartMs, int? sourceEndMs}) => TimelineClip(
+  TimelineClip copyWith({
+    int? sourceStartMs,
+    int? sourceEndMs,
+    int? rotationDeg,
+    double? scale,
+    double? speed,
+  }) =>
+      TimelineClip(
         id: id,
         assetId: assetId,
         storagePath: storagePath,
@@ -81,6 +97,9 @@ class TimelineClip {
         durationMs: durationMs,
         timelinePositionMs: timelinePositionMs,
         sortOrder: sortOrder,
+        rotationDeg: rotationDeg ?? this.rotationDeg,
+        scale: scale ?? this.scale,
+        speed: speed ?? this.speed,
       );
 
   Map<String, dynamic> toInsertJson(String projectId) => {
@@ -91,6 +110,9 @@ class TimelineClip {
         'source_end_ms': sourceEndMs,
         'timeline_position_ms': timelinePositionMs,
         'sort_order': sortOrder,
+        'rotation_deg': rotationDeg,
+        'scale': scale,
+        'speed': speed,
       };
 }
 
@@ -129,7 +151,7 @@ class TextOverlay {
 class TransitionSpec {
   final String fromClipId;
   final String toClipId;
-  final String type;
+  final String type; // crossfade | zoom | slide | wipe
   final int durationMs;
 
   const TransitionSpec({
@@ -217,6 +239,7 @@ class AudioTrack {
   final int startMs;
   final double volume;
   final int? durationMs;
+  final bool cleaned; // apply noise reduction/normalization/silence trim
 
   const AudioTrack({
     required this.id,
@@ -225,6 +248,7 @@ class AudioTrack {
     this.startMs = 0,
     this.volume = 1.0,
     this.durationMs,
+    this.cleaned = false,
   });
 
   factory AudioTrack.fromJson(Map<String, dynamic> j) => AudioTrack(
@@ -234,6 +258,17 @@ class AudioTrack {
         startMs: j['start_ms'] ?? 0,
         volume: (j['volume'] as num?)?.toDouble() ?? 1.0,
         durationMs: j['duration_ms'],
+        cleaned: j['cleaned'] ?? false,
+      );
+
+  AudioTrack copyWith({bool? cleaned}) => AudioTrack(
+        id: id,
+        kind: kind,
+        storagePath: storagePath,
+        startMs: startMs,
+        volume: volume,
+        durationMs: durationMs,
+        cleaned: cleaned ?? this.cleaned,
       );
 
   Map<String, dynamic> toInsertJson(String projectId) => {
@@ -243,6 +278,7 @@ class AudioTrack {
         'start_ms': startMs,
         'volume': volume,
         'duration_ms': durationMs,
+        'cleaned': cleaned,
       };
 }
 
@@ -346,6 +382,13 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
     state = state.copyWith(clips: updated);
   }
 
+  void transformClip(String clipId, {int? rotationDeg, double? scale, double? speed}) {
+    final updated = state.clips
+        .map((c) => c.id == clipId ? c.copyWith(rotationDeg: rotationDeg, scale: scale, speed: speed) : c)
+        .toList();
+    state = state.copyWith(clips: updated);
+  }
+
   void removeClip(String clipId) {
     state = state.copyWith(clips: state.clips.where((c) => c.id != clipId).toList());
   }
@@ -377,6 +420,11 @@ class VideoLabNotifier extends Notifier<VideoLabData> {
 
   void addAudioTrack(AudioTrack track) {
     state = state.copyWith(audioTracks: [...state.audioTracks, track]);
+  }
+
+  void toggleAudioCleaned(String id) {
+    final updated = state.audioTracks.map((a) => a.id == id ? a.copyWith(cleaned: !a.cleaned) : a).toList();
+    state = state.copyWith(audioTracks: updated);
   }
 
   void removeAudioTrack(String id) {
