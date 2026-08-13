@@ -4,6 +4,8 @@ import 'cyber_models.dart';
 import 'cyber_service.dart';
 import 'ctf_screen.dart';
 import 'sandbox_screen.dart';
+import 'mission_service.dart';
+import 'mission_list_screen.dart';
 
 // ============================================================
 // CYBER LAB HOME SCREEN — entry point and module picker
@@ -73,6 +75,16 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
     await _refreshScore();
   }
 
+  void _openMissions() {
+    final missionService = MissionService(supabase: Supabase.instance.client, userId: _cyberService.userId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MissionListScreen(missionService: missionService),
+      ),
+    );
+  }
+
   void _openSandbox() {
     Navigator.push(
       context,
@@ -103,6 +115,14 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
               title: 'Capture The Flag',
               subtitle: '$_solvedCount / $_totalChallenges challenges solved — cryptography, web security, forensics, OSINT, networking',
               onTap: _openCtf,
+            ),
+            const SizedBox(height: 12),
+            _buildModuleCard(
+              icon: Icons.route_outlined,
+              iconColor: Colors.purple,
+              title: 'Guided Missions',
+              subtitle: 'Step-by-step walkthroughs — discover, exploit, understand, submit evidence',
+              onTap: _openMissions,
             ),
             const SizedBox(height: 12),
             _buildModuleCard(
