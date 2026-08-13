@@ -8,6 +8,7 @@
 // To regenerate, run: python3 tools/generate_flutter_courses.py
 import 'package:flutter/material.dart';
 import '../models/app_course.dart';
+import 'mobile_development_courses.dart';
 
 import 'flutter_add_to_app_courses.dart';
 import 'flutter_ai_courses.dart';
