@@ -46,12 +46,12 @@ jobs:
       - name: Report transcoding
         run: |
           curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"transcoding","progress_pct":25}}'
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"transcoding","progress_pct":20}}'
         env:
           SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-      - name: Trim each clip
+      - name: Trim and transform each clip
         run: |
           node - <<'EOF' > trim_commands.sh
           const spec = require('./spec.json');
@@ -59,7 +59,27 @@ jobs:
             const inFile = `clips/${c.assets.storage_path.split('/').pop()}`;
             const start = c.source_start_ms / 1000;
             const dur = (c.source_end_ms - c.source_start_ms) / 1000;
-            console.log(`ffmpeg -y -i "${inFile}" -ss ${start} -t ${dur} -c:v libx264 -c:a aac "trimmed_${i}.mp4"`);
+
+            const vf = [];
+            const rot = c.rotation_deg || 0;
+            if (rot === 90) vf.push('transpose=1');
+            else if (rot === 180) vf.push('transpose=1,transpose=1');
+            else if (rot === 270) vf.push('transpose=2');
+
+            const scale = c.scale || 1.0;
+            if (scale !== 1.0) vf.push(`scale=iw*${scale}:ih*${scale}`);
+
+            const speed = c.speed || 1.0;
+            const afParts = [];
+            if (speed !== 1.0) {
+              vf.push(`setpts=(1/${speed})*PTS`);
+              afParts.push(`atempo=${speed}`);
+            }
+
+            const vfArg = vf.length ? `-vf "${vf.join(',')}"` : '';
+            const afArg = afParts.length ? `-af "${afParts.join(',')}"` : '';
+
+            console.log(`ffmpeg -y -i "${inFile}" -ss ${start} -t ${dur} ${vfArg} ${afArg} -c:v libx264 -c:a aac "trimmed_${i}.mp4"`);
           });
           EOF
           bash trim_commands.sh
@@ -67,23 +87,35 @@ jobs:
       - name: Report compositing
         run: |
           curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"compositing","progress_pct":45}}'
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"compositing","progress_pct":40}}'
         env:
           SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-      - name: Concat clips with crossfade transitions
+      - name: Concat clips with per-pair transition types
         run: |
-          # simple sequential xfade chain across all trimmed_*.mp4 files
+          node - <<'EOF' > transition_types.txt
+          const spec = require('./spec.json');
+          const clips = spec.clips;
+          const transitions = spec.transitions || [];
+          const typeMap = { crossfade: 'fade', zoom: 'zoomin', slide: 'slideleft', wipe: 'wipeleft' };
+          const lines = [];
+          for (let i = 1; i < clips.length; i++) {
+            const t = transitions.find(t => t.from_clip_id === clips[i-1].id && t.to_clip_id === clips[i].id);
+            lines.push(typeMap[t ? t.type : 'crossfade'] || 'fade');
+          }
+          console.log(lines.join('\n'));
+          EOF
           FILES=(trimmed_*.mp4)
           cp "${FILES[0]}" concat_0.mp4
-          for i in "${!FILES[@]}"; do
-            if [ "$i" -eq 0 ]; then continue; fi
-            prev=$((i-1))
-            ffmpeg -y -i "concat_${prev}.mp4" -i "${FILES[$i]}" \
-              -filter_complex "xfade=transition=fade:duration=0.5:offset=2" \
-              -c:v libx264 -c:a aac "concat_${i}.mp4"
-          done
+          IDX=0
+          while IFS= read -r TYPE; do
+            IDX=$((IDX+1))
+            prev=$((IDX-1))
+            ffmpeg -y -i "concat_${prev}.mp4" -i "${FILES[$IDX]}" \
+              -filter_complex "xfade=transition=${TYPE}:duration=0.5:offset=2" \
+              -c:v libx264 -c:a aac "concat_${IDX}.mp4"
+          done < transition_types.txt
           cp "concat_$((${#FILES[@]}-1)).mp4" composed.mp4
 
       - name: Report filtering
@@ -158,12 +190,40 @@ jobs:
             cp stickered.mp4 texted.mp4
           fi
 
+      - name: Report audio cleanup
+        run: |
+          curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"cleaning_audio","progress_pct":70}}'
+        env:
+          SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Clean marked audio tracks (denoise, normalize, trim silence)
+        run: |
+          node - <<'EOF'
+          const spec = require('./spec.json');
+          const fs = require('fs');
+          const tracks = spec.audio_tracks || [];
+          const cmds = tracks
+            .filter(a => a.cleaned)
+            .map(a => {
+              const fname = a.storage_path.split('/').pop();
+              const cleanName = `audio/clean_${fname}`;
+              return `ffmpeg -y -i "audio/${fname}" -af "afftdn=nf=-25,loudnorm=I=-16:TP=-1.5:LRA=11,silenceremove=start_periods=1:start_threshold=-40dB:stop_periods=-1:stop_threshold=-40dB" "${cleanName}"`;
+            });
+          fs.writeFileSync('cleanup_commands.sh', cmds.join('\n'));
+          EOF
+          bash cleanup_commands.sh || true
+
       - name: Mix audio tracks
         run: |
           node - <<'EOF' > audio_inputs.txt
           const spec = require('./spec.json');
           const tracks = spec.audio_tracks || [];
-          const lines = tracks.map(a => `audio/${a.storage_path.split('/').pop()}`);
+          const lines = tracks.map(a => {
+            const fname = a.storage_path.split('/').pop();
+            return a.cleaned ? `audio/clean_${fname}` : `audio/${fname}`;
+          });
           console.log(lines.join('\n'));
           EOF
           AUDIO_COUNT=$(grep -c . audio_inputs.txt || true)
@@ -181,7 +241,7 @@ jobs:
       - name: Report encoding/uploading
         run: |
           curl -s -X POST "$SUPABASE_FN_URL" -H "Authorization: Bearer $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
-            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"uploading","progress_pct":85}}'
+            -d '{"action":"progress_callback","payload":{"job_id":"${{ github.event.inputs.job_id }}","status":"uploading","progress_pct":88}}'
         env:
           SUPABASE_FN_URL: ${{ secrets.SUPABASE_FN_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
