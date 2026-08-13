@@ -68,6 +68,8 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon.png"
 ''';
 
   static MobileFileNode buildProjectTree(MobileAppTemplate template, String projectName) {
