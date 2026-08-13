@@ -168,16 +168,7 @@ You have now completed the Web Development Fundamentals course. You understand w
     ],
   ),
 ];
-AppCourse(
-    id: 'html',
-    title: '''HTML''',
-    description: '''Learn the language that gives every website its bones. From your very first tag to writing clean, meaningful, accessible HTML the way professional developers do — taught step by step by Connect Baba at Hustle Academy.''',
-    instructor: '''Connect Baba''',
-    duration: '40 min',
-    difficulty: 'Beginner',
-    category: '''Web Development''',
-    icon: Icons.language,
-    color: Colors.blue,
+
     lessons: [
       AppLesson(
         title: '''HTML Fundamentals''',
