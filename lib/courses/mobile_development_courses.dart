@@ -317,7 +317,7 @@ Performance tips
 
 Immutability and patterns
 - Use 'final' to make references immutable and prefer returning unmodifiable views for public APIs.
-- Use collection-if and collection-for for concise construction: ['a', if (cond) 'b', for (v in items) 'x_$v'].
+- Use collection-if and collection-for for concise construction, such as a list that conditionally includes items or generates values from another collection.
 
 Common mistakes
 - Using dynamic maps and performing unchecked casts.
