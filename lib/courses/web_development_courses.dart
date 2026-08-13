@@ -169,7 +169,7 @@ You have now completed the Web Development Fundamentals course. You understand w
   ),
 ];
 
-    lessons: [
+    
       AppLesson(
         title: '''HTML Fundamentals''',
         body: '''Welcome back. Now that you understand what web development is, it is time to build your first real skill: HTML.
