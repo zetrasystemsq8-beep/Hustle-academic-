@@ -20,6 +20,7 @@ import 'video_lab/screens.dart';
 import 'cyber_lab/cyber_lab_home_screen.dart';
 import 'auth/zetramail_auth.dart';
 import 'video_lab/project_list_screen.dart';
+import 'courses/mobile_development_courses.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -97,6 +98,7 @@ final List<AppCourse> kCourses = [
   ...artificialIntelligenceCourses,
   ...cybersecurityCourses,
   ...saasCourses,
+  ...webDevelopmentCourses,
 ];
 
 // ============================================================
