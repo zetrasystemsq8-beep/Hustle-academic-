@@ -14,6 +14,7 @@ import 'filters.dart';
 import 'models_and_state.dart';
 import 'service.dart';
 import 'stickers_data.dart';
+import 'transform_clip_screen.dart';
 import 'trim_clip_screen.dart';
 
 const _kBg = Color(0xFF0F0F0F);
@@ -58,9 +59,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     old?.dispose();
   }
 
-  /// Adds one or more clips. Each picked file still goes through its own
-  /// trim screen (so duration/in-out points stay accurate per file) — the
-  /// picker itself now allows selecting multiple videos at once.
   Future<void> _addClip() async {
     final data = ref.read(videoLabProvider);
     if (data.project == null) return;
@@ -77,7 +75,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
         context,
         MaterialPageRoute(builder: (_) => TrimClipScreen(file: file)),
       );
-      if (trim == null) continue; // user skipped this one, move to next
+      if (trim == null) continue;
 
       setState(() => _busy = true);
       try {
@@ -133,6 +131,29 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     );
     if (trim == null) return;
     ref.read(videoLabProvider.notifier).trimClip(clip.id, trim.startMs, trim.endMs);
+  }
+
+  Future<void> _transformSelected() async {
+    final data = ref.read(videoLabProvider);
+    if (_selectedIndex == null || _selectedIndex! >= data.clips.length) return;
+    final clip = data.clips[_selectedIndex!];
+
+    final url = await _service.signedUrl('assets', clip.storagePath);
+    if (!mounted) return;
+
+    final result = await Navigator.push<TransformResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => TransformClipScreen(
+          videoUrl: url,
+          initialRotationDeg: clip.rotationDeg,
+          initialScale: clip.scale,
+          initialSpeed: clip.speed,
+        ),
+      ),
+    );
+    if (result == null) return;
+    ref.read(videoLabProvider.notifier).transformClip(clip.id, rotationDeg: result.rotationDeg, scale: result.scale, speed: result.speed);
   }
 
   Future<void> _previewClipFullscreen(TimelineClip clip) async {
@@ -271,9 +292,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     return url;
   }
 
-  /// Opens a real text-entry dialog — this is the fix for "Text doesn't
-  /// work": before, this just silently added a hardcoded "New text" that
-  /// was never even shown in the preview.
   Future<void> _addTextOverlay() async {
     final controller = TextEditingController();
     final entered = await showDialog<String>(
@@ -307,6 +325,39 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
     ref.read(videoLabProvider.notifier).addOverlay(
           TextOverlay(id: const Uuid().v4(), text: entered, startMs: 0, endMs: 3000),
         );
+  }
+
+  Future<void> _addTransitionWithType() async {
+    final data = ref.read(videoLabProvider);
+    if (data.clips.length < 2) return;
+
+    final type = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: _kSurface,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Transition type', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              _TransitionTile(icon: Icons.blur_on, label: 'Crossfade', onTap: () => Navigator.pop(context, 'crossfade')),
+              _TransitionTile(icon: Icons.zoom_in, label: 'Zoom', onTap: () => Navigator.pop(context, 'zoom')),
+              _TransitionTile(icon: Icons.swap_horiz, label: 'Slide', onTap: () => Navigator.pop(context, 'slide')),
+              _TransitionTile(icon: Icons.crop_free, label: 'Wipe', onTap: () => Navigator.pop(context, 'wipe')),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (type == null) return;
+    ref.read(videoLabProvider.notifier).addTransition(TransitionSpec(
+          fromClipId: data.clips[data.clips.length - 2].id,
+          toClipId: data.clips.last.id,
+          type: type,
+        ));
   }
 
   Future<void> _pickAudio() async {
@@ -423,7 +474,7 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
         filename: 'voiceover_${DateTime.now().millisecondsSinceEpoch}.m4a',
       );
       ref.read(videoLabProvider.notifier).addAudioTrack(AudioTrack(id: const Uuid().v4(), kind: 'voiceover', storagePath: storagePath));
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Voiceover added')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Voiceover added — long-press it below to mark for cleanup')));
     } catch (e) {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save voiceover: $e')));
     } finally {
@@ -475,7 +526,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
       ),
       body: Column(
         children: [
-          // Preview area — now shows text overlays and stickers together
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) => Container(
@@ -503,7 +553,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                               ],
                             ),
                     ),
-                    // Text overlays — real fix: these are now actually rendered
                     ...data.overlays.map((overlay) {
                       final isBottom = overlay.position == 'bottom';
                       final isTop = overlay.position == 'top';
@@ -517,7 +566,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                             : Center(child: _TextOverlayChip(overlay: overlay, onRemove: () => notifier.removeOverlay(overlay.id))),
                       );
                     }),
-                    // Draggable stickers/emoji
                     ...data.stickers.map((sticker) {
                       return Positioned(
                         left: sticker.posX * constraints.maxWidth - 24,
@@ -544,8 +592,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
               ),
             ),
           ),
-
-          // Audio track list — real fix: previously added tracks were invisible
           if (data.audioTracks.isNotEmpty)
             Container(
               height: 44,
@@ -556,29 +602,37 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                 itemCount: data.audioTracks.length,
                 itemBuilder: (context, i) {
                   final track = data.audioTracks[i];
-                  return Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    decoration: BoxDecoration(color: _kSurfaceLight, borderRadius: BorderRadius.circular(20)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(track.kind == 'voiceover' ? Icons.mic : Icons.music_note, color: _kAccent, size: 16),
-                        const SizedBox(width: 6),
-                        Text(track.kind == 'voiceover' ? 'Voiceover' : 'Music', style: const TextStyle(color: Colors.white70, fontSize: 12)),
-                        const SizedBox(width: 6),
-                        GestureDetector(
-                          onTap: () => notifier.removeAudioTrack(track.id),
-                          child: const Icon(Icons.close, color: Colors.white38, size: 16),
-                        ),
-                      ],
+                  return GestureDetector(
+                    onLongPress: () => notifier.toggleAudioCleaned(track.id),
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        color: track.cleaned ? _kAccent.withOpacity(0.25) : _kSurfaceLight,
+                        borderRadius: BorderRadius.circular(20),
+                        border: track.cleaned ? Border.all(color: _kAccent) : null,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(track.kind == 'voiceover' ? Icons.mic : Icons.music_note, color: _kAccent, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            track.kind == 'voiceover' ? (track.cleaned ? 'Voiceover · Cleaned' : 'Voiceover') : 'Music',
+                            style: const TextStyle(color: Colors.white70, fontSize: 12),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () => notifier.removeAudioTrack(track.id),
+                            child: const Icon(Icons.close, color: Colors.white38, size: 16),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
               ),
             ),
-
-          // Clip strip
           Container(
             height: 92,
             color: _kSurface,
@@ -609,6 +663,8 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                                     Icon(Icons.movie, color: selected ? _kAccent : Colors.white54, size: 22),
                                     const SizedBox(height: 4),
                                     Text('${durationS}s', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+                                    if (clip.rotationDeg != 0 || clip.scale != 1.0 || clip.speed != 1.0)
+                                      const Icon(Icons.tune, color: _kAccent, size: 12),
                                   ],
                                 ),
                               ),
@@ -636,8 +692,6 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                     },
                   ),
           ),
-
-          // Bottom toolbar
           Container(
             color: _kSurface,
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -647,14 +701,9 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
                 children: [
                   _bottomAction(icon: Icons.add_box_outlined, label: 'Add clip', onTap: _busy ? null : _addClip),
                   _bottomAction(icon: Icons.content_cut, label: 'Trim', onTap: _selectedIndex == null ? null : _reTrimSelected),
+                  _bottomAction(icon: Icons.tune, label: 'Transform', onTap: _selectedIndex == null ? null : _transformSelected),
                   _bottomAction(icon: Icons.text_fields, label: 'Text', onTap: data.project == null ? null : _addTextOverlay),
-                  _bottomAction(
-                    icon: Icons.compare_arrows,
-                    label: 'Transition',
-                    onTap: data.clips.length >= 2
-                        ? () => notifier.addTransition(TransitionSpec(fromClipId: data.clips[data.clips.length - 2].id, toClipId: data.clips.last.id))
-                        : null,
-                  ),
+                  _bottomAction(icon: Icons.compare_arrows, label: 'Transition', onTap: data.clips.length >= 2 ? _addTransitionWithType : null),
                   _bottomAction(icon: Icons.filter_vintage, label: 'Filters', onTap: data.project == null ? null : _pickFilter),
                   _bottomAction(icon: Icons.emoji_emotions_outlined, label: 'Sticker', onTap: (_busy || data.project == null) ? null : _pickSticker),
                   _bottomAction(icon: Icons.mic_none, label: 'Audio', onTap: (_busy || data.project == null) ? null : _pickAudio),
@@ -664,6 +713,22 @@ class _VideoEditorScreenState extends ConsumerState<VideoEditorScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _TransitionTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  const _TransitionTile({required this.icon, required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, color: _kAccent),
+      title: Text(label, style: const TextStyle(color: Colors.white)),
+      onTap: onTap,
     );
   }
 }
@@ -680,11 +745,7 @@ class _TextOverlayChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(8)),
-        child: Text(
-          overlay.text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        child: Text(overlay.text, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
       ),
     );
   }
