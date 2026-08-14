@@ -498,4 +498,4 @@ You have now completed the Responsive Web Design course. You understand the core
         hasImage: true,
       ),
     ],
-  ),
+  
