@@ -167,18 +167,7 @@ You have now completed the Web Development Fundamentals course. You understand w
       ),
     ],
   ),
-];
-AppCourse(
-    id: 'responsive-design',
-    title: '''Responsive Web Design''',
-    description: '''Go deeper into building websites that work beautifully on every device — from the smallest phone screen to the widest monitor. Viewports, mobile-first thinking, flexible layouts, responsive images, and real cross-device craftsmanship, taught by Connect Baba at Hustle Academy.''',
-    instructor: '''Connect Baba''',
-    duration: '35 min',
-    difficulty: 'Intermediate',
-    category: '''Web Development''',
-    icon: Icons.language,
-    color: Colors.blue,
-    lessons: [
+
       AppLesson(
         title: '''Responsive Design Principles''',
         body: '''In the CSS course, you got your first taste of responsive design through media queries. In this course, we go much deeper, because this is one skill that genuinely separates a hobby coder from a professional developer.
