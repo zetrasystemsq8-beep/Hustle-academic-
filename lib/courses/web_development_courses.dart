@@ -165,9 +165,6 @@ You have now completed the Web Development Fundamentals course. You understand w
         codeSnippet: '''''',
         hasImage: true,
       ),
-    ],
-  ),
-
       AppLesson(
         title: '''Responsive Design Principles''',
         body: '''In the CSS course, you got your first taste of responsive design through media queries. In this course, we go much deeper, because this is one skill that genuinely separates a hobby coder from a professional developer.
