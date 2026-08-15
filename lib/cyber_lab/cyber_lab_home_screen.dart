@@ -6,6 +6,7 @@ import 'ctf_screen.dart';
 import 'sandbox_screen.dart';
 import 'mission_service.dart';
 import 'mission_list_screen.dart';
+import 'skill_progress_screen.dart';
 
 // ============================================================
 // CYBER LAB HOME SCREEN — entry point and module picker
@@ -81,6 +82,17 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => MissionListScreen(missionService: missionService),
+      ),
+    );
+  }
+
+  void _openSandbox() {
+    void _openSkillProgress() {
+    final missionService = MissionService(supabase: Supabase.instance.client, userId: _cyberService.userId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SkillProgressScreen(cyberService: _cyberService, missionService: missionService),
       ),
     );
   }
