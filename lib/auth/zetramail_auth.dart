@@ -37,12 +37,9 @@ class UserProfile {
 class AuthService {
   String? get lastInternalEmail => supabase.auth.currentUser?.email;
 
-  /// A session exists (password was correct) — but OTP may still
-  /// be unverified. Use [isFullyVerified] to gate app access.
   bool get isLoggedIn => supabase.auth.currentUser != null;
 
-  /// True only once the OTP step has actually been completed for
-  /// this session. This is what gates entry into MainScreen.
+  /// True only once THIS login's OTP step has actually been completed.
   bool get isFullyVerified {
     final user = supabase.auth.currentUser;
     if (user == null) return false;
@@ -72,6 +69,18 @@ class AuthService {
       if (authResponse.user == null) {
         throw Exception('Login failed');
       }
+
+      // CRITICAL: reset the verified flag for THIS fresh login attempt,
+      // before requesting the OTP. hustle_otp_verified is permanent
+      // account metadata — if a previous login was ever verified, this
+      // flag stays true forever unless explicitly cleared here. Without
+      // this reset, a killed/restarted app process between password
+      // entry and OTP entry would see the stale "true" from a past
+      // session and skip straight past OtpScreen into the app, making
+      // OTP effectively decorative after the first successful use.
+      await supabase.auth.updateUser(
+        UserAttributes(data: {'hustle_otp_verified': false}),
+      );
 
       await _requestOtp();
 
@@ -104,20 +113,14 @@ class AuthService {
     await _requestOtp();
   }
 
-  /// Verifies the OTP for the currently authenticated session.
-  ///
-  /// The `verify_otp` Postgres function reads `auth.uid()` internally
-  /// to know whose code to check, so it only takes `p_code` — no
-  /// email is passed. [internalEmail] is kept as a parameter here so
-  /// call sites (e.g. OtpScreen) don't need to change, but it isn't
-  /// used in the RPC call.
   Future<bool> verifyOtp({
     required String internalEmail,
     required String otpCode,
   }) async {
     try {
       final result = await supabase.rpc('verify_otp', params: {
-        'p_code': otpCode,
+        'p_email': internalEmail,
+        'p_otp': otpCode,
       });
 
       if (result == true) {
