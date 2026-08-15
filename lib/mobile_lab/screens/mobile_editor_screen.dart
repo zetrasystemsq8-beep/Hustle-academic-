@@ -272,10 +272,7 @@ flutter_launcher_icons:
 }
 
 // ============================================================
-// PROJECT ZIPPER — packs a MobileProject's file tree into a
-// Flutter-shaped zip, plus assets/icon.png (the student's custom
-// icon if set, otherwise Hustle Academy's bundled default — so no
-// generated app ever ships with the plain Flutter logo).
+// PROJECT ZIPPER
 // ============================================================
 
 class MobileProjectZipper {
@@ -306,55 +303,109 @@ class MobileProjectZipper {
 }
 
 // ============================================================
-// STORAGE
+// STORAGE — projects now live in Supabase (mobile_projects table)
+// instead of on-device SharedPreferences, so a project can be
+// reached from any device the owner logs into, and — in the next
+// stage — shared with a collaborator. A one-time silent migration
+// uploads anything that was previously saved locally, so no
+// existing project is lost by this switch.
 // ============================================================
 
 class MobileProjectRepository {
-  static const String _indexKey = 'mobile_lab.project_index';
-  static const String _projectPrefix = 'mobile_lab.project.';
+  final SupabaseClient _supabase = Supabase.instance.client;
+
+  static const String _migrationFlagKey = 'mobile_lab.migrated_to_cloud_v1';
+  static const String _legacyIndexKey = 'mobile_lab.project_index';
+  static const String _legacyProjectPrefix = 'mobile_lab.project.';
+
+  String get _ownerId => _supabase.auth.currentUser!.id;
 
   Future<void> saveProject(MobileProject project) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('$_projectPrefix${project.id}', jsonEncode(project.toJson()));
-    final index = await _loadIndex();
-    index.removeWhere((e) => e['id'] == project.id);
-    index.add({'id': project.id, 'name': project.name, 'lastOpenedAt': project.lastOpenedAt.toIso8601String()});
-    await prefs.setString(_indexKey, jsonEncode(index));
+    await _supabase.from('mobile_projects').upsert({
+      'id': project.id,
+      'owner_id': _ownerId,
+      'name': project.name,
+      'project_json': project.toJson(),
+      'updated_at': DateTime.now().toIso8601String(),
+    });
   }
 
-  /// Loads a saved project from disk. Returns null both when the
-  /// project doesn't exist AND when it exists but fails to decode.
+  /// Loads a saved project from Supabase. Returns null both when the
+  /// project doesn't exist (or isn't owned by this user, per RLS) AND
+  /// when it exists but fails to decode.
   Future<MobileProject?> loadProject(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString('$_projectPrefix$id');
-    if (raw == null) return null;
     try {
-      return MobileProject.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      final data = await _supabase
+          .from('mobile_projects')
+          .select('project_json')
+          .eq('id', id)
+          .maybeSingle();
+      if (data == null) return null;
+      return MobileProject.fromJson(data['project_json'] as Map<String, dynamic>);
     } catch (e) {
       debugPrint('Failed to load project $id: $e');
       return null;
     }
   }
 
-  Future<List<Map<String, dynamic>>> _loadIndex() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_indexKey);
-    if (raw == null) return [];
-    return (jsonDecode(raw) as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
-  }
-
   Future<List<Map<String, dynamic>>> listProjects() async {
-    final index = await _loadIndex();
-    index.sort((a, b) => (b['lastOpenedAt'] as String).compareTo(a['lastOpenedAt'] as String));
-    return index;
+    await _migrateLocalProjectsIfNeeded();
+    try {
+      final data = await _supabase
+          .from('mobile_projects')
+          .select('id, name, updated_at')
+          .eq('owner_id', _ownerId)
+          .order('updated_at', ascending: false);
+      return (data as List)
+          .map((e) => {
+                'id': e['id'] as String,
+                'name': e['name'] as String,
+                'lastOpenedAt': e['updated_at'] as String,
+              })
+          .toList();
+    } catch (e) {
+      debugPrint('Failed to list projects: $e');
+      return [];
+    }
   }
 
   Future<void> deleteProject(String id) async {
+    await _supabase.from('mobile_projects').delete().eq('id', id);
+  }
+
+  /// One-time migration: uploads any projects this device saved
+  /// locally before storage moved to Supabase, under the current
+  /// account, so nothing already built is lost. Runs once per
+  /// device (tracked via a local flag); safe to call repeatedly
+  /// after that — it becomes a no-op.
+  Future<void> _migrateLocalProjectsIfNeeded() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('$_projectPrefix$id');
-    final index = await _loadIndex();
-    index.removeWhere((e) => e['id'] == id);
-    await prefs.setString(_indexKey, jsonEncode(index));
+    if (prefs.getBool(_migrationFlagKey) == true) return;
+
+    try {
+      final rawIndex = prefs.getString(_legacyIndexKey);
+      if (rawIndex != null) {
+        final index = (jsonDecode(rawIndex) as List<dynamic>)
+            .map((e) => e as Map<String, dynamic>)
+            .toList();
+        for (final entry in index) {
+          final id = entry['id'] as String?;
+          if (id == null) continue;
+          final raw = prefs.getString('$_legacyProjectPrefix$id');
+          if (raw == null) continue;
+          try {
+            final project = MobileProject.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+            await saveProject(project);
+          } catch (e) {
+            debugPrint('Skipping unreadable local project $id during migration: $e');
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Local project migration failed: $e');
+    } finally {
+      await prefs.setBool(_migrationFlagKey, true);
+    }
   }
 }
 
@@ -811,16 +862,10 @@ class MobileProjectController extends ChangeNotifier {
   /// Loads a saved project by id. Returns true on success, false if
   /// the project couldn't be found or failed to decode.
   ///
-  /// IMPORTANT: this deliberately does NOT toggle the global
-  /// isLoading flag. Opening a single project is a fast, local
-  /// SharedPreferences read — it doesn't need a full-screen spinner.
-  /// Toggling isLoading here previously swapped the ENTIRE home
-  /// screen body (the whole project list) out for a spinner and
-  /// back, which destroyed and recreated the very ListTile the user
-  /// just tapped. That invalidated the BuildContext the tap handler
-  /// was using for navigation/snackbars after the await, causing
-  /// taps to silently do nothing. Keeping this operation "quiet"
-  /// avoids that class of bug entirely.
+  /// Deliberately does NOT toggle the global isLoading flag — see the
+  /// note on this method's earlier version. Opening a project now
+  /// costs one network round trip instead of a local read, but still
+  /// stays "quiet" so it can't invalidate the tapped tile's context.
   Future<bool> openProject(String id) async {
     final project = await _repository.loadProject(id);
     if (project != null) {
@@ -1645,8 +1690,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
   }
 
   // ---------------------------------------------------------
-  // FILE DRAWER — full project file tree reachable from inside
-  // the editor itself.
+  // FILE DRAWER
   // ---------------------------------------------------------
 
   Future<String?> _promptForName(String title, {String initial = ''}) {
@@ -1957,9 +2001,6 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     super.dispose();
   }
 
-  /// Opens the template picker instead of creating a blank project
-  /// directly — see mobile_templates_screen.dart for the 10
-  /// available starter apps.
   void _createNewProject() {
     Navigator.push(
       context,
@@ -1982,12 +2023,6 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     );
   }
 
-  /// Opens a saved project. Captures the Navigator and
-  /// ScaffoldMessenger BEFORE the await — these State objects stay
-  /// valid even if the tapped ListTile's own BuildContext gets
-  /// rebuilt or disposed while the project loads, which is what
-  /// was silently swallowing both navigation and error messages
-  /// before.
   Future<void> _openProjectTile(Map<String, dynamic> summary) async {
     final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
