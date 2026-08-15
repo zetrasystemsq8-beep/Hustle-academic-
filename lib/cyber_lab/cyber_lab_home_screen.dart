@@ -162,6 +162,14 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
                 );
               },
             ),
+            const SizedBox(height: 12),
+            _buildModuleCard(
+              icon: Icons.insights_outlined,
+              iconColor: Colors.blue,
+              title: 'Skill Progress',
+              subtitle: 'See your mastery across every category',
+              onTap: _openSkillProgress,
+            ),
             const SizedBox(height: 24),
             _buildSafetyNote(),
           ],
