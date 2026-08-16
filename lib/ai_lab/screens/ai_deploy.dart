@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'ai_dataset_lab.dart' show AiProject;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'ai_dataset_lab.dart' show AiProject;
 import 'ai_training_pipeline.dart' show AiTrainingJob, AiTrainingStatus, AiTrainingService;
-
-// ============================================================
-// AI LAB — Deploy
-//
-// Honest scope: there is no always-on inference server here — only
-// Supabase + GitHub exist in this stack, and neither gives you a
-// persistent compute host for free. What IS real: pinning a trained
-// model version as "deployed" and giving the student a documented,
-// callable trigger (the same Edge Function Test/Inference already
-// uses) with a real example request. Calling it dispatches a real
-// GitHub Actions job and takes seconds, not milliseconds — that
-// latency is stated in the UI, not hidden.
-// ============================================================
+import 'ai_collaborators.dart' show AiCollaboratorRepository, AiPermissions;
 
 class AiDeployment {
   final String id;
   final String projectId;
   final String trainingJobId;
   final String modelArtifactPath;
-  final String status; // 'active' | 'inactive'
+  final String status;
   final DateTime createdAt;
 
   AiDeployment({
@@ -61,9 +49,6 @@ class AiDeployRepository {
     required String projectId,
     required AiTrainingJob job,
   }) async {
-    // Deactivate any currently active deployment for this project —
-    // only one active version at a time, same convention real
-    // deployment systems use.
     await supabase.from('ai_deployments').update({'status': 'inactive'}).eq('project_id', projectId).eq('status', 'active');
 
     final id = '${DateTime.now().microsecondsSinceEpoch}_deploy';
@@ -99,6 +84,7 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
   List<AiDeployment> _deployments = [];
   bool _isLoading = true;
   bool _isDeploying = false;
+  AiPermissions? _permissions;
 
   @override
   void initState() {
@@ -106,6 +92,16 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
     _trainingService = AiTrainingService(Supabase.instance.client);
     _deployRepository = AiDeployRepository(Supabase.instance.client);
     _load();
+    _resolvePermissions();
+  }
+
+  Future<void> _resolvePermissions() async {
+    final currentUser = Supabase.instance.client.auth.currentUser;
+    if (currentUser == null) return;
+    final role = await AiCollaboratorRepository(Supabase.instance.client)
+        .resolveRole(project: widget.project, currentUserId: currentUser.id);
+    if (!mounted) return;
+    setState(() => _permissions = AiPermissions(role));
   }
 
   Future<void> _load() async {
@@ -129,6 +125,12 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
   }
 
   Future<void> _deployVersion(AiTrainingJob job) async {
+    if (_permissions != null && !_permissions!.canDeploy) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Only the model owner can deploy a version.')),
+      );
+      return;
+    }
     setState(() => _isDeploying = true);
     try {
       await _deployRepository.deploy(projectId: widget.project.id, job: job);
@@ -147,6 +149,12 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
   }
 
   Future<void> _undeploy(AiDeployment deployment) async {
+    if (_permissions != null && !_permissions!.canDeploy) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Only the model owner can undeploy.')),
+      );
+      return;
+    }
     await _deployRepository.undeploy(deployment.id);
     await _load();
   }
@@ -155,6 +163,7 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
   Widget build(BuildContext context) {
     final active = _activeDeployment;
     final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
+    final blocked = _permissions != null && !_permissions!.canDeploy;
 
     return Scaffold(
       appBar: AppBar(title: Text('Deploy — ${widget.project.name}')),
@@ -175,6 +184,16 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
                     ),
                   ),
                 ),
+                if (blocked) ...[
+                  const SizedBox(height: 8),
+                  const Card(
+                    color: Color(0xFFFFEBEE),
+                    child: Padding(
+                      padding: EdgeInsets.all(12),
+                      child: Text('Only the model owner can deploy or undeploy versions.', style: TextStyle(fontSize: 12)),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 16),
                 if (active == null)
                   const Text('No active deployment.')
@@ -219,7 +238,7 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
                           ),
                           const SizedBox(height: 12),
                           OutlinedButton(
-                            onPressed: () => _undeploy(active),
+                            onPressed: blocked ? null : () => _undeploy(active),
                             child: const Text('Undeploy'),
                           ),
                         ],
@@ -241,7 +260,7 @@ class _AiDeployScreenState extends State<AiDeployScreen> {
                         trailing: _isDeploying
                             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                             : FilledButton(
-                                onPressed: () => _deployVersion(job),
+                                onPressed: blocked ? null : () => _deployVersion(job),
                                 child: const Text('Deploy'),
                               ),
                       ),
