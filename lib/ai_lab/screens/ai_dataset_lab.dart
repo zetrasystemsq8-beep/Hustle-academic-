@@ -13,14 +13,10 @@ import 'ai_evaluate.dart';
 import 'ai_build_model.dart';
 import 'ai_deploy.dart';
 import 'ai_collaborators.dart';
+
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
 // ============================================================
-
-// ------------------------------------------------------------
-// DEVICE IDENTITY (no login screen exists yet, so we resolve a
-// stable id the same way Mobile Lab does)
-// ------------------------------------------------------------
 
 class AiDeviceIdentity {
   static const String _key = 'ai_lab.device_user_id';
@@ -774,6 +770,15 @@ class AiProjectDashboardScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _ActionTile(
+            icon: Icons.group_outlined,
+            title: 'Collaborators',
+            subtitle: 'Invite AI engineers and manage roles',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiCollaboratorsScreen(project: project)),
+            ),
+          ),
+          _ActionTile(
             icon: Icons.dataset_outlined,
             title: 'Dataset',
             subtitle: 'Upload, preview, and prepare data',
@@ -783,14 +788,14 @@ class AiProjectDashboardScreen extends StatelessWidget {
             ),
           ),
           _ActionTile(
-  icon: Icons.architecture_outlined,
-  title: 'Build Model',
-  subtitle: 'Choose an algorithm and hyperparameters',
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => AiBuildModelScreen(project: project)),
-  ),
-),
+            icon: Icons.architecture_outlined,
+            title: 'Build Model',
+            subtitle: 'Choose an algorithm and hyperparameters',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiBuildModelScreen(project: project)),
+            ),
+          ),
           _ActionTile(
             icon: Icons.code,
             title: 'Python Workspace',
@@ -814,23 +819,23 @@ class AiProjectDashboardScreen extends StatelessWidget {
             },
           ),
           _ActionTile(
-  icon: Icons.science_outlined,
-  title: 'Experiments',
-  subtitle: 'Compare training runs',
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => AiExperimentsScreen(project: project)),
-  ),
-),
+            icon: Icons.science_outlined,
+            title: 'Experiments',
+            subtitle: 'Compare training runs',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiExperimentsScreen(project: project)),
+            ),
+          ),
           _ActionTile(
-  icon: Icons.fact_check_outlined,
-  title: 'Evaluate',
-  subtitle: 'Precision, recall, F1, confusion matrix',
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => AiEvaluateScreen(project: project)),
-  ),
-),
+            icon: Icons.fact_check_outlined,
+            title: 'Evaluate',
+            subtitle: 'Precision, recall, F1, confusion matrix',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiEvaluateScreen(project: project)),
+            ),
+          ),
           _ActionTile(
             icon: Icons.bolt_outlined,
             title: 'Test / Inference',
@@ -847,23 +852,14 @@ class AiProjectDashboardScreen extends StatelessWidget {
             ),
           ),
           _ActionTile(
-  icon: Icons.group_outlined,
-  title: 'Collaborators',
-  subtitle: 'Invite AI engineers and manage roles',
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => AiCollaboratorsScreen(project: project)),
-  ),
-),
-          _ActionTile(
-  icon: Icons.cloud_upload_outlined,
-  title: 'Deploy',
-  subtitle: 'Pin a model version and get a callable trigger',
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => AiDeployScreen(project: project)),
-  ),
-),
+            icon: Icons.cloud_upload_outlined,
+            title: 'Deploy',
+            subtitle: 'Pin a model version and get a callable trigger',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiDeployScreen(project: project)),
+            ),
+          ),
         ],
       ),
     );
@@ -916,12 +912,23 @@ class _AiDatasetManagerScreenState extends State<AiDatasetManagerScreen> {
   List<AiDataset> _datasets = [];
   bool _isLoading = true;
   bool _isImporting = false;
+  AiPermissions? _permissions;
 
   @override
   void initState() {
     super.initState();
     _repository = AiDatasetRepository(Supabase.instance.client);
     _load();
+    _resolvePermissions();
+  }
+
+  Future<void> _resolvePermissions() async {
+    final currentUser = Supabase.instance.client.auth.currentUser;
+    if (currentUser == null) return;
+    final role = await AiCollaboratorRepository(Supabase.instance.client)
+        .resolveRole(project: widget.project, currentUserId: currentUser.id);
+    if (!mounted) return;
+    setState(() => _permissions = AiPermissions(role));
   }
 
   Future<void> _load() async {
@@ -935,6 +942,11 @@ class _AiDatasetManagerScreenState extends State<AiDatasetManagerScreen> {
   }
 
   Future<void> _importFile() async {
+    if (_permissions != null && !_permissions!.canEditDataset) {
+      _showError('Your role does not have permission to add datasets.');
+      return;
+    }
+
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['csv', 'json'],
@@ -993,10 +1005,12 @@ class _AiDatasetManagerScreenState extends State<AiDatasetManagerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final blocked = _permissions != null && !_permissions!.canEditDataset;
+
     return Scaffold(
       appBar: AppBar(title: Text('Datasets — ${widget.project.name}')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _isImporting ? null : _importFile,
+        onPressed: (_isImporting || blocked) ? null : _importFile,
         icon: _isImporting
             ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
             : const Icon(Icons.upload_file),
@@ -1026,6 +1040,17 @@ class _AiDatasetManagerScreenState extends State<AiDatasetManagerScreen> {
               ),
             ),
           ),
+          if (blocked)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Card(
+                color: Colors.red.shade50,
+                child: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text('Your role can view datasets but cannot add or edit them.', style: TextStyle(fontSize: 12)),
+                ),
+              ),
+            ),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -1065,7 +1090,7 @@ class _AiDatasetManagerScreenState extends State<AiDatasetManagerScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => AiDatasetPreviewScreen(dataset: hydrated),
+                                    builder: (_) => AiDatasetPreviewScreen(dataset: hydrated, project: widget.project),
                                   ),
                                 ).then((_) => _load());
                               },
@@ -1082,7 +1107,8 @@ class _AiDatasetManagerScreenState extends State<AiDatasetManagerScreen> {
 
 class AiDatasetPreviewScreen extends StatefulWidget {
   final AiDataset dataset;
-  const AiDatasetPreviewScreen({super.key, required this.dataset});
+  final AiProject project;
+  const AiDatasetPreviewScreen({super.key, required this.dataset, required this.project});
 
   @override
   State<AiDatasetPreviewScreen> createState() => _AiDatasetPreviewScreenState();
@@ -1094,13 +1120,26 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
   static const int _pageSize = 50;
   int _page = 0;
   bool _isSaving = false;
+  AiPermissions? _permissions;
 
   @override
   void initState() {
     super.initState();
     _repository = AiDatasetRepository(Supabase.instance.client);
     _tabController = TabController(length: 3, vsync: this);
+    _resolvePermissions();
   }
+
+  Future<void> _resolvePermissions() async {
+    final currentUser = Supabase.instance.client.auth.currentUser;
+    if (currentUser == null) return;
+    final role = await AiCollaboratorRepository(Supabase.instance.client)
+        .resolveRole(project: widget.project, currentUserId: currentUser.id);
+    if (!mounted) return;
+    setState(() => _permissions = AiPermissions(role));
+  }
+
+  bool get _canEdit => _permissions == null || _permissions!.canEditDataset;
 
   @override
   void dispose() {
@@ -1118,6 +1157,12 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
   int get _pageCount => (widget.dataset.rows.length / _pageSize).ceil().clamp(1, 999999);
 
   Future<void> _editCell(Map<String, String> row, String column) async {
+    if (!_canEdit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your role cannot edit this dataset.')),
+      );
+      return;
+    }
     final controller = TextEditingController(text: row[column] ?? '');
     final newValue = await showDialog<String>(
       context: context,
@@ -1135,10 +1180,22 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
   }
 
   Future<void> _deleteRow(Map<String, String> row) async {
+    if (!_canEdit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your role cannot edit this dataset.')),
+      );
+      return;
+    }
     setState(() => widget.dataset.rows.remove(row));
   }
 
   Future<void> _saveVersion() async {
+    if (!_canEdit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your role cannot save changes to this dataset.')),
+      );
+      return;
+    }
     setState(() => _isSaving = true);
     try {
       await _repository.saveNewVersion(widget.dataset);
@@ -1160,6 +1217,7 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
   }
 
   Future<void> _configureLabelColumn() async {
+    if (!_canEdit) return;
     String? selected = widget.dataset.labelColumn;
     final result = await showDialog<String>(
       context: context,
@@ -1189,6 +1247,7 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
   }
 
   Future<void> _configureSplit() async {
+    if (!_canEdit) return;
     var train = widget.dataset.splitConfig?.trainRatio ?? 0.7;
     var val = widget.dataset.splitConfig?.validationRatio ?? 0.15;
     var test = widget.dataset.splitConfig?.testRatio ?? 0.15;
@@ -1250,7 +1309,7 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
             icon: _isSaving
                 ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.save_outlined),
-            onPressed: _isSaving ? null : _saveVersion,
+            onPressed: (_isSaving || !_canEdit) ? null : _saveVersion,
           ),
         ],
         bottom: TabBar(
@@ -1279,6 +1338,13 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
     }
     return Column(
       children: [
+        if (!_canEdit)
+          Container(
+            width: double.infinity,
+            color: Colors.red.shade50,
+            padding: const EdgeInsets.all(8),
+            child: const Text('View-only — your role cannot edit this dataset.', style: TextStyle(fontSize: 12)),
+          ),
         Expanded(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -1350,7 +1416,7 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
           contentPadding: EdgeInsets.zero,
           title: const Text('Label column'),
           subtitle: Text(dataset.labelColumn ?? 'Not set'),
-          trailing: TextButton(onPressed: _configureLabelColumn, child: const Text('Change')),
+          trailing: _canEdit ? TextButton(onPressed: _configureLabelColumn, child: const Text('Change')) : null,
         ),
         const Divider(),
         Text('Class distribution', style: Theme.of(context).textTheme.titleMedium),
@@ -1409,7 +1475,7 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
       padding: const EdgeInsets.all(16),
       children: [
         FilledButton.icon(
-          onPressed: _configureSplit,
+          onPressed: _canEdit ? _configureSplit : null,
           icon: const Icon(Icons.tune),
           label: Text(dataset.splitConfig == null ? 'Configure split' : 'Reconfigure split'),
         ),
