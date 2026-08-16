@@ -12,7 +12,7 @@ import 'ai_experiments.dart';
 import 'ai_evaluate.dart';
 import 'ai_build_model.dart';
 import 'ai_deploy.dart';
-
+import 'ai_collaborators.dart';
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
 // ============================================================
@@ -846,6 +846,15 @@ class AiProjectDashboardScreen extends StatelessWidget {
               MaterialPageRoute(builder: (_) => AiModelVersionsScreen(project: project)),
             ),
           ),
+          _ActionTile(
+  icon: Icons.group_outlined,
+  title: 'Collaborators',
+  subtitle: 'Invite AI engineers and manage roles',
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => AiCollaboratorsScreen(project: project)),
+  ),
+),
           _ActionTile(
   icon: Icons.cloud_upload_outlined,
   title: 'Deploy',
