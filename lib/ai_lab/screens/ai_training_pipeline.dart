@@ -6,16 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'ai_dataset_lab.dart' show AiProject, AiDataset, AiDatasetRepository;
 import 'ai_python_workspace.dart' show AiWorkspace, AiWorkspaceFileNode, AiWorkspaceRepository, AiFileNodeType;
-
-// ============================================================
-// AI LAB — Training Pipeline
-//
-// Real: zips the workspace, uploads it, calls the Edge Function,
-// which dispatches the GitHub Actions workflow above. That runner
-// genuinely installs requirements.txt and executes train.py on
-// CPU. Progress is polled from ai_training_jobs, which the
-// workflow itself updates via the Supabase REST API mid-run.
-// ============================================================
+import 'ai_collaborators.dart' show AiCollaboratorRepository, AiPermissions;
 
 enum AiTrainingStatus { queued, running, complete, failed }
 
@@ -89,9 +80,6 @@ class AiTrainingService {
 
   static const String _workspaceBucket = 'ai-workspace-zips';
 
-  /// Zips the workspace tree into a flat archive (same approach as
-  /// MobileProjectZipper) so the GitHub Actions runner can unzip it
-  /// directly into a working directory.
   List<int> _zipWorkspace(AiWorkspace workspace) {
     final archive = Archive();
     _addNode(archive, workspace.root, '');
@@ -153,10 +141,6 @@ class AiTrainingService {
     return job;
   }
 
-  /// Polls job status. The workflow itself writes progress via the
-  /// Supabase REST API mid-run (see the "Mark job as running" and
-  /// "Report completion" steps in ai-lab-train.yml), so polling this
-  /// table reflects real runner state, not a local simulation.
   Stream<AiTrainingJob> watchJob(String jobId) async* {
     while (true) {
       final response = await supabase.from('ai_training_jobs').select().eq('id', jobId).maybeSingle();
@@ -183,10 +167,6 @@ class AiTrainingService {
   }
 }
 
-// ============================================================
-// SCREENS
-// ============================================================
-
 class AiTrainingLaunchScreen extends StatefulWidget {
   final AiProject project;
   final AiWorkspace workspace;
@@ -204,6 +184,7 @@ class _AiTrainingLaunchScreenState extends State<AiTrainingLaunchScreen> {
   String _entryScript = 'src/train.py';
   bool _isLoading = true;
   bool _isStarting = false;
+  AiPermissions? _permissions;
 
   @override
   void initState() {
@@ -211,6 +192,16 @@ class _AiTrainingLaunchScreenState extends State<AiTrainingLaunchScreen> {
     _datasetRepository = AiDatasetRepository(Supabase.instance.client);
     _trainingService = AiTrainingService(Supabase.instance.client);
     _load();
+    _resolvePermissions();
+  }
+
+  Future<void> _resolvePermissions() async {
+    final currentUser = Supabase.instance.client.auth.currentUser;
+    if (currentUser == null) return;
+    final role = await AiCollaboratorRepository(Supabase.instance.client)
+        .resolveRole(project: widget.project, currentUserId: currentUser.id);
+    if (!mounted) return;
+    setState(() => _permissions = AiPermissions(role));
   }
 
   Future<void> _load() async {
@@ -224,6 +215,12 @@ class _AiTrainingLaunchScreenState extends State<AiTrainingLaunchScreen> {
   }
 
   Future<void> _startTraining() async {
+    if (_permissions != null && !_permissions!.canStartTraining) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your role does not have permission to start training.')),
+      );
+      return;
+    }
     setState(() => _isStarting = true);
     try {
       final job = await _trainingService.startTraining(
@@ -252,6 +249,7 @@ class _AiTrainingLaunchScreenState extends State<AiTrainingLaunchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final blocked = _permissions != null && !_permissions!.canStartTraining;
     return Scaffold(
       appBar: AppBar(title: const Text('Train Model')),
       body: _isLoading
@@ -283,8 +281,16 @@ class _AiTrainingLaunchScreenState extends State<AiTrainingLaunchScreen> {
                   onChanged: (v) => _entryScript = v,
                 ),
                 const SizedBox(height: 24),
+                if (blocked)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: Text(
+                      'Your role can view this project but cannot start training.',
+                      style: TextStyle(color: Colors.orange),
+                    ),
+                  ),
                 FilledButton.icon(
-                  onPressed: _isStarting ? null : _startTraining,
+                  onPressed: (_isStarting || blocked) ? null : _startTraining,
                   icon: _isStarting
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : const Icon(Icons.play_arrow),
