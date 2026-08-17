@@ -914,6 +914,317 @@ let webDev = new TreeNode("Web Development");
 root.children.push(webDev);''',
         hasImage: true,
       ),
+    AppCourse(
+    id: 'frontend-libraries-frameworks',
+    title: '''Frontend Libraries & Frameworks''',
+    description: '''Understand why frameworks exist, how component-based thinking became the standard, and how modern frontend applications are structured — components, state, routing, and more, explained conceptually by Connect Baba at Hustle Academy.''',
+    instructor: '''Connect Baba''',
+    duration: '42 min',
+    difficulty: 'Intermediate',
+    category: '''Web Development''',
+    icon: Icons.language,
+    color: Colors.blue,
+    lessons: [
+      AppLesson(
+        title: '''Why Frameworks Exist''',
+        body: '''In the Frontend Development course, you learned component thinking using plain JavaScript. It worked, but you may have noticed it took a lot of manual effort — writing HTML as strings, manually updating the DOM, manually keeping state and interface in sync. A frontend framework is a tool built specifically to handle that manual effort for you, so you can focus on what your application should do, not on the repetitive plumbing of keeping everything updated correctly.
+
+At Zetra Company, a senior engineer named Oyedele once explained it to new hires this way: "Before frameworks, we were like tailors sewing every stitch by hand. Frameworks gave us a sewing machine — we still design the outfit, but the machine handles the repetitive motion." That is exactly what frameworks like React, Vue, and Angular do — they give structured, reliable ways to build components, manage state, and update the interface automatically when data changes.
+
+The core idea shared by almost all modern frameworks is this: you describe what the interface should look like for a given state, and the framework figures out how to update the actual page to match, efficiently, whenever that state changes. This is a shift from manually telling the browser "change this text now" to declaring "this is what it should show, given this data" — a shift called declarative programming, as opposed to the manual, step-by-step imperative style you practiced earlier.
+
+You do not need to memorize a specific framework's syntax in this lesson. What matters is understanding why this whole category of tool exists: to make component-based, state-driven applications easier and safer to build at scale, exactly the challenge you first encountered in the Frontend Development course.''',
+        codeSnippet: '''''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Components & Props''',
+        body: '''In a framework, a component is written as a self-contained unit that combines structure and logic together, and it can be reused with different pieces of information passed into it — very similar to the createCourseCard function you wrote earlier, but with the framework handling the rendering automatically.
+
+The information passed into a component from outside is commonly called props (short for properties). Props flow in one direction — from a parent component down to a child component — which keeps data predictable and easy to trace.
+
+function CourseCard(props) {
+  return (
+    <div className="course-card">
+      <h3>{props.title}</h3>
+      <p>{props.difficulty}</p>
+    </div>
+  );
+}
+
+<CourseCard title="HTML" difficulty="Beginner" />
+<CourseCard title="CSS" difficulty="Beginner" />
+
+Notice how this mirrors what Toluwani, one of our Hustle Academy alumni now building at Zetra Store, once described in her own words: "I stopped thinking of my interface as one big page, and started thinking of it as small, labeled boxes that just receive information and display it." That is exactly what props allow — a component stays generic and reusable, and the specific information it displays is decided entirely by whoever uses it.
+
+This one-directional flow of props — data always moving from parent to child — is a deliberate design decision in most frameworks. It makes applications far easier to reason about, because you always know where a piece of data originally came from, rather than data changing unpredictably from multiple directions at once.''',
+        codeSnippet: '''function CourseCard(props) {
+  return (
+    <div className="course-card">
+      <h3>{props.title}</h3>
+      <p>{props.difficulty}</p>
+    </div>
+  );
+}''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''State Management in Frameworks''',
+        body: '''You met state conceptually in the Frontend Development course — data that determines what the interface currently shows. Frameworks provide a formal, built-in way to declare state, and automatically re-render a component whenever that state changes, without you manually touching the DOM at all.
+
+Using React's useState as an example:
+
+function LessonCounter() {
+  const [completed, setCompleted] = useState(0);
+
+  function markComplete() {
+    setCompleted(completed + 1);
+  }
+
+  return (
+    <div>
+      <p>{completed} lessons completed</p>
+      <button onClick={markComplete}>Complete Lesson</button>
+    </div>
+  );
+}
+
+Notice you never wrote document.querySelector or .textContent here. You simply declared "this is what should be shown," based on the completed value, and called setCompleted() whenever it changes. The framework handles updating the visible page automatically.
+
+A crucial distinction to hold onto is local state versus shared state. Local state belongs to one single component, like the counter above. Shared state is needed by multiple components at once — for example, whether a student is logged in, which many different parts of an application, like a header and a profile page, might all need to know about simultaneously. Frameworks provide different patterns for sharing state upward or across components, which you will meet briefly again later in this course.
+
+This automatic, predictable connection between state and what is displayed is the single biggest advantage frameworks offer over plain JavaScript for large, growing applications — exactly the kind of application ZetraMail or Nigergram represents.''',
+        codeSnippet: '''function LessonCounter() {
+  const [completed, setCompleted] = useState(0);
+  return (
+    <div>
+      <p>{completed} lessons completed</p>
+      <button onClick={() => setCompleted(completed + 1)}>Complete</button>
+    </div>
+  );
+}''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Component Lifecycle''',
+        body: '''A component is not static — it is born, it exists on the page for a while, it may update repeatedly, and eventually it disappears when no longer needed. Frameworks let developers hook into these specific moments, collectively called the component lifecycle.
+
+The most common lifecycle moments are: mounting, when a component first appears on the page; updating, when a component re-renders because its state or props changed; and unmounting, when a component is removed from the page entirely.
+
+A very common real use case is fetching data (as you learned in the Frontend Development course) exactly once, right when a component first mounts:
+
+function CourseList() {
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    fetch("https://api.hustleacademy.com/courses")
+      .then(response => response.json())
+      .then(data => setCourses(data));
+  }, []);
+
+  return (
+    <div>
+      {courses.map(course => <p key={course.id}>{course.title}</p>)}
+    </div>
+  );
+}
+
+Here, useEffect runs the fetch logic, and the empty array [] at the end tells the framework "only run this once, when the component first mounts, not on every re-render." Without understanding lifecycle, a beginner might accidentally trigger a network request repeatedly, every single time the component updates — a real, common mistake even experienced developers occasionally make.
+
+Understanding lifecycle carefully protects you from two common bugs: doing something too often (like fetching data on every render), or doing something at the wrong moment (like trying to read data before it has actually arrived).''',
+        codeSnippet: '''useEffect(() => {
+  fetch("https://api.hustleacademy.com/courses")
+    .then(response => response.json())
+    .then(data => setCourses(data));
+}, []);''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Conditional Rendering & Lists''',
+        body: '''Real interfaces rarely show the exact same thing every time. Sometimes a section should only appear if a certain condition is true; sometimes you need to display an entire list of repeated items generated from data, rather than typed out by hand. Frameworks handle both patterns cleanly.
+
+Conditional rendering commonly uses the ternary expression you learned in the JavaScript course:
+
+function LoginStatus(props) {
+  return (
+    <p>{props.isLoggedIn ? "Welcome back!" : "Please log in."}</p>
+  );
+}
+
+Or, for simply showing or hiding something entirely, the && operator is a common shorthand:
+
+{props.hasNewMessage && <span className="badge">New</span>}
+
+This reads as: "if hasNewMessage is true, show the badge; otherwise, show nothing at all."
+
+For rendering lists, frameworks lean directly on .map(), which you already learned deeply in the JavaScript Algorithms & Data Structures course:
+
+function CourseList(props) {
+  return (
+    <div>
+      {props.courses.map(course => (
+        <CourseCard key={course.id} title={course.title} />
+      ))}
+    </div>
+  );
+}
+
+Notice the key prop — every item generated inside a list rendered this way needs a unique key, so the framework can correctly track which specific item changed, was added, or was removed, without confusing one item for another. Forgetting keys, or using unreliable ones like an array index that can shift around, is a very common beginner mistake that leads to subtle bugs.
+
+Combining conditional logic with list rendering is how nearly every real dashboard, feed, or course catalog — including the very screens you have been using throughout Hustle Academy — is actually built.''',
+        codeSnippet: '''{props.courses.map(course => (
+  <CourseCard key={course.id} title={course.title} />
+))}''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Styling in Component-Based Apps''',
+        body: '''Styling a component-based application raises a new question you did not fully face with plain CSS: how do you keep a component's styles from accidentally leaking out and affecting unrelated components elsewhere in a large application?
+
+One common approach, CSS Modules, automatically scopes a stylesheet to only the component that imports it, generating unique class names behind the scenes so styles never accidentally clash:
+
+/* CourseCard.module.css */
+.card {
+  padding: 16px;
+  border-radius: 12px;
+}
+
+import styles from "./CourseCard.module.css";
+
+function CourseCard() {
+  return <div className={styles.card}>...</div>;
+}
+
+Another popular approach, called styled components (or CSS-in-JS), writes actual CSS directly inside JavaScript files, tightly bound to a specific component, so the styling and the logic that uses it live physically together in one place, and never accidentally apply anywhere else:
+
+const Card = styled.div`
+  padding: 16px;
+  border-radius: 12px;
+`;
+
+A third widely used approach, utility-first CSS (frameworks like Tailwind follow this pattern), applies many small, single-purpose classes directly in the markup, instead of writing custom class names for every component:
+
+<div className="p-4 rounded-lg bg-white">...</div>
+
+There is no single "correct" approach — Zetra Company's own frontend team, including Tofumi, another Hustle Academy alumnus now working there, uses CSS Modules for most of ZetraMail's interface, but switches to utility classes for quick internal tools. What matters is understanding the underlying problem every one of these approaches solves: keeping styles predictable, scoped, and safe to change, exactly the same goal you first met in the "Styling Approaches at Scale" lesson of the Frontend Development course, now solved with dedicated tooling.''',
+        codeSnippet: '''const Card = styled.div`
+  padding: 16px;
+  border-radius: 12px;
+`;''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Routing in Single Page Applications''',
+        body: '''Traditionally, every different page on a website — home, about, courses — was a completely separate HTML file, and clicking a link caused the browser to fully reload and fetch a brand new page from the server, exactly as you learned in the very first course of this journey. Modern frameworks commonly build something different: a single page application, or SPA, where only one actual HTML page ever loads, and JavaScript handles swapping the visible content instantly, without a full page reload.
+
+This creates a challenge: if there is truly only one HTML page, how does the browser's address bar still show different, meaningful URLs for different sections, like naijalearn.com/courses versus naijalearn.com/profile? The answer is client-side routing, handled by dedicated routing libraries.
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+Behind the scenes, the router listens for URL changes and swaps which component is displayed, all without a full page reload — giving users the instant, app-like feeling of ZetraMail or Nigergram switching screens smoothly, while still preserving normal, shareable, meaningful web addresses, back-button behavior, and bookmarkability, exactly the properties users expect from the web.
+
+Client-side routing is a good example of a recurring theme in frontend development: taking something the browser used to handle by default (page navigation), and reimplementing it deliberately in JavaScript, in order to gain a smoother, faster user experience.''',
+        codeSnippet: '''<Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/courses" element={<Courses />} />
+</Routes>''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''State Management Libraries''',
+        body: '''As an application grows, passing props down through many layers of nested components — sometimes called prop drilling — becomes awkward and hard to maintain. Imagine needing to pass a "current logged-in student" all the way from the very top of ZetraMail's interface, down through six nested layers of components, just so one deeply buried component can display the student's name. Dedicated state management tools exist to solve exactly this problem.
+
+Context, built directly into frameworks like React, allows certain shared state to be made available to any component that needs it, without manually passing it down through every single layer in between:
+
+const UserContext = createContext();
+
+function App() {
+  const [user, setUser] = useState({ name: "Amaka" });
+  return (
+    <UserContext.Provider value={user}>
+      <ProfilePage />
+    </UserContext.Provider>
+  );
+}
+
+function ProfilePage() {
+  const user = useContext(UserContext);
+  return <p>Welcome, {user.name}</p>;
+}
+
+Notice ProfilePage reads the user directly, without App needing to pass it down manually through every intermediate component in between.
+
+For very large, complex applications, dedicated external state management libraries (such as Redux) offer an even more structured, predictable pattern for managing shared state across an entire application, with strict rules about how and when state is allowed to change.
+
+Oyedele, the senior backend engineer at Zetra Company mentioned earlier in this course, once put it simply to a group of Hustle Academy students visiting the office: "The bigger the application, the more state management becomes less about writing clever code, and more about keeping a large team of developers from confusing each other about where a single piece of truth actually lives." That is the real, underlying purpose of every state management tool covered in this lesson.''',
+        codeSnippet: '''const UserContext = createContext();
+
+function ProfilePage() {
+  const user = useContext(UserContext);
+  return <p>Welcome, {user.name}</p>;
+}''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Working with Forms in Frameworks''',
+        body: '''You built forms with plain JavaScript in earlier courses, manually reading values with document.querySelector. In frameworks, forms are commonly handled through a pattern called controlled components, where a form field's value is directly tied to state, rather than read out manually at submission time.
+
+function SignupForm() {
+  const [email, setEmail] = useState("");
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log("Submitting:", email);
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="email"
+        value={email}
+        onChange={(event) => setEmail(event.target.value)}
+      />
+      <button type="submit">Sign Up</button>
+    </form>
+  );
+}
+
+Read this carefully: the input's value is always exactly whatever is currently stored in the email state — never anything else. Every keystroke fires onChange, which updates state, which then updates what the input displays. This might look like an unnecessary extra step compared to simply reading the input's value directly at submission time, but it brings a major advantage: at any given moment, your component's state is always a perfectly accurate, live reflection of exactly what the user has typed, which makes real-time validation (as you learned about in the Frontend Development course) far simpler to build correctly.
+
+For forms with many fields, frameworks and dedicated form libraries also help manage validation rules, error messages, and submission logic in an organized, centralized way, rather than scattering separate event listeners across every single field individually, exactly the kind of organization Toluwani relies on daily while building signup flows for Zetra Store.''',
+        codeSnippet: '''<input
+  type="email"
+  value={email}
+  onChange={(event) => setEmail(event.target.value)}
+/>''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Choosing & Comparing Frameworks''',
+        body: '''We close this course by stepping back from any single framework's syntax, and talking about how a professional developer thinks about choosing between them — a skill more valuable than memorizing any one framework's exact commands.
+
+React, Vue, and Angular are the three most widely used frameworks in the industry today, and while their syntax differs, the underlying ideas you learned throughout this course — components, props, state, lifecycle, conditional rendering, routing — apply to all three in some form. This is genuinely good news: once you deeply understand these underlying concepts, learning any specific framework's particular syntax becomes far faster, because you are really only learning new vocabulary for ideas you already understand.
+
+When choosing a framework for a real project, professional developers, including the frontend team at Zetra Company, typically weigh a few practical factors: the size and complexity of the project, the existing skills of the team building it, the availability of learning resources and community support, and sometimes simply what a particular company or client already uses and expects new developers to know.
+
+It is worth remembering something important here: frameworks are tools, not identities. A genuinely strong developer does not attach their whole sense of skill to one single framework — they understand the underlying concepts deeply enough to move between tools with reasonable ease, the same way a skilled carpenter can pick up an unfamiliar but similar tool and still do good work, because they understand the underlying craft, not just one specific brand of hammer.
+
+You have now completed the Frontend Libraries & Frameworks course. You understand why frameworks exist, how components and props work, how state and lifecycle are managed automatically, how conditional rendering and lists are handled, how styling and routing work in component-based applications, how larger applications manage shared state, and how forms are handled in a framework context. This conceptual foundation prepares you to confidently learn any specific framework you encounter next, exactly the depth expected of frontend developers competing for serious opportunities anywhere in the world.''',
+        codeSnippet: '''''',
+        hasImage: true,
+      ),
     ],
   ),
 ];
