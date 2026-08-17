@@ -12,6 +12,8 @@ import 'project_secrets_screen.dart';
 import 'mobile_templates_screen.dart';
 import 'mobile_icon_picker_service.dart';
 import 'mobile_package_picker_screen.dart';
+import 'mobile_collaboration_service.dart';
+import 'mobile_collaboration_screen.dart';
 
 // ============================================================
 // MODELS — a Flutter project's editable file tree
@@ -303,12 +305,7 @@ class MobileProjectZipper {
 }
 
 // ============================================================
-// STORAGE — projects now live in Supabase (mobile_projects table)
-// instead of on-device SharedPreferences, so a project can be
-// reached from any device the owner logs into, and — in the next
-// stage — shared with a collaborator. A one-time silent migration
-// uploads anything that was previously saved locally, so no
-// existing project is lost by this switch.
+// STORAGE — projects live in Supabase (mobile_projects table).
 // ============================================================
 
 class MobileProjectRepository {
@@ -330,9 +327,6 @@ class MobileProjectRepository {
     });
   }
 
-  /// Loads a saved project from Supabase. Returns null both when the
-  /// project doesn't exist (or isn't owned by this user, per RLS) AND
-  /// when it exists but fails to decode.
   Future<MobileProject?> loadProject(String id) async {
     try {
       final data = await _supabase
@@ -373,11 +367,6 @@ class MobileProjectRepository {
     await _supabase.from('mobile_projects').delete().eq('id', id);
   }
 
-  /// One-time migration: uploads any projects this device saved
-  /// locally before storage moved to Supabase, under the current
-  /// account, so nothing already built is lost. Runs once per
-  /// device (tracked via a local flag); safe to call repeatedly
-  /// after that — it becomes a no-op.
   Future<void> _migrateLocalProjectsIfNeeded() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(_migrationFlagKey) == true) return;
@@ -825,14 +814,23 @@ class MobileEditorSearchEngine {
 class MobileProjectController extends ChangeNotifier {
   final MobileProjectRepository _repository = MobileProjectRepository();
   final MobileFileSystemService _fileSystemService = MobileFileSystemService();
+  late final CollaborationService _collabService =
+      CollaborationService(supabase: Supabase.instance.client);
 
   MobileProject? _currentProject;
   List<Map<String, dynamic>> _recentProjects = [];
   bool _isLoading = false;
 
+  /// Non-null when the currently open project is actually a shared
+  /// draft (opened via a collaboration invite), not the user's own
+  /// saved project. Saves and builds route to the draft, not to
+  /// mobile_projects, while this is set.
+  String? _draftId;
+
   MobileProject? get currentProject => _currentProject;
   List<Map<String, dynamic>> get recentProjects => List.unmodifiable(_recentProjects);
   bool get isLoading => _isLoading;
+  bool get isEditingDraft => _draftId != null;
   MobileFileSystemService get fileSystemService => _fileSystemService;
 
   Future<void> loadRecentProjects() async {
@@ -843,15 +841,13 @@ class MobileProjectController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Creates a new project. Pass [treeBuilder] to seed it from a
-  /// template (see mobile_templates_screen.dart); otherwise falls
-  /// back to the plain counter starter.
   Future<MobileProject> createProject(
     String name, {
     MobileFileNode Function(String projectName)? treeBuilder,
   }) async {
     final root = treeBuilder != null ? treeBuilder(name) : MobileProject.buildStarterTree(name);
     final project = MobileProject(id: _fileSystemService.generateId(), name: name, root: root);
+    _draftId = null;
     await _repository.saveProject(project);
     _currentProject = project;
     await loadRecentProjects();
@@ -859,18 +855,24 @@ class MobileProjectController extends ChangeNotifier {
     return project;
   }
 
-  /// Loads a saved project by id. Returns true on success, false if
-  /// the project couldn't be found or failed to decode.
-  ///
-  /// Deliberately does NOT toggle the global isLoading flag — see the
-  /// note on this method's earlier version. Opening a project now
-  /// costs one network round trip instead of a local read, but still
-  /// stays "quiet" so it can't invalidate the tapped tile's context.
   Future<bool> openProject(String id) async {
     final project = await _repository.loadProject(id);
     if (project != null) {
       project.lastOpenedAt = DateTime.now();
+      _draftId = null;
       await _repository.saveProject(project);
+      _currentProject = project;
+      notifyListeners();
+    }
+    return project != null;
+  }
+
+  /// Opens a collaborator's shared draft instead of one of the
+  /// user's own projects. See [isEditingDraft].
+  Future<bool> openDraft(String draftId) async {
+    final project = await _collabService.loadDraft(draftId);
+    if (project != null) {
+      _draftId = draftId;
       _currentProject = project;
       notifyListeners();
     }
@@ -880,8 +882,20 @@ class MobileProjectController extends ChangeNotifier {
   Future<void> saveCurrentProject() async {
     final project = _currentProject;
     if (project == null) return;
-    await _repository.saveProject(project);
-    await loadRecentProjects();
+    if (_draftId != null) {
+      await _collabService.saveDraft(_draftId!, project);
+    } else {
+      await _repository.saveProject(project);
+      await loadRecentProjects();
+    }
+  }
+
+  /// Submits the currently open draft back to the project owner for
+  /// review. Does nothing if the current project isn't a draft.
+  Future<void> submitCurrentDraftForReview() async {
+    if (_draftId == null) return;
+    await saveCurrentProject();
+    await _collabService.submitDraftForReview(_draftId!);
   }
 
   Future<void> renameCurrentProject(String newName) async {
@@ -901,6 +915,7 @@ class MobileProjectController extends ChangeNotifier {
 
   void closeCurrentProject() {
     _currentProject = null;
+    _draftId = null;
     notifyListeners();
   }
 
@@ -1597,6 +1612,7 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
   late final MobileEditorController _editorController;
   late final BuildService _buildService;
   bool _isStartingBuild = false;
+  bool _isSubmittingDraft = false;
 
   @override
   void initState() {
@@ -1687,6 +1703,39 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
         ),
       ),
     );
+  }
+
+  void _openCollaboration(MobileProject project) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MobileProjectCollaborationScreen(
+          projectId: project.id,
+          projectName: project.name,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitDraft() async {
+    if (_isSubmittingDraft) return;
+    setState(() => _isSubmittingDraft = true);
+    try {
+      await widget.projectController.submitCurrentDraftForReview();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Submitted for review')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmittingDraft = false);
+    }
   }
 
   // ---------------------------------------------------------
@@ -1828,6 +1877,24 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
                     ],
                   ),
                 ),
+                if (widget.projectController.isEditingDraft)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    color: Colors.orange[50],
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_note, size: 16, color: Colors.orange[800]),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Shared draft — changes won\'t affect the original until submitted',
+                            style: TextStyle(fontSize: 11, color: Colors.orange[800]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 const Divider(height: 1),
                 Expanded(
                   child: MobileFileTreeWidget(
@@ -1855,30 +1922,50 @@ class _MobileEditorScreenState extends State<MobileEditorScreen> {
     final project = widget.projectController.currentProject;
     if (project == null) return const Scaffold(body: Center(child: Text('No project open.')));
 
+    final isDraft = widget.projectController.isEditingDraft;
+
     return Scaffold(
       drawer: _buildFileDrawer(project),
       appBar: AppBar(
         title: Text(project.name),
         actions: [
           IconButton(tooltip: 'Save', icon: const Icon(Icons.save_outlined), onPressed: _saveAll),
-          IconButton(
-            tooltip: 'Secrets',
-            icon: const Icon(Icons.key_outlined),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ProjectSecretsScreen(
-                  projectId: project.id,
-                  projectName: project.name,
+          if (!isDraft) ...[
+            IconButton(
+              tooltip: 'Secrets',
+              icon: const Icon(Icons.key_outlined),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ProjectSecretsScreen(
+                    projectId: project.id,
+                    projectName: project.name,
+                  ),
                 ),
               ),
             ),
-          ),
-          IconButton(
-            tooltip: 'App Icon',
-            icon: const Icon(Icons.image_outlined),
-            onPressed: () => _pickIcon(project),
-          ),
+            IconButton(
+              tooltip: 'App Icon',
+              icon: const Icon(Icons.image_outlined),
+              onPressed: () => _pickIcon(project),
+            ),
+            IconButton(
+              tooltip: 'Collaborate',
+              icon: const Icon(Icons.group_add_outlined),
+              onPressed: () => _openCollaboration(project),
+            ),
+          ] else
+            IconButton(
+              tooltip: 'Submit for Review',
+              icon: _isSubmittingDraft
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.rate_review_outlined),
+              onPressed: _isSubmittingDraft ? null : _submitDraft,
+            ),
           IconButton(
             tooltip: 'Add Package',
             icon: const Icon(Icons.extension_outlined),
@@ -2023,6 +2110,15 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
     );
   }
 
+  void _openCollaborationInbox() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MobileCollaborationInboxScreen(projectController: _projectController),
+      ),
+    );
+  }
+
   Future<void> _openProjectTile(Map<String, dynamic> summary) async {
     final navigator = Navigator.of(context);
     final messenger = ScaffoldMessenger.of(context);
@@ -2048,6 +2144,11 @@ class _MobileLabHomeScreenState extends State<MobileLabHomeScreen> {
       appBar: AppBar(
         title: const Text('Mobile Lab'),
         actions: [
+          IconButton(
+            tooltip: 'Collaboration',
+            icon: const Icon(Icons.people_outline),
+            onPressed: _openCollaborationInbox,
+          ),
           IconButton(
             tooltip: 'My Builds',
             icon: const Icon(Icons.build_circle_outlined),
