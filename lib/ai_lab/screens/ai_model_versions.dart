@@ -66,16 +66,7 @@ class _AiModelVersionsScreenState extends State<AiModelVersionsScreen> {
                               ? 'Accuracy: ${(accuracy is num ? accuracy.toStringAsFixed(4) : accuracy)} · ${job.completedAt?.toLocal().toString().split('.').first ?? ''}'
                               : job.completedAt?.toLocal().toString().split('.').first ?? '',
                         ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.download_outlined),
-                          onPressed: () async {
-                            final url = await _artifactUrl(job.modelArtifactPath!);
-                            if (!context.mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Download link ready — check clipboard or open: $url')),
-                            );
-                          },
-                        ),
+                        
                       ),
                     );
                   },
