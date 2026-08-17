@@ -13,7 +13,8 @@ import 'ai_evaluate.dart';
 import 'ai_build_model.dart';
 import 'ai_deploy.dart';
 import 'ai_collaborators.dart';
-
+import 'ai_training_review.dart';
+import 'ai_app_integration.dart';
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
 // ============================================================
@@ -776,6 +777,33 @@ class AiProjectDashboardScreen extends StatelessWidget {
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => AiCollaboratorsScreen(project: project)),
+            ),
+          ),
+          _ActionTile(
+            icon: Icons.rate_review_outlined,
+            title: 'Review Queue',
+            subtitle: 'Approve or reject submitted training data',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiReviewQueueScreen(project: project)),
+            ),
+          ),
+          _ActionTile(
+            icon: Icons.history_edu_outlined,
+            title: 'Training History',
+            subtitle: 'Who changed what, and when',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiActivityLogScreen(project: project)),
+            ),
+          ),
+          _ActionTile(
+            icon: Icons.integration_instructions_outlined,
+            title: 'App Integration',
+            subtitle: 'Link this model to a Mobile/Web Lab app',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => AiAppIntegrationScreen(project: project)),
             ),
           ),
           _ActionTile(
