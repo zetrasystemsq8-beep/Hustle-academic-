@@ -15,6 +15,7 @@ import 'ai_deploy.dart';
 import 'ai_collaborators.dart';
 import 'ai_training_review.dart';
 import 'ai_app_integration.dart';
+import 'ai_training_review.dart';
 // ============================================================
 // AI LAB — Foundation Layer: Projects + Dataset Lab
 // ============================================================
@@ -1332,6 +1333,16 @@ class _AiDatasetPreviewScreenState extends State<AiDatasetPreviewScreen> with Si
       appBar: AppBar(
         title: Text(dataset.name),
         actions: [
+          IconButton(
+            tooltip: 'Submit a new training example for review',
+            icon: const Icon(Icons.add_box_outlined),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AiSubmitTrainingDataScreen(project: widget.project, dataset: dataset),
+              ),
+            ),
+          ),
           IconButton(
             tooltip: 'Save as new version',
             icon: _isSaving
