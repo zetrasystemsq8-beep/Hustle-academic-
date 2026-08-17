@@ -914,17 +914,7 @@ let webDev = new TreeNode("Web Development");
 root.children.push(webDev);''',
         hasImage: true,
       ),
-    AppCourse(
-    id: 'frontend-libraries-frameworks',
-    title: '''Frontend Libraries & Frameworks''',
-    description: '''Understand why frameworks exist, how component-based thinking became the standard, and how modern frontend applications are structured — components, state, routing, and more, explained conceptually by Connect Baba at Hustle Academy.''',
-    instructor: '''Connect Baba''',
-    duration: '42 min',
-    difficulty: 'Intermediate',
-    category: '''Web Development''',
-    icon: Icons.language,
-    color: Colors.blue,
-    lessons: [
+    
       AppLesson(
         title: '''Why Frameworks Exist''',
         body: '''In the Frontend Development course, you learned component thinking using plain JavaScript. It worked, but you may have noticed it took a lot of manual effort — writing HTML as strings, manually updating the DOM, manually keeping state and interface in sync. A frontend framework is a tool built specifically to handle that manual effort for you, so you can focus on what your application should do, not on the repetitive plumbing of keeping everything updated correctly.
