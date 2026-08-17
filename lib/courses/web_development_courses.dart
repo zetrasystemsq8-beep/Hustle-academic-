@@ -497,6 +497,422 @@ You have now completed the Responsive Web Design course. You understand the core
 }''',
         hasImage: true,
       ),
+      AppLesson(
+        title: '''What Are Algorithms & Data Structures?''',
+        body: '''In the JavaScript course, you learned the vocabulary of programming — variables, loops, functions, arrays, objects. In this course, we go one level deeper. We stop asking "how do I write this?" and start asking "how do I write this well?"
+
+An algorithm is simply a set of clear steps for solving a problem. You already use algorithms every day without calling them that. The steps you follow to make jollof rice are an algorithm. The steps a search box follows to find matching courses on NaijaLearn are also an algorithm. In programming, an algorithm is just a precise sequence of instructions that takes an input and produces a correct output.
+
+A data structure is a way of organizing information so it can be used efficiently. Think of it like furniture in a room. You could pile all your clothes in one heap on the floor — that is technically "storage," but finding one particular shirt becomes painful. Or you could organize clothes into a wardrobe with labeled sections — same clothes, same room, but now finding anything is fast and predictable. Data structures are the wardrobes of programming: same information, organized in a way that makes using it fast and sensible.
+
+Why does this course matter? Because writing code that merely works is only the first step. Writing code that works well — that stays fast even when handling thousands or millions of pieces of information, like every user on Nigergram or every message on ZetraMail — is what separates an average developer from a genuinely strong one. This is also exactly the kind of thinking tested when developers compete for serious jobs anywhere in the world, including against the strongest developers coming out of India and elsewhere. This course builds that muscle.
+
+Throughout this course, we will study the most important, most commonly used data structures, and the algorithms that operate on them, always asking two questions about our approach: is it correct, and is it efficient? The next lesson introduces the exact tool developers use to measure that second question — efficiency.''',
+        codeSnippet: '''''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Big O Notation & Efficiency''',
+        body: '''Imagine two students each searching for one particular course name inside a list of 1,000 courses. One student checks every single course, one at a time, from the very first to the very last, until they find it. The other student uses a smarter method and finds it in a handful of steps. Both students eventually find the answer — but one method is clearly better as the list grows larger. Big O notation is how developers describe and compare exactly this kind of difference, formally.
+
+Big O notation describes how the time (or memory) an algorithm needs grows, as the size of its input grows. It is written as O(something), and it focuses on the general pattern of growth, not exact timing in seconds.
+
+O(1), read as "constant time," means an operation takes the same amount of time no matter how large the input is. Accessing a specific item in an array by its index, like courses[3], is O(1) — it does not matter if the array has 10 items or 10 million, grabbing index 3 takes the same single step.
+
+O(n), read as "linear time," means the time grows directly in proportion to the input size. Searching through an unsorted array by checking every item, one at a time, is O(n) — double the array, and you roughly double the worst-case number of steps needed.
+
+for (let course of courses) {
+  if (course === target) {
+    console.log("Found it!");
+  }
+}
+
+O(n²), read as "quadratic time," means the time grows by the square of the input size, often caused by a loop running inside another loop. This becomes very slow, very quickly, as input grows.
+
+for (let i = 0; i < courses.length; i++) {
+  for (let j = 0; j < courses.length; j++) {
+    // comparing every course to every other course
+  }
+}
+
+O(log n), read as "logarithmic time," means the time grows very slowly, even as the input becomes huge, because the algorithm repeatedly cuts the problem in half instead of checking everything. You will see exactly how this works in the searching lesson later in this course.
+
+Big O is not about exact seconds — it is a mental model for predicting how an approach will behave as data grows from small to huge. Learning to instinctively ask "how will this behave with a lot of data?" is one of the biggest mindset shifts this course will give you.''',
+        codeSnippet: '''// O(1) — constant time
+let first = courses[0];
+
+// O(n) — linear time
+for (let course of courses) {
+  console.log(course);
+}''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Arrays & Array Algorithms''',
+        body: '''You met arrays in the JavaScript course as a way to store an ordered list of values. Now let us look at arrays from the lens of efficiency, and study a few classic algorithmic patterns built on top of them.
+
+Reading a specific index in an array, like scores[5], is O(1) — fast and constant, because the computer can jump straight to that position without checking anything before it.
+
+Searching for a value without knowing its position, however, requires checking items one at a time until a match is found (or the array ends), making it O(n) in the worst case — this is called linear search, and you already saw its code pattern in the previous lesson.
+
+A very common and important pattern is the two-pointer technique, where you track two positions in an array at once, often moving toward each other, to solve a problem more efficiently than checking every possible pair. For example, checking whether an array is a palindrome (reads the same forward and backward):
+
+function isPalindrome(arr) {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left < right) {
+    if (arr[left] !== arr[right]) {
+      return false;
+    }
+    left++;
+    right--;
+  }
+  return true;
+}
+
+Notice how left and right move toward the center simultaneously, comparing pairs, instead of comparing every item to every other item — a far more efficient approach than a nested loop.
+
+Another common pattern is the sliding window technique, useful when examining a continuous section (a "window") of an array at a time, such as calculating the sum of every group of 3 consecutive numbers, without recalculating the entire sum from scratch on every step:
+
+function maxSumOfThree(arr) {
+  let maxSum = arr[0] + arr[1] + arr[2];
+  let windowSum = maxSum;
+
+  for (let i = 3; i < arr.length; i++) {
+    windowSum += arr[i] - arr[i - 3];
+    maxSum = Math.max(maxSum, windowSum);
+  }
+  return maxSum;
+}
+
+These patterns — two pointers and sliding windows — appear again and again across real problems. Recognizing them is a skill in itself, and it comes from exposure and practice, which is exactly why we study them explicitly here.''',
+        codeSnippet: '''function isPalindrome(arr) {
+  let left = 0;
+  let right = arr.length - 1;
+  while (left < right) {
+    if (arr[left] !== arr[right]) return false;
+    left++;
+    right--;
+  }
+  return true;
+}''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Objects & Hash Maps''',
+        body: '''In the JavaScript course, you learned that objects store information as key-value pairs. In this course, we look at objects again, but through a very important lens: speed of lookup.
+
+Here is a powerful fact: looking up a value in an object by its key is, on average, O(1) — constant time — regardless of how many keys the object holds. This is because, behind the scenes, JavaScript objects are built using a structure called a hash map (sometimes called a hash table), which uses a clever mathematical technique to convert a key directly into a memory location, instead of searching through entries one by one.
+
+Compare these two approaches to finding a student's score, given their name:
+
+// Using an array — requires searching, O(n)
+let students = [
+  { name: "Amaka", score: 85 },
+  { name: "Tunde", score: 72 }
+];
+
+function findScore(name) {
+  for (let student of students) {
+    if (student.name === name) return student.score;
+  }
+}
+
+// Using an object as a hash map — instant lookup, O(1)
+let scores = {
+  Amaka: 85,
+  Tunde: 72
+};
+
+function findScoreFast(name) {
+  return scores[name];
+}
+
+The array version must check students one at a time until it finds a match. The object version jumps directly to the answer. As the number of students grows into the thousands, this difference becomes enormous — the array approach slows down noticeably, while the object approach stays just as fast.
+
+This is why hash maps (objects, in JavaScript) are one of the most powerful and heavily used data structures in all of programming. Any time you find yourself repeatedly searching through a list to find something by a unique identifier — a username, a course ID, an email address — a hash map is almost always the smarter, faster choice. Recognizing this pattern is one of the clearest, most practical upgrades you can make to your programming instincts.''',
+        codeSnippet: '''let scores = {
+  Amaka: 85,
+  Tunde: 72
+};
+
+function findScoreFast(name) {
+  return scores[name];
+}
+
+console.log(findScoreFast("Amaka"));''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Stacks & Queues''',
+        body: '''Arrays and objects are general-purpose. Stacks and queues are more specialized — they are data structures that deliberately restrict how you add and remove items, and that restriction is exactly what makes them useful.
+
+A stack follows the principle of LIFO — Last In, First Out. Imagine a stack of plates: you can only add a new plate to the top, and you can only remove the plate currently on top. The very last plate placed on the stack is always the very first one to come off.
+
+let stack = [];
+stack.push("HTML");
+stack.push("CSS");
+stack.push("JavaScript");
+
+console.log(stack.pop()); // "JavaScript" — the last one added, comes off first
+
+Stacks are used constantly in real programming. The "undo" feature in an app, keeping track of previous actions so the most recent one is undone first, is a stack. The way a browser remembers your "back" button history is essentially a stack too.
+
+A queue follows the opposite principle: FIFO — First In, First Out. Imagine a line of students waiting to register for Hustle Academy: whoever joined the line first is served first, and new students join at the back.
+
+let queue = [];
+queue.push("Amaka");
+queue.push("Tunde");
+queue.push("Chidera");
+
+console.log(queue.shift()); // "Amaka" — the first one added, comes off first
+
+Notice we used .shift() here instead of .pop() — .shift() removes from the very beginning of the array, which matches the "first in, first out" behavior a queue requires.
+
+Queues are used constantly too. A printer processing print jobs in the order they were submitted is a queue. A customer support system handling requests in the order they arrived is a queue. Even background tasks on a server, like sending out a batch of notification emails through ZetraMail, are commonly processed using a queue.
+
+The lesson underneath both of these structures is important: sometimes, deliberately limiting how data can be added or removed is not a weakness — it is exactly what makes a structure predictable, correct, and easy to reason about for a specific real-world situation.''',
+        codeSnippet: '''let stack = [];
+stack.push("HTML");
+stack.push("CSS");
+console.log(stack.pop()); // "CSS"
+
+let queue = [];
+queue.push("Amaka");
+queue.push("Tunde");
+console.log(queue.shift()); // "Amaka"''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Linked Lists''',
+        body: '''So far, every list-like structure we have used has been an array. Arrays are excellent, but they have one weakness worth understanding: inserting or removing an item from the middle or beginning of a large array can be slow, because every item after it must shift position to make room. A linked list solves this differently.
+
+A linked list is a chain of individual nodes, where each node holds two things: a value, and a reference (a pointer) to the next node in the chain. Unlike an array, the items are not stored next to each other in one continuous block — they can live anywhere, connected only by these pointers, like a treasure hunt where each clue tells you where to find the next one.
+
+Here is a simple way to represent a node in JavaScript:
+
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+let first = new Node("HTML");
+let second = new Node("CSS");
+let third = new Node("JavaScript");
+
+first.next = second;
+second.next = third;
+
+To read through a linked list, you start at the first node and follow the .next references, one at a time, until you reach a node whose .next is null, meaning the chain has ended:
+
+let current = first;
+while (current !== null) {
+  console.log(current.value);
+  current = current.next;
+}
+
+The major advantage of a linked list is that inserting or removing a node, once you already have a reference to the correct position, only requires updating a couple of pointers — no shifting of the rest of the list required, unlike an array. The major disadvantage is that you cannot instantly jump to a specific position (like arr[500]) the way you can with an array — you must walk through the chain from the beginning, node by node, to reach it.
+
+Linked lists are a perfect example of a core lesson in data structures: there is rarely a single "best" structure for every situation — only structures with different trade-offs, and the skill of a strong developer lies in recognizing which trade-off fits a given problem.''',
+        codeSnippet: '''class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+let first = new Node("HTML");
+let second = new Node("CSS");
+first.next = second;''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Recursion''',
+        body: '''Recursion is one of those ideas that feels confusing the first time you meet it, and then suddenly feels obvious once it clicks. It is simply a function that calls itself, in order to solve a smaller version of the same problem, over and over, until it reaches a point simple enough to answer directly.
+
+Every recursive function needs two essential parts. A base case, which is the simple condition where the function stops calling itself and just returns an answer directly — without this, the function would call itself forever. And a recursive case, where the function calls itself again, but with a smaller, simpler version of the original problem.
+
+Here is a classic example: calculating the factorial of a number (the product of every whole number from that number down to 1). For example, factorial of 4 is 4 × 3 × 2 × 1, which equals 24.
+
+function factorial(n) {
+  if (n <= 1) {
+    return 1; // base case
+  }
+  return n * factorial(n - 1); // recursive case
+}
+
+console.log(factorial(4)); // 24
+
+Trace through this carefully: factorial(4) calls factorial(3), which calls factorial(2), which calls factorial(1), which finally hits the base case and returns 1. Then each waiting call multiplies its own number by the result coming back up: 2 × 1 = 2, then 3 × 2 = 6, then 4 × 6 = 24.
+
+Recursion is especially natural for problems that are themselves built from smaller versions of themselves — exploring every folder inside a folder (which may contain more folders inside it), or walking through a tree-shaped structure, which you will meet in the final lesson of this course.
+
+A word of caution: every recursive function absolutely must have a correct base case, and it must be guaranteed to eventually be reached. A recursive function without a proper base case will call itself endlessly, eventually crashing the program — this is the recursive equivalent of the infinite loop danger you learned about with while loops earlier in your JavaScript studies.''',
+        codeSnippet: '''function factorial(n) {
+  if (n <= 1) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+}
+
+console.log(factorial(4)); // 24''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Searching Algorithms''',
+        body: '''You have already met one searching algorithm — linear search, checking every item one at a time. In this lesson, we learn a dramatically faster alternative, but it comes with one important requirement: the data must already be sorted.
+
+Linear search checks items one by one, from the start, and in the worst case (when the item is near the end, or not present at all), it takes O(n) time — proportional to the size of the list.
+
+function linearSearch(arr, target) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === target) return i;
+  }
+  return -1;
+}
+
+Binary search takes a completely different, much smarter approach, but only works correctly on a sorted list. Instead of checking one item at a time, it repeatedly checks the middle item, and uses the fact that the list is sorted to immediately eliminate half of the remaining possibilities on every single step.
+
+function binarySearch(arr, target) {
+  let low = 0;
+  let high = arr.length - 1;
+
+  while (low <= high) {
+    let mid = Math.floor((low + high) / 2);
+
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+  return -1;
+}
+
+Trace through the logic: check the middle item. If it matches, you are done. If the middle item is smaller than what you are looking for, the target must be somewhere in the right half, so you discard the entire left half and search only the right half next. If it is larger, you discard the right half instead. Each step cuts the remaining search space in half.
+
+This is exactly the O(log n) behavior you learned about in the Big O lesson. Searching through a sorted list of one million items with linear search could take up to one million checks in the worst case. Binary search would need at most around twenty checks. This dramatic difference is precisely why sorting data first, and then using binary search, is such a powerful and widely used combination in real software.''',
+        codeSnippet: '''function binarySearch(arr, target) {
+  let low = 0;
+  let high = arr.length - 1;
+
+  while (low <= high) {
+    let mid = Math.floor((low + high) / 2);
+    if (arr[mid] === target) return mid;
+    else if (arr[mid] < target) low = mid + 1;
+    else high = mid - 1;
+  }
+  return -1;
+}''',
+        hasImage: true,
+      ),
+      AppLesson(
+        title: '''Sorting Algorithms''',
+        body: '''Binary search only works on sorted data, which raises an important question: how does data actually get sorted in the first place? This lesson introduces sorting algorithms — the processes that arrange a list into order.
+
+Bubble sort is the simplest sorting algorithm to understand, even though it is rarely used in serious real-world code due to its slowness on large lists. It repeatedly steps through the list, comparing each pair of neighboring items, and swapping them if they are in the wrong order — larger values gradually "bubble" their way toward the end of the list with each full pass.
+
+function bubbleSort(arr) {
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0; j < arr.length - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        let temp = arr[j];
+        arr[j] = arr[j + 1];
+        arr[j + 1] = temp;
+      }
+    }
+  }
+  return arr;
+}
+
+Notice the nested loop — this gives bubble sort a time complexity of O(n²), which you learned about in the Big O lesson, making it noticeably slow on large lists.
+
+A far more efficient approach used widely in practice is merge sort, which uses a strategy called divide and conquer: it splits the list in half again and again until each piece contains just a single item (which is, by definition, already sorted), and then carefully merges those pieces back together in the correct order.
+
+function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+
+  let mid = Math.floor(arr.length / 2);
+  let left = mergeSort(arr.slice(0, mid));
+  let right = mergeSort(arr.slice(mid));
+
+  return merge(left, right);
+}
+
+function merge(left, right) {
+  let result = [];
+  while (left.length && right.length) {
+    if (left[0] <= right[0]) {
+      result.push(left.shift());
+    } else {
+      result.push(right.shift());
+    }
+  }
+  return [...result, ...left, ...right];
+}
+
+Notice that mergeSort calls itself — this is recursion, exactly as you studied earlier in this course, applied to a real, practical problem. Merge sort achieves O(n log n) time complexity, a significant improvement over bubble sort's O(n²), especially as the list grows large.
+
+In real-world JavaScript, you rarely write sorting algorithms from scratch, because JavaScript provides a built-in method, .sort(), that handles it for you efficiently. But understanding how sorting actually works underneath that convenient method is exactly the kind of deep understanding that lets you reason confidently about performance, and that is asked about in interviews for serious developer roles anywhere in the world.''',
+        codeSnippet: '''function mergeSort(arr) {
+  if (arr.length <= 1) return arr;
+  let mid = Math.floor(arr.length / 2);
+  let left = mergeSort(arr.slice(0, mid));
+  let right = mergeSort(arr.slice(mid));
+  return merge(left, right);
+}''',
+        hasImage: false,
+      ),
+      AppLesson(
+        title: '''Trees & Graphs (Introduction)''',
+        body: '''We close this course with two more advanced data structures that appear throughout real software: trees and graphs. You do not need to master every detail of them today — this lesson is meant to introduce the shape of these ideas, so they feel familiar when you meet them again later in your journey.
+
+A tree is a structure made of nodes, where each node can have child nodes branching beneath it, starting from a single top node called the root, and with no cycles (no path that loops back on itself). You have actually already met a real-world example of a tree without realizing it: the HTML document you learned about at the very beginning of this journey. The <html> tag is the root, <head> and <body> are its children, and every nested tag beneath them is a child of its parent tag. This entire structure is sometimes even called the DOM tree, which you worked with directly in the JavaScript course.
+
+A simple way to represent a tree node in JavaScript:
+
+class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.children = [];
+  }
+}
+
+let root = new TreeNode("Hustle Academy");
+let webDev = new TreeNode("Web Development");
+let cyber = new TreeNode("Cybersecurity");
+
+root.children.push(webDev, cyber);
+
+A graph is an even more general structure, made of nodes (often called vertices) connected by edges, but without the strict "parent and child" rule a tree requires — any node can connect to any other node, in any pattern, and cycles are allowed. A graph is an excellent way to represent real relationships and networks: the connections between accounts on Nigergram (who follows who), the roads connecting cities on a map, or the links between pages across the entire web that you learned about in your very first course.
+
+A simple way to represent a graph in JavaScript, using an object where each key connects to a list of its neighbors:
+
+let network = {
+  Amaka: ["Tunde", "Chidera"],
+  Tunde: ["Amaka"],
+  Chidera: ["Amaka"]
+};
+
+This tells us Amaka is connected to Tunde and Chidera, while Tunde is connected only back to Amaka.
+
+You have now completed the JavaScript Algorithms & Data Structures course. You understand how to measure efficiency using Big O notation, and you have studied arrays, hash maps, stacks, queues, linked lists, recursion, searching, sorting, and the foundational shape of trees and graphs. This is genuinely advanced thinking — the same kind of thinking tested in technical interviews at serious companies worldwide, and the same kind of thinking that separates a developer who merely writes code that runs, from one who writes code that performs well and holds up under real, growing demand. Carry this mindset — always ask not just "does it work?" but "how well does it work, and why?" — into every course that follows.''',
+        codeSnippet: '''class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.children = [];
+  }
+}
+
+let root = new TreeNode("Hustle Academy");
+let webDev = new TreeNode("Web Development");
+root.children.push(webDev);''',
+        hasImage: true,
+      ),
     ],
   ),
-];
