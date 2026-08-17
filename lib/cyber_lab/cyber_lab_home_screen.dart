@@ -7,6 +7,7 @@ import 'sandbox_screen.dart';
 import 'mission_service.dart';
 import 'mission_list_screen.dart';
 import 'skill_progress_screen.dart';
+import 'duel_lobby_screen.dart';
 
 // ============================================================
 // CYBER LAB HOME SCREEN — entry point and module picker
@@ -86,6 +87,15 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
     );
   }
 
+  void _openDuel() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DuelLobbyScreen(cyberService: _cyberService),
+      ),
+    );
+  }
+
   void _openSkillProgress() {
     final missionService = MissionService(supabase: Supabase.instance.client, userId: _cyberService.userId);
     Navigator.push(
@@ -134,6 +144,14 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
               title: 'Guided Missions',
               subtitle: 'Step-by-step walkthroughs — discover, exploit, understand, submit evidence',
               onTap: _openMissions,
+            ),
+            const SizedBox(height: 12),
+            _buildModuleCard(
+              icon: Icons.bolt,
+              iconColor: Colors.red,
+              title: 'Duel a Friend',
+              subtitle: 'Head-to-head — same challenges, real-time scores, see who wins',
+              onTap: _openDuel,
             ),
             const SizedBox(height: 12),
             _buildModuleCard(
