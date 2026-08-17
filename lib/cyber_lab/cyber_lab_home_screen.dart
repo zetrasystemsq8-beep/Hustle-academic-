@@ -86,8 +86,7 @@ class _CyberLabHomeScreenState extends State<CyberLabHomeScreen> {
     );
   }
 
-  void _openSandbox() {
-    void _openSkillProgress() {
+  void _openSkillProgress() {
     final missionService = MissionService(supabase: Supabase.instance.client, userId: _cyberService.userId);
     Navigator.push(
       context,
